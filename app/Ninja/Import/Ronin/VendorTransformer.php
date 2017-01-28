@@ -15,13 +15,13 @@ class VendorTransformer extends BaseTransformer
      */
     public function transform($data)
     {
-        if ($this->hasVendor($data->company)) {
+        if ($this->hasVendor($data->corporation)) {
             return false;
         }
 
         return new Item($data, function ($data) {
             return [
-                'name' => $data->company,
+                'name' => $data->corporation,
                 'work_phone' => $data->phone,
                 'contacts' => [
                     [

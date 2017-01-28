@@ -118,7 +118,7 @@ class BraintreePaymentDriver extends BasePaymentDriver
         return [
             'firstName' => array_get($this->input, 'first_name') ?: $this->contact()->first_name,
             'lastName' => array_get($this->input, 'last_name') ?: $this->contact()->last_name,
-            'company' => $this->client()->name,
+            'corporation' => $this->client()->name,
             'email' => $this->contact()->email,
             'phone' => $this->contact()->phone,
             'website' => $this->client()->website

@@ -4,7 +4,7 @@
     <div class="cell"></div>
     <div class="cell">{{ trans('texts.plans.number_clients') }}</div>
     <div class="cell">{{ trans('texts.plans.unlimited_invoices') }}</div>
-    <div class="cell">{{ trans('texts.plans.company_logo') }}</div>
+    <div class="cell">{{ trans('texts.plans.corporation_logo') }}</div>
     <div class="cell">{{ trans('texts.plans.live_pdf') }}</div>
     <div class="cell">{{ trans('texts.plans.four_templates') }}</div>
     <div class="cell">{{ trans('texts.plans.payments') }}</div>
@@ -23,7 +23,7 @@
     <div class="cell">{{ trans('texts.plans.free') }}</div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.number_clients') }}</div><span>500</span></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.unlimited_invoices') }}</div><span class="glyphicon glyphicon-ok"></div>
-    <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.company_logo') }}</div><span class="glyphicon glyphicon-ok"></div>
+    <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.corporation_logo') }}</div><span class="glyphicon glyphicon-ok"></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.live_pdf') }}</div><span class="glyphicon glyphicon-ok"></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.four_templates') }}</div><span class="glyphicon glyphicon-ok"></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.payments') }}</div><span class="glyphicon glyphicon-ok"></div>
@@ -42,7 +42,7 @@
     <div class="cell">{{ trans('texts.plans.pro_plan') }}</div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.number_clients') }}</div><span style="color: #2299c0; font-size: 16px;">{{ trans('texts.plans.unlimited') }}</span></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.unlimited_invoices') }}</div><span class="glyphicon glyphicon-ok"></div>
-    <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.company_logo') }}</div><span class="glyphicon glyphicon-ok"></div>
+    <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.corporation_logo') }}</div><span class="glyphicon glyphicon-ok"></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.live_pdf') }}</div><span class="glyphicon glyphicon-ok"></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.four_templates') }}</div><span class="glyphicon glyphicon-ok"></div>
     <div class="cell"><div class="hide-desktop">{{ trans('texts.plans.payments') }}</div><span class="glyphicon glyphicon-ok"></div>

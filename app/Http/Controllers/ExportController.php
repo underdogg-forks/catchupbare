@@ -130,7 +130,7 @@ class ExportController extends BaseController
                   ->setKeywords('')
                   ->setCategory('')
                   ->setManager('')
-                  ->setCompany($user->account->getDisplayName());
+                  ->setCorporation($user->account->getDisplayName());
 
             foreach ($data as $key => $val) {
                 if ($key === 'account' || $key === 'title' || $key === 'multiUser') {

@@ -168,7 +168,7 @@
                         <a href="#client_fields" aria-controls="client_fields" role="tab" data-toggle="tab">{{ trans('texts.client_fields') }}</a>
                     </li>
                     <li role="presentation">
-                        <a href="#company_fields" aria-controls="company_fields" role="tab" data-toggle="tab">{{ trans('texts.company_fields') }}</a>
+                        <a href="#corporation_fields" aria-controls="corporation_fields" role="tab" data-toggle="tab">{{ trans('texts.corporation_fields') }}</a>
                     </li>
                     <li role="presentation">
                         <a href="#invoice_fields" aria-controls="invoice_fields" role="tab" data-toggle="tab">{{ trans('texts.invoice_fields') }}</a>
@@ -193,7 +193,7 @@
 
                     </div>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="company_fields">
+                <div role="tabpanel" class="tab-pane" id="corporation_fields">
                     <div class="panel-body">
 
                         {!! Former::text('custom_label1')

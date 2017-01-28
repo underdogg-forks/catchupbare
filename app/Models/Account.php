@@ -301,9 +301,9 @@ class Account extends Eloquent
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function company()
+    public function corporation()
     {
-        return $this->belongsTo('App\Models\Company');
+        return $this->belongsTo('App\Models\Corporation');
     }
 
     /**
@@ -943,13 +943,13 @@ class Account extends Eloquent
             return;
         }
 
-        if ($this->company->trial_started && $this->company->trial_started != '0000-00-00') {
+        if ($this->corporation->trial_started && $this->corporation->trial_started != '0000-00-00') {
             return;
         }
 
-        $this->company->trial_plan = $plan;
-        $this->company->trial_started = date_create()->format('Y-m-d');
-        $this->company->save();
+        $this->corporation->trial_plan = $plan;
+        $this->corporation->trial_started = date_create()->format('Y-m-d');
+        $this->corporation->save();
     }
 
     /**
@@ -977,7 +977,7 @@ class Account extends Eloquent
             // Pro
             case FEATURE_TASKS:
             case FEATURE_EXPENSES:
-                if (Utils::isNinja() && $this->company_id < EXTRAS_GRANDFATHER_COMPANY_ID) {
+                if (Utils::isNinja() && $this->corporation_id < EXTRAS_GRANDFATHER_COMPANY_ID) {
                     return true;
                 }
 
@@ -1073,13 +1073,13 @@ class Account extends Eloquent
      */
     public function getPlanDetails($include_inactive = false, $include_trial = true)
     {
-        if (!$this->company) {
+        if (!$this->corporation) {
             return null;
         }
 
-        $plan = $this->company->plan;
-        $price = $this->company->plan_price;
-        $trial_plan = $this->company->trial_plan;
+        $plan = $this->corporation->plan;
+        $price = $this->corporation->plan_price;
+        $trial_plan = $this->corporation->trial_plan;
 
         if((!$plan || $plan == PLAN_FREE) && (!$trial_plan || !$include_trial)) {
             return null;
@@ -1087,7 +1087,7 @@ class Account extends Eloquent
 
         $trial_active = false;
         if ($trial_plan && $include_trial) {
-            $trial_started = DateTime::createFromFormat('Y-m-d', $this->company->trial_started);
+            $trial_started = DateTime::createFromFormat('Y-m-d', $this->corporation->trial_started);
             $trial_expires = clone $trial_started;
             $trial_expires->modify('+2 weeks');
 
@@ -1098,11 +1098,11 @@ class Account extends Eloquent
 
         $plan_active = false;
         if ($plan) {
-            if ($this->company->plan_expires == null) {
+            if ($this->corporation->plan_expires == null) {
                 $plan_active = true;
                 $plan_expires = false;
             } else {
-                $plan_expires = DateTime::createFromFormat('Y-m-d', $this->company->plan_expires);
+                $plan_expires = DateTime::createFromFormat('Y-m-d', $this->corporation->plan_expires);
                 if ($plan_expires >= date_create()) {
                     $plan_active = true;
                 }
@@ -1142,20 +1142,20 @@ class Account extends Eloquent
 
         if ($use_plan) {
             return [
-                'company_id' => $this->company->id,
-                'num_users' => $this->company->num_users,
+                'corporation_id' => $this->corporation->id,
+                'num_users' => $this->corporation->num_users,
                 'plan_price' => $price,
                 'trial' => false,
                 'plan' => $plan,
-                'started' => DateTime::createFromFormat('Y-m-d', $this->company->plan_started),
+                'started' => DateTime::createFromFormat('Y-m-d', $this->corporation->plan_started),
                 'expires' => $plan_expires,
-                'paid' => DateTime::createFromFormat('Y-m-d', $this->company->plan_paid),
-                'term' => $this->company->plan_term,
+                'paid' => DateTime::createFromFormat('Y-m-d', $this->corporation->plan_paid),
+                'term' => $this->corporation->plan_term,
                 'active' => $plan_active,
             ];
         } else {
             return [
-                'company_id' => $this->company->id,
+                'corporation_id' => $this->corporation->id,
                 'num_users' => 1,
                 'plan_price' => 0,
                 'trial' => true,

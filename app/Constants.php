@@ -49,7 +49,7 @@ if (!defined('APP_NAME'))
     define('BASIC_SETTINGS', 'basic_settings');
     define('ADVANCED_SETTINGS', 'advanced_settings');
 
-    define('ACCOUNT_COMPANY_DETAILS', 'company_details');
+    define('ACCOUNT_COMPANY_DETAILS', 'corporation_details');
     define('ACCOUNT_USER_DETAILS', 'user_details');
     define('ACCOUNT_LOCALIZATION', 'localization');
     define('ACCOUNT_NOTIFICATIONS', 'notifications');

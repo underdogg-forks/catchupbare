@@ -164,7 +164,7 @@ class AccountController extends BaseController
     public function changePlan() {
         $user = Auth::user();
         $account = $user->account;
-        $company = $account->company;
+        $corporation = $account->corporation;
 
         $plan = Input::get('plan');
         $term = Input::get('plan_term');
@@ -190,7 +190,7 @@ class AccountController extends BaseController
             $refund_deadline->modify('+30 days');
 
             if ($plan == PLAN_FREE && $refund_deadline >= date_create()) {
-                if ($payment = $account->company->payment) {
+                if ($payment = $account->corporation->payment) {
                     $ninjaAccount = $this->accountRepo->getNinjaAccount();
                     $paymentDriver = $ninjaAccount->paymentDriver();
                     $paymentDriver->refundPayment($payment);
@@ -215,7 +215,7 @@ class AccountController extends BaseController
 
             $days_total = $planDetails['paid']->diff($planDetails['expires'])->days;
             $percent_used = $days_used / $days_total;
-            $credit = floatval($company->payment->amount) * (1 - $percent_used);
+            $credit = floatval($corporation->payment->amount) * (1 - $percent_used);
         }
 
         if ($newPlan['price'] > $credit) {
@@ -228,17 +228,17 @@ class AccountController extends BaseController
         } else {
 
             if ($plan == PLAN_FREE) {
-                $company->discount = 0;
+                $corporation->discount = 0;
             } else {
-                $company->plan_term = $term;
-                $company->plan_price = $newPlan['price'];
-                $company->num_users = $numUsers;
-                $company->plan_expires = date_create()->modify($term == PLAN_TERM_MONTHLY ? '+1 month' : '+1 year')->format('Y-m-d');
+                $corporation->plan_term = $term;
+                $corporation->plan_price = $newPlan['price'];
+                $corporation->num_users = $numUsers;
+                $corporation->plan_expires = date_create()->modify($term == PLAN_TERM_MONTHLY ? '+1 month' : '+1 year')->format('Y-m-d');
             }
 
-            $company->trial_plan = null;
-            $company->plan = $plan;
-            $company->save();
+            $corporation->trial_plan = null;
+            $corporation->plan = $plan;
+            $corporation->save();
 
             return Redirect::to('settings/account_management');
         }
@@ -299,7 +299,7 @@ class AccountController extends BaseController
         }
 
         if ($section == ACCOUNT_COMPANY_DETAILS) {
-            return self::showCompanyDetails();
+            return self::showCorporationDetails();
         } elseif ($section == ACCOUNT_LOCALIZATION) {
             return self::showLocalization();
         } elseif ($section == ACCOUNT_PAYMENTS) {
@@ -385,7 +385,7 @@ class AccountController extends BaseController
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    private function showCompanyDetails()
+    private function showCorporationDetails()
     {
         // check that logo is less than the max file size
         $account = Auth::user()->account;
@@ -396,7 +396,7 @@ class AccountController extends BaseController
         $data = [
             'account' => Account::with('users')->findOrFail(Auth::user()->account_id),
             'sizes' => Cache::get('sizes'),
-            'title' => trans('texts.company_details'),
+            'title' => trans('texts.corporation_details'),
         ];
 
         return View::make('accounts.details', $data);
@@ -1354,8 +1354,8 @@ class AccountController extends BaseController
         });
 
         $this->accountRepo->unlinkAccount($account);
-        if ($account->company->accounts->count() == 1) {
-            $account->company->forceDelete();
+        if ($account->corporation->accounts->count() == 1) {
+            $account->corporation->forceDelete();
         } else {
             $account->forceDelete();
         }

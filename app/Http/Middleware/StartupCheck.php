@@ -146,13 +146,13 @@ class StartupCheck
                     }
                 } elseif ($productId == PRODUCT_WHITE_LABEL) {
                     if ($data && $data != RESULT_FAILURE) {
-                        $company = Auth::user()->account->company;
-                        $company->plan_term = PLAN_TERM_YEARLY;
-                        $company->plan_paid = $data;
-                        $date = max(date_create($data), date_create($company->plan_expires));
-                        $company->plan_expires = $date->modify('+1 year')->format('Y-m-d');
-                        $company->plan = PLAN_WHITE_LABEL;
-                        $company->save();
+                        $corporation = Auth::user()->account->corporation;
+                        $corporation->plan_term = PLAN_TERM_YEARLY;
+                        $corporation->plan_paid = $data;
+                        $date = max(date_create($data), date_create($corporation->plan_expires));
+                        $corporation->plan_expires = $date->modify('+1 year')->format('Y-m-d');
+                        $corporation->plan = PLAN_WHITE_LABEL;
+                        $corporation->save();
 
                         Session::flash('message', trans('texts.bought_white_label'));
                     } else {

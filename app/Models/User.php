@@ -379,14 +379,14 @@ class User extends Authenticatable
         }
 
         $account = $this->account;
-        $company = $account->company;
+        $corporation = $account->corporation;
 
         $numUsers = 1;
-        foreach ($company->accounts as $account) {
+        foreach ($corporation->accounts as $account) {
             $numUsers += $account->users->count() - 1;
         }
 
-        return $numUsers < $company->num_users;
+        return $numUsers < $corporation->num_users;
     }
 
     public function canCreateOrEdit($entityType, $entity = false)
@@ -397,7 +397,7 @@ class User extends Authenticatable
 
     public function primaryAccount()
     {
-        return $this->account->company->accounts->sortBy('id')->first();
+        return $this->account->corporation->accounts->sortBy('id')->first();
     }
 }
 

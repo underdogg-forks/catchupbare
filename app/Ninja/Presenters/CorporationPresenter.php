@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Presenters;
 
-class CompanyPresenter extends EntityPresenter
+class CorporationPresenter extends EntityPresenter
 {
     public function promoMessage()
     {

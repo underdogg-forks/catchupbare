@@ -103,7 +103,7 @@
         });
 
         Mousetrap.bind('g s', function(e) {
-            location.href = "{{ url('/settings/company_details') }}";
+            location.href = "{{ url('/settings/corporation_details') }}";
         });
 
         Mousetrap.bind('h', function(e) {

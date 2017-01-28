@@ -342,7 +342,7 @@
 @section('body')
 
 @if ( ! Request::is('settings/account_management'))
-  @include('partials.upgrade_modal')
+  {{--@include('partials.upgrade_modal')--}}
 @endif
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="height:60px;">
@@ -374,7 +374,7 @@
           @if (!Auth::user()->registered)
             {!! Button::success(trans('texts.sign_up'))->withAttributes(array('id' => 'signUpButton', 'data-toggle'=>'modal', 'data-target'=>'#signUpModal', 'style' => 'max-width:100px;;overflow:hidden'))->small() !!} &nbsp;
           @elseif (Utils::isNinjaProd() && (!Auth::user()->isPro() || Auth::user()->isTrial()))
-            @if (Auth::user()->account->company->hasActivePromo())
+            @if (Auth::user()->account->corporation->hasActivePromo())
                 {!! Button::warning(trans('texts.plan_upgrade'))->withAttributes(array('onclick' => 'showUpgradeModal()', 'style' => 'max-width:100px;overflow:hidden'))->small() !!} &nbsp;
             @else
                 {!! Button::success(trans('texts.plan_upgrade'))->withAttributes(array('onclick' => 'showUpgradeModal()', 'style' => 'max-width:100px;overflow:hidden'))->small() !!} &nbsp;
@@ -430,9 +430,9 @@
             <li class="divider"></li>
             @if (Utils::isAdmin())
               @if (count(session(SESSION_USER_ACCOUNTS)) > 1)
-                  <li>{!! link_to('/manage_companies', trans('texts.manage_companies')) !!}</li>
+                  <li>{!! link_to('/manage_corporations', trans('texts.manage_corporations')) !!}</li>
               @elseif (!session(SESSION_USER_ACCOUNTS) || count(session(SESSION_USER_ACCOUNTS)) < 5)
-                  <li>{!! link_to('/invoice_now?new_company=true&sign_up=true', trans('texts.add_company')) !!}</li>
+                  <li>{!! link_to('/invoice_now?new_corporation=true&sign_up=true', trans('texts.add_corporation')) !!}</li>
               @endif
             @endif
             <li>{!! link_to('#', trans('texts.logout'), array('onclick'=>'logout()')) !!}</li>
@@ -593,7 +593,7 @@
                       ]) !!}
                 @endif
               @else
-                @include('partials.white_label', ['company' => Auth::user()->account->company])
+                {{--@include('partials.white_label', ['corporation' => Auth::user()->account->corporation])--}}
               @endif
             </div>
         </div>

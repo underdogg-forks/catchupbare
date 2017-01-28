@@ -12,7 +12,7 @@
     @endif
 
     {!! Former::checkbox('authorize_ach')
-            ->text(trans('texts.ach_authorization', ['company'=>$account->getDisplayName(), 'email' => $account->work_email]))
+            ->text(trans('texts.ach_authorization', ['corporation'=>$account->getDisplayName(), 'email' => $account->work_email]))
             ->label(' ')
             ->value(1) !!}
 

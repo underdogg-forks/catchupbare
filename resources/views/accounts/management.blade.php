@@ -56,9 +56,9 @@
 							</div>
 						</div>
 
-						@if ($account->company->hasActiveDiscount())
+						@if ($account->corporation->hasActiveDiscount())
 							{!! Former::plaintext('discount')
-									->value($account->company->present()->discountMessage) !!}
+									->value($account->corporation->present()->discountMessage) !!}
 						@endif
 
 						@if (Utils::isNinjaProd())
@@ -134,7 +134,7 @@
 								->inlineHelp(trans('texts.enterprise_plan_features', ['link' => link_to(NINJA_WEB_URL . '/plans-pricing', trans('texts.click_here'), ['target' => '_blank'])])) !!}
 
 							{!! Former::plaintext(' ')
-								->inlineHelp($account->company->present()->promoMessage) !!}
+								->inlineHelp($account->corporation->present()->promoMessage) !!}
 
 						</div>
 						<div class="modal-footer" style="margin-top: 0px">

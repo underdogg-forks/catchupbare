@@ -37,7 +37,7 @@ trait PresentsInvoice
                 'client.email',
             ],
             'account_fields1' => [
-                'account.company_name',
+                'account.corporation_name',
                 'account.id_number',
                 'account.vat_number',
                 'account.website',
@@ -106,7 +106,7 @@ trait PresentsInvoice
                 '.blank',
             ],
             INVOICE_FIELDS_ACCOUNT => [
-                'account.company_name',
+                'account.corporation_name',
                 'account.id_number',
                 'account.vat_number',
                 'account.website',
@@ -202,7 +202,7 @@ trait PresentsInvoice
             'country',
             'email',
             'contact_name',
-            'company_name',
+            'corporation_name',
             'website',
             'phone',
             'blank',

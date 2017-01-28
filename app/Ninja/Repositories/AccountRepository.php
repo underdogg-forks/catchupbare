@@ -18,7 +18,7 @@ use App\Models\Credit;
 use App\Models\Language;
 use App\Models\Contact;
 use App\Models\Account;
-use App\Models\Company;
+use App\Models\Corporation;
 use App\Models\User;
 use App\Models\UserAccount;
 use App\Models\AccountToken;
@@ -27,18 +27,18 @@ class AccountRepository
 {
     public function create($firstName = '', $lastName = '', $email = '', $password = '')
     {
-        $company = new Company();
-        $company->utm_source = Input::get('utm_source');
-        $company->utm_medium = Input::get('utm_medium');
-        $company->utm_campaign = Input::get('utm_campaign');
-        $company->utm_term = Input::get('utm_term');
-        $company->utm_content = Input::get('utm_content');
-        $company->save();
+        $corporation = new Corporation();
+        $corporation->utm_source = Input::get('utm_source');
+        $corporation->utm_medium = Input::get('utm_medium');
+        $corporation->utm_campaign = Input::get('utm_campaign');
+        $corporation->utm_term = Input::get('utm_term');
+        $corporation->utm_content = Input::get('utm_content');
+        $corporation->save();
 
         $account = new Account();
         $account->ip = Request::getClientIp();
         $account->account_key = str_random(RANDOM_KEY_LENGTH);
-        $account->company_id = $company->id;
+        $account->corporation_id = $corporation->id;
 
         // Track referal code
         if ($referralCode = Session::get(SESSION_REFERRAL_CODE)) {
@@ -285,10 +285,10 @@ class AccountRepository
         $invoice->invoice_type_id = INVOICE_TYPE_STANDARD;
 
         // check for promo/discount
-        $clientCompany = $clientAccount->company;
-        if ($clientCompany->hasActivePromo() || $clientCompany->hasActiveDiscount($renewalDate)) {
-            $discount = $invoice->amount * $clientCompany->discount;
-            $invoice->discount = $clientCompany->discount * 100;
+        $clientCorporation = $clientAccount->corporation;
+        if ($clientCorporation->hasActivePromo() || $clientCorporation->hasActiveDiscount($renewalDate)) {
+            $discount = $invoice->amount * $clientCorporation->discount;
+            $invoice->discount = $clientCorporation->discount * 100;
             $invoice->amount -= $discount;
             $invoice->balance -= $discount;
         }
@@ -337,15 +337,15 @@ class AccountRepository
         if ($account) {
             return $account;
         } else {
-            $company = new Company();
-            $company->save();
+            $corporation = new Corporation();
+            $corporation->save();
 
             $account = new Account();
             $account->name = 'Invoice Ninja';
             $account->work_email = 'contact@invoiceninja.com';
             $account->work_phone = '(800) 763-1948';
             $account->account_key = NINJA_ACCOUNT_KEY;
-            $account->company_id = $company->id;
+            $account->corporation_id = $corporation->id;
             $account->save();
 
             $random = str_random(RANDOM_KEY_LENGTH);
@@ -636,19 +636,19 @@ class AccountRepository
             }
         }
 
-        // Merge other companies into the primary user's company
+        // Merge other corporations into the primary user's corporation
         if (!empty($primaryUser)) {
             foreach ($users as $user) {
                 if ($user == $primaryUser || $user->public_id) {
                     continue;
                 }
 
-                if ($user->account->company_id != $primaryUser->account->company_id) {
-                    foreach ($user->account->company->accounts as $account) {
-                        $account->company_id = $primaryUser->account->company_id;
+                if ($user->account->corporation_id != $primaryUser->account->corporation_id) {
+                    foreach ($user->account->corporation->accounts as $account) {
+                        $account->corporation_id = $primaryUser->account->corporation_id;
                         $account->save();
                     }
-                    $user->account->company->forceDelete();
+                    $user->account->corporation->forceDelete();
                 }
             }
         }
@@ -674,10 +674,10 @@ class AccountRepository
 
         $user = User::whereId($userId)->first();
 
-        if (!$user->public_id && $user->account->company->accounts->count() > 1) {
-            $company = Company::create();
-            $company->save();
-            $user->account->company_id = $company->id;
+        if (!$user->public_id && $user->account->corporation->accounts->count() > 1) {
+            $corporation = Corporation::create();
+            $corporation->save();
+            $user->account->corporation_id = $corporation->id;
             $user->account->save();
         }
     }

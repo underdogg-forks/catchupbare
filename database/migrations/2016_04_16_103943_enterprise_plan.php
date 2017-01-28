@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Models\Company;
+use App\Models\Corporation;
 use App\Models\Account;
 
 class EnterprisePlan extends Migration
@@ -21,8 +21,8 @@ class EnterprisePlan extends Migration
         $timeout = max($timeout - 10, $timeout * .9);
         $startTime = time();
 
-        if (!Schema::hasTable('companies')) {
-            Schema::create('companies', function ($table) {
+        if (!Schema::hasTable('corporations')) {
+            Schema::create('corporations', function ($table) {
                 $table->increments('id');
 
                 $table->enum('plan', array('pro', 'enterprise', 'white_label'))->nullable();
@@ -44,17 +44,17 @@ class EnterprisePlan extends Migration
                 $table->softDeletes();
             });
 
-            Schema::table('companies', function ($table) {
+            Schema::table('corporations', function ($table) {
                 $table->foreign('payment_id')->references('id')->on('payments');
             });
         }
 
-        if (!Schema::hasColumn('accounts', 'company_id')) {
+        if (!Schema::hasColumn('accounts', 'corporation_id')) {
             Schema::table('accounts', function ($table) {
-                $table->unsignedInteger('company_id')->nullable();
+                $table->unsignedInteger('corporation_id')->nullable();
             });
             Schema::table('accounts', function ($table) {
-                $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+                $table->foreign('corporation_id')->references('id')->on('corporations')->onDelete('cascade');
             });
         }
 
@@ -68,7 +68,7 @@ class EnterprisePlan extends Migration
             })
             ->leftJoin('accounts', 'accounts.id', '=', 'users.account_id')
             ->whereNull('user_accounts.id')
-            ->whereNull('accounts.company_id')
+            ->whereNull('accounts.corporation_id')
             ->where(function ($query) {
                 $query->whereNull('users.public_id');
                 $query->orWhere('users.public_id', '=', 0);
@@ -94,11 +94,11 @@ class EnterprisePlan extends Migration
             LEFT JOIN accounts a3 ON a3.id = u3.account_id
             LEFT JOIN accounts a4 ON a4.id = u4.account_id
             LEFT JOIN accounts a5 ON a5.id = u5.account_id
-            WHERE (a1.id IS NOT NULL AND a1.company_id IS NULL)
-            OR (a2.id IS NOT NULL AND a2.company_id IS NULL)
-            OR (a3.id IS NOT NULL AND a3.company_id IS NULL)
-            OR (a4.id IS NOT NULL AND a4.company_id IS NULL)
-            OR (a5.id IS NOT NULL AND a5.company_id IS NULL)');
+            WHERE (a1.id IS NOT NULL AND a1.corporation_id IS NULL)
+            OR (a2.id IS NOT NULL AND a2.corporation_id IS NULL)
+            OR (a3.id IS NOT NULL AND a3.corporation_id IS NULL)
+            OR (a4.id IS NOT NULL AND a4.corporation_id IS NULL)
+            OR (a5.id IS NOT NULL AND a5.corporation_id IS NULL)');
 
         if (count($group_accounts)) {
             foreach ($group_accounts as $group_account) {
@@ -125,12 +125,12 @@ class EnterprisePlan extends Migration
             return;
         }
 
-        $company = Company::create();
+        $corporation = Corporation::create();
         if ($primaryAccount->pro_plan_paid && $primaryAccount->pro_plan_paid != '0000-00-00') {
-            $company->plan = 'pro';
-            $company->plan_term = 'year';
-            $company->plan_started = $primaryAccount->pro_plan_paid;
-            $company->plan_paid = $primaryAccount->pro_plan_paid;
+            $corporation->plan = 'pro';
+            $corporation->plan_term = 'year';
+            $corporation->plan_started = $primaryAccount->pro_plan_paid;
+            $corporation->plan_paid = $primaryAccount->pro_plan_paid;
 
             $expires = DateTime::createFromFormat('Y-m-d', $primaryAccount->pro_plan_paid);
             $expires->modify('+1 year');
@@ -138,35 +138,35 @@ class EnterprisePlan extends Migration
 
             // check for self host white label licenses
             if (!Utils::isNinjaProd()) {
-                if ($company->plan_paid) {
-                    $company->plan = 'white_label';
+                if ($corporation->plan_paid) {
+                    $corporation->plan = 'white_label';
                     // old ones were unlimited, new ones are yearly
-                    if ($company->plan_paid == NINJA_DATE) {
-                        $company->plan_term = null;
+                    if ($corporation->plan_paid == NINJA_DATE) {
+                        $corporation->plan_term = null;
                     } else {
-                        $company->plan_term = PLAN_TERM_YEARLY;
-                        $company->plan_expires = $expires;
+                        $corporation->plan_term = PLAN_TERM_YEARLY;
+                        $corporation->plan_expires = $expires;
                     }
                 }
-            } elseif ($company->plan_paid != NINJA_DATE) {
-                $company->plan_expires = $expires;
+            } elseif ($corporation->plan_paid != NINJA_DATE) {
+                $corporation->plan_expires = $expires;
             }
         }
 
         if ($primaryAccount->pro_plan_trial && $primaryAccount->pro_plan_trial != '0000-00-00') {
-            $company->trial_started = $primaryAccount->pro_plan_trial;
-            $company->trial_plan = 'pro';
+            $corporation->trial_started = $primaryAccount->pro_plan_trial;
+            $corporation->trial_plan = 'pro';
         }
 
-        $company->save();
+        $corporation->save();
 
-        $primaryAccount->company_id = $company->id;
+        $primaryAccount->corporation_id = $corporation->id;
         $primaryAccount->save();
 
         if (!empty($otherAccounts)) {
             foreach ($otherAccounts as $account) {
                 if ($account && $account->id != $primaryAccount->id) {
-                    $account->company_id = $company->id;
+                    $account->corporation_id = $corporation->id;
                     $account->save();
                 }
             }
@@ -201,36 +201,36 @@ class EnterprisePlan extends Migration
             });
         }
 
-        $company_ids = \DB::table('companies')
-            ->leftJoin('accounts', 'accounts.company_id', '=', 'companies.id')
+        $corporation_ids = \DB::table('corporations')
+            ->leftJoin('accounts', 'accounts.corporation_id', '=', 'corporations.id')
             ->whereNull('accounts.pro_plan_paid')
             ->whereNull('accounts.pro_plan_trial')
             ->where(function ($query) {
-                $query->whereNotNull('companies.plan_paid');
-                $query->orWhereNotNull('companies.trial_started');
+                $query->whereNotNull('corporations.plan_paid');
+                $query->orWhereNotNull('corporations.trial_started');
             })
-            ->lists('companies.id');
+            ->lists('corporations.id');
 
-        $company_ids = array_unique($company_ids);
+        $corporation_ids = array_unique($corporation_ids);
 
-        if (count($company_ids)) {
-            foreach (Company::find($company_ids) as $company) {
-                foreach ($company->accounts as $account) {
-                    $account->pro_plan_paid = $company->plan_paid;
-                    $account->pro_plan_trial = $company->trial_started;
+        if (count($corporation_ids)) {
+            foreach (Corporation::find($corporation_ids) as $corporation) {
+                foreach ($corporation->accounts as $account) {
+                    $account->pro_plan_paid = $corporation->plan_paid;
+                    $account->pro_plan_trial = $corporation->trial_started;
                     $account->save();
                 }
                 $this->checkTimeout($timeout, $startTime);
             }
         }
 
-        if (Schema::hasColumn('accounts', 'company_id')) {
+        if (Schema::hasColumn('accounts', 'corporation_id')) {
             Schema::table('accounts', function ($table) {
-                $table->dropForeign('accounts_company_id_foreign');
-                $table->dropColumn('company_id');
+                $table->dropForeign('accounts_corporation_id_foreign');
+                $table->dropColumn('corporation_id');
             });
         }
 
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('corporations');
     }
 }

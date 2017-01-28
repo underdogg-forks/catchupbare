@@ -105,7 +105,7 @@ class AppServiceProvider extends ServiceProvider
                 if (!$crumb) {
                     continue;
                 }
-                if ($crumb == 'company') {
+                if ($crumb == 'corporation') {
                     return '';
                 }
 

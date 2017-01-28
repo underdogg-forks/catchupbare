@@ -12,7 +12,7 @@ class SupportNewPricing extends Migration
      */
     public function up()
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('corporations', function (Blueprint $table) {
             $table->decimal('plan_price', 7, 2)->nullable();
             $table->decimal('pending_plan_price', 7, 2)->nullable();
             $table->smallInteger('num_users')->default(1);
@@ -20,11 +20,11 @@ class SupportNewPricing extends Migration
         });
 
         // lock in existing prices
-        DB::table('companies')->where('plan', 'pro')->where('plan_term', 'month')->update(['plan_price' => 5]);
-        DB::table('companies')->where('plan', 'pro')->where('plan_term', 'year')->update(['plan_price' => 50]);
-        DB::table('companies')->where('plan', 'enterprise')->where('plan_term', 'month')->update(['plan_price' => 10]);
-        DB::table('companies')->where('plan', 'enterprise')->where('plan_term', 'year')->update(['plan_price' => 100]);
-        DB::table('companies')->where('plan', 'enterprise')->update(['num_users' => 5]);
+        DB::table('corporations')->where('plan', 'pro')->where('plan_term', 'month')->update(['plan_price' => 5]);
+        DB::table('corporations')->where('plan', 'pro')->where('plan_term', 'year')->update(['plan_price' => 50]);
+        DB::table('corporations')->where('plan', 'enterprise')->where('plan_term', 'month')->update(['plan_price' => 10]);
+        DB::table('corporations')->where('plan', 'enterprise')->where('plan_term', 'year')->update(['plan_price' => 100]);
+        DB::table('corporations')->where('plan', 'enterprise')->update(['num_users' => 5]);
 
         // https://github.com/invoiceninja/invoiceninja/pull/955
         Schema::table('activities', function (Blueprint $table) {
@@ -77,7 +77,7 @@ class SupportNewPricing extends Migration
      */
     public function down()
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('corporations', function (Blueprint $table) {
             $table->dropColumn('plan_price');
             $table->dropColumn('pending_plan_price');
             $table->dropColumn('num_users');

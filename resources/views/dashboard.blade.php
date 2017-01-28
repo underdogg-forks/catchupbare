@@ -198,7 +198,7 @@
     </div>
 </div>
 
-@if ($account->company->hasEarnedPromo())
+@if ($account->corporation->hasEarnedPromo())
 	@include('partials/discount_promo')
 @elseif ($showBlueVinePromo)
     @include('partials/bluevine_promo')

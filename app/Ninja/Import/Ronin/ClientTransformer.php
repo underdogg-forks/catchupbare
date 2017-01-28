@@ -14,13 +14,13 @@ class ClientTransformer extends BaseTransformer
      */
     public function transform($data)
     {
-        if ($this->hasClient($data->company)) {
+        if ($this->hasClient($data->corporation)) {
             return false;
         }
 
         return new Item($data, function ($data) {
             return [
-                'name' => $this->getString($data, 'company'),
+                'name' => $this->getString($data, 'corporation'),
                 'work_phone' => $this->getString($data, 'phone'),
                 'contacts' => [
                     [

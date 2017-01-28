@@ -233,7 +233,7 @@ Route::group([
     Route::get('send_confirmation/{user_id}', 'UserController@sendConfirmation');
     Route::get('/switch_account/{user_id}', 'UserController@switchAccount');
     Route::get('/unlink_account/{user_account_id}/{user_id}', 'UserController@unlinkAccount');
-    Route::get('/manage_companies', 'UserController@manageCompanies');
+    Route::get('/manage_corporations', 'UserController@manageCompanies');
 
     Route::get('api/tokens', 'TokenController@getDatatable');
     Route::resource('tokens', 'TokenController');
@@ -246,14 +246,14 @@ Route::group([
     Route::get('settings/email_preview', 'AccountController@previewEmail');
     Route::post('settings/client_portal', 'AccountController@saveClientPortalSettings');
     Route::post('settings/email_settings', 'AccountController@saveEmailSettings');
-    Route::get('company/{section}/{subSection?}', 'AccountController@redirectLegacy');
+    Route::get('corporation/{section}/{subSection?}', 'AccountController@redirectLegacy');
     Route::get('settings/data_visualizations', 'ReportController@d3');
     Route::get('reports', 'ReportController@showReports');
     Route::post('reports', 'ReportController@showReports');
 
     Route::post('settings/change_plan', 'AccountController@changePlan');
     Route::post('settings/cancel_account', 'AccountController@cancelAccount');
-    Route::post('settings/company_details', 'AccountController@updateDetails');
+    Route::post('settings/corporation_details', 'AccountController@updateDetails');
     Route::post('settings/{section?}', 'AccountController@doSection');
 
     Route::post('user/setTheme', 'UserController@setTheme');

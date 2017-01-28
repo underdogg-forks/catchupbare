@@ -63,7 +63,7 @@ class HomeController extends BaseController
      */
     public function invoiceNow()
     {
-        if (Auth::check() && Input::get('new_company')) {
+        if (Auth::check() && Input::get('new_corporation')) {
             Session::put(PREV_USER_ID, Auth::user()->id);
             Auth::user()->clearSession();
             Auth::logout();

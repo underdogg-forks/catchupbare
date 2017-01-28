@@ -227,8 +227,8 @@ class CheckData extends Command {
         }
 
         $clients = $clients->groupBy('clients.id', 'clients.balance', 'clients.created_at')
-                ->orderBy('accounts.company_id', 'DESC')
-                ->get(['accounts.company_id', 'clients.account_id', 'clients.id', 'clients.balance', 'clients.paid_to_date', DB::raw('sum(invoices.balance) actual_balance')]);
+                ->orderBy('accounts.corporation_id', 'DESC')
+                ->get(['accounts.corporation_id', 'clients.account_id', 'clients.id', 'clients.balance', 'clients.paid_to_date', DB::raw('sum(invoices.balance) actual_balance')]);
         $this->logMessage(count($clients) . ' clients with incorrect balance/activities');
 
         if (count($clients) > 0) {
@@ -236,7 +236,7 @@ class CheckData extends Command {
         }
 
         foreach ($clients as $client) {
-            $this->logMessage("=== Company: {$client->company_id} Account:{$client->account_id} Client:{$client->id} Balance:{$client->balance} Actual Balance:{$client->actual_balance} ===");
+            $this->logMessage("=== Corporation: {$client->corporation_id} Account:{$client->account_id} Client:{$client->id} Balance:{$client->balance} Actual Balance:{$client->actual_balance} ===");
             $foundProblem = false;
             $lastBalance = 0;
             $lastAdjustment = 0;

@@ -75,8 +75,8 @@ class ChargeRenewalInvoices extends Command
                 continue;
             }
 
-            $company = $account->company;
-            if ( ! $company->plan || $company->plan == PLAN_FREE) {
+            $corporation = $account->corporation;
+            if ( ! $corporation->plan || $corporation->plan == PLAN_FREE) {
                 continue;
             }
 

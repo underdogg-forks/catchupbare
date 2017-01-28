@@ -3,7 +3,7 @@
 use App\Models\User;
 use App\Models\Font;
 use App\Models\Account;
-use App\Models\Company;
+use App\Models\Corporation;
 use App\Models\Affiliate;
 use App\Models\Country;
 use App\Models\InvoiceDesign;
@@ -23,7 +23,7 @@ class UserTableSeeder extends Seeder
         Eloquent::unguard();
 
         $faker = Faker\Factory::create();
-        $company = Company::create();
+        $corporation = Corporation::create();
 
         $account = Account::create([
             'name' => $faker->name,
@@ -42,7 +42,7 @@ class UserTableSeeder extends Seeder
             'body_font_id' => min(Font::all()->random()->id, 17),
             'primary_color' => $faker->hexcolor,
             'timezone_id' => 1,
-            'company_id' => $company->id,
+            'corporation_id' => $corporation->id,
             //'date_format_id' => DateFormat::all()->random()->id,
         ]);
 

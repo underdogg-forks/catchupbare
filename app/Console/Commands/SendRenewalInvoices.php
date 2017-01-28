@@ -2,7 +2,7 @@
 
 use Utils;
 use Illuminate\Console\Command;
-use App\Models\Company;
+use App\Models\Corporation;
 use App\Ninja\Mailers\ContactMailer as Mailer;
 use App\Ninja\Repositories\AccountRepository;
 
@@ -50,28 +50,28 @@ class SendRenewalInvoices extends Command
         $this->info(date('Y-m-d').' Running SendRenewalInvoices...');
 
         // get all accounts with plans expiring in 10 days
-        $companies = Company::whereRaw("datediff(plan_expires, curdate()) = 10 and (plan = 'pro' or plan = 'enterprise')")
+        $corporations = Corporation::whereRaw("datediff(plan_expires, curdate()) = 10 and (plan = 'pro' or plan = 'enterprise')")
                         ->orderBy('id')
                         ->get();
-        $this->info(count($companies).' companies found renewing in 10 days');
+        $this->info(count($corporations).' corporations found renewing in 10 days');
 
-        foreach ($companies as $company) {
-            if (!count($company->accounts)) {
+        foreach ($corporations as $corporation) {
+            if (!count($corporation->accounts)) {
                 continue;
             }
 
-            $account = $company->accounts->sortBy('id')->first();
+            $account = $corporation->accounts->sortBy('id')->first();
             $plan = [];
-            $plan['plan'] = $company->plan;
-            $plan['term'] = $company->plan_term;
-            $plan['num_users'] = $company->num_users;
-            $plan['price'] = min($company->plan_price, Utils::getPlanPrice($plan));
+            $plan['plan'] = $corporation->plan;
+            $plan['term'] = $corporation->plan_term;
+            $plan['num_users'] = $corporation->num_users;
+            $plan['price'] = min($corporation->plan_price, Utils::getPlanPrice($plan));
 
-            if ($company->pending_plan) {
-                $plan['plan'] = $company->pending_plan;
-                $plan['term'] = $company->pending_term;
-                $plan['num_users'] = $company->pending_num_users;
-                $plan['price'] = min($company->pending_plan_price, Utils::getPlanPrice($plan));
+            if ($corporation->pending_plan) {
+                $plan['plan'] = $corporation->pending_plan;
+                $plan['term'] = $corporation->pending_term;
+                $plan['num_users'] = $corporation->pending_num_users;
+                $plan['price'] = min($corporation->pending_plan_price, Utils::getPlanPrice($plan));
             }
 
             if ($plan['plan'] == PLAN_FREE || !$plan['plan'] || !$plan['term'] || !$plan['price']){

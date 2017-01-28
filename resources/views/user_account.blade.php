@@ -3,7 +3,7 @@
         @if (isset($user_id) && $user_id != Auth::user()->id)
             <a href="{{ URL::to("/switch_account/{$user_id}") }}">
         @else 
-            <a href="{{ URL::to("/settings/company_details") }}">
+            <a href="{{ URL::to("/settings/corporation_details") }}">
         @endif
     @else
         <a href="{{ URL::to("/settings/user_details") }}">

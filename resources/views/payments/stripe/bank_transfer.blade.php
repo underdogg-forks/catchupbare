@@ -182,7 +182,7 @@
 
         {!! Former::radios('account_holder_type')->radios(array(
                 trans('texts.individual_account') => array('value' => 'individual'),
-                trans('texts.company_account') => array('value' => 'company'),
+                trans('texts.corporation_account') => array('value' => 'corporation'),
             ))->inline()->label(trans('texts.account_holder_type'));  !!}
 
         {!! Former::text('account_holder_name')
@@ -219,7 +219,7 @@
     </div>
 
     {!! Former::checkbox('authorize_ach')
-            ->text(trans('texts.ach_authorization', ['company'=>$account->getDisplayName(), 'email' => $account->work_email]))
+            ->text(trans('texts.ach_authorization', ['corporation'=>$account->getDisplayName(), 'email' => $account->work_email]))
             ->label(' ')
             ->value(1) !!}
 

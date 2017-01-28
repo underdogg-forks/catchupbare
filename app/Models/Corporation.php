@@ -7,17 +7,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laracasts\Presenter\PresentableTrait;
 
 /**
- * Class Company
+ * Class Corporation
  */
-class Company extends Eloquent
+class Corporation extends Eloquent
 {
     use SoftDeletes;
     use PresentableTrait;
 
+    protected $table = 'corporations';
+
     /**
      * @var string
      */
-    protected $presenter = 'App\Ninja\Presenters\CompanyPresenter';
+    protected $presenter = 'App\Ninja\Presenters\CorporationPresenter';
 
     /**
      * @var array

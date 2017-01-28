@@ -281,8 +281,8 @@ class UserController extends BaseController
             if (!Auth::user()->registered) {
                 $account = Auth::user()->account;
                 $this->accountRepo->unlinkAccount($account);
-                if ($account->company->accounts->count() == 1) {
-                    $account->company->forceDelete();
+                if ($account->corporation->accounts->count() == 1) {
+                    $account->corporation->forceDelete();
                 }
                 $account->forceDelete();
             }
@@ -356,7 +356,7 @@ class UserController extends BaseController
         Session::put(SESSION_USER_ACCOUNTS, $users);
 
         Session::flash('message', trans('texts.unlinked_account'));
-        return Redirect::to('/manage_companies');
+        return Redirect::to('/manage_corporations');
     }
 
     public function manageCompanies()
