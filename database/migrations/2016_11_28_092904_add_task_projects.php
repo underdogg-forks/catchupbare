@@ -18,8 +18,6 @@ class AddTaskProjects extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('account_id')->index();
             $table->unsignedInteger('client_id')->index()->nullable();
-            $table->timestamps();
-            $table->softDeletes();
 
             $table->string('name')->nullable();
             $table->boolean('is_deleted')->default(false);
@@ -30,6 +28,11 @@ class AddTaskProjects extends Migration
 
             $table->unsignedInteger('public_id')->index();
             $table->unique( array('account_id','public_id') );
+
+
+            $table->timestamps();
+            $table->softDeletes();
+
         });
 
         Schema::table('tasks', function ($table)

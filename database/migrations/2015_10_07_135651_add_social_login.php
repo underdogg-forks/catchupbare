@@ -44,7 +44,7 @@ class AddSocialLogin extends Migration
             $table->dropColumn('oauth_user_id');
             $table->dropColumn('oauth_provider_id');
         });
-        
+
         Schema::table('accounts', function ($table) {
             $table->dropColumn('custom_invoice_text_label1');
             $table->dropColumn('custom_invoice_text_label2');

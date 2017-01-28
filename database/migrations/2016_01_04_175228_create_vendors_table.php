@@ -105,9 +105,9 @@ class CreateVendorsTable extends Migration
 
         // Update public id
         $paymentTerms = DB::table('payment_terms')
-                    ->where('public_id', '=', 0)
-                    ->select('id', 'public_id')
-                    ->get();
+            ->where('public_id', '=', 0)
+            ->select('id', 'public_id')
+            ->get();
         $i = 1;
         foreach ($paymentTerms as $pTerm) {
             $data = ['public_id' => $i++];

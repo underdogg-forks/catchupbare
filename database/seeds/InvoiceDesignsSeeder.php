@@ -20,8 +20,8 @@ class InvoiceDesignsSeeder extends Seeder
             'Playful',
             'Photo',
         ];
-        
-        for ($i=0; $i<count($designs); $i++) {
+
+        for ($i = 0; $i < count($designs); $i++) {
             $design = $designs[$i];
             $fileName = storage_path() . '/templates/' . strtolower($design) . '.js';
             if (file_exists($fileName)) {

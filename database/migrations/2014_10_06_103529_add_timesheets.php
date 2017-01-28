@@ -3,101 +3,113 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddTimesheets extends Migration {
+class AddTimesheets extends Migration
+{
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{ 
-        Schema::create('projects', function($t) {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('projects', function ($t) {
             $t->increments('id');
             $t->unsignedInteger('user_id');
             $t->unsignedInteger('account_id')->index();
             $t->unsignedInteger('client_id')->nullable();
-            $t->timestamps();
-            $t->softDeletes();
+
 
             $t->string('name');
             $t->string('description');
-            
+
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $t->foreign('account_id')->references('id')->on('accounts'); 
-            
-            $t->unique( array('account_id','name') );
+            $t->foreign('account_id')->references('id')->on('accounts');
+
+            $t->unique(array('account_id', 'name'));
+
+            $t->timestamps();
+            $t->softDeletes();
+
         });
-        
-        Schema::create('project_codes', function($t) {
+
+        Schema::create('project_codes', function ($t) {
             $t->increments('id');
             $t->unsignedInteger('user_id');
             $t->unsignedInteger('account_id')->index();
             $t->unsignedInteger('project_id');
-            $t->timestamps();
-            $t->softDeletes();
+
 
             $t->string('name');
             $t->string('description');
-           
+
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $t->foreign('account_id')->references('id')->on('accounts'); 
+            $t->foreign('account_id')->references('id')->on('accounts');
             $t->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
-            
-            $t->unique( array('account_id','name') );
+
+            $t->unique(array('account_id', 'name'));
+
+
+            $t->timestamps();
+            $t->softDeletes();
         });
-        
-        
-        Schema::create('timesheets', function($t) {
+
+
+        Schema::create('timesheets', function ($t) {
             $t->increments('id');
             $t->unsignedInteger('user_id');
             $t->unsignedInteger('account_id')->index();
-            $t->timestamps();
-            $t->softDeletes();
-                       
+
+
             $t->dateTime('start_date');
             $t->dateTime('end_date');
             $t->float('discount');
-            
+
             $t->decimal('hours');
-            
+
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $t->foreign('account_id')->references('id')->on('accounts');
-            
+
             $t->unsignedInteger('public_id');
-            $t->unique( array('account_id','public_id') );
+            $t->unique(array('account_id', 'public_id'));
+
+
+            $t->timestamps();
+            $t->softDeletes();
         });
-        
-        Schema::create('timesheet_event_sources', function($t) {
+
+        Schema::create('timesheet_event_sources', function ($t) {
             $t->increments('id');
             $t->unsignedInteger('user_id');
             $t->unsignedInteger('account_id')->index();
-            $t->timestamps();
-            $t->softDeletes();
-            
+
+
             $t->string('owner');
             $t->string('name');
             $t->string('url');
             $t->enum('type', array('ical', 'googlejson'));
-            
+
             $t->dateTime('from_date')->nullable();
             $t->dateTime('to_date')->nullable();
-            
-            $t->foreign('account_id')->references('id')->on('accounts'); 
+
+            $t->foreign('account_id')->references('id')->on('accounts');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+
+            $t->timestamps();
+            $t->softDeletes();
         });
-        
-        Schema::create('timesheet_events', function($t) {
+
+        Schema::create('timesheet_events', function ($t) {
             $t->increments('id');
             $t->unsignedInteger('user_id');
             $t->unsignedInteger('account_id')->index();
             $t->unsignedInteger('timesheet_event_source_id');
             $t->unsignedInteger('timesheet_id')->nullable()->index();
             $t->unsignedInteger('project_id')->nullable()->index();
-            $t->unsignedInteger('project_code_id')->nullable()->index();            
-            $t->timestamps();
-            $t->softDeletes();
-            
+            $t->unsignedInteger('project_code_id')->nullable()->index();
+
+
             // Basic fields
             $t->string('uid');
             $t->string('summary');
@@ -106,12 +118,12 @@ class AddTimesheets extends Migration {
             $t->string('owner');
             $t->dateTime('start_date');
             $t->dateTime('end_date');
-            
+
             # Calculated values
             $t->decimal('hours');
             $t->float('discount');
             $t->boolean('manualedit');
-            
+
             // Original data
             $t->string('org_code');
             $t->timeStamp('org_created_at');
@@ -120,33 +132,37 @@ class AddTimesheets extends Migration {
             $t->string('org_start_date_timezone')->nullable();
             $t->string('org_end_date_timezone')->nullable();
             $t->text('org_data');
-            
+
             // Error and merge handling
             $t->string('import_error')->nullable();
             $t->string('import_warning')->nullable();
             $t->text('updated_data')->nullable();
             $t->timeStamp('updated_data_at')->default('0000-00-00T00:00:00');
-            
-            $t->foreign('account_id')->references('id')->on('accounts'); 
+
+            $t->foreign('account_id')->references('id')->on('accounts');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $t->foreign('timesheet_event_source_id')->references('id')->on('timesheet_event_sources')->onDelete('cascade');
 
-            $t->unique( array('timesheet_event_source_id', 'uid') );
+            $t->unique(array('timesheet_event_source_id', 'uid'));
+
+            $t->timestamps();
+            $t->softDeletes();
+
         });
     }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
         Schema::dropIfExists('timesheet_events');
         Schema::dropIfExists('timesheet_event_sources');
         Schema::dropIfExists('timesheets');
         Schema::dropIfExists('project_codes');
         Schema::dropIfExists('projects');
-	}
+    }
 
 }

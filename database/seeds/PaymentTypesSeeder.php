@@ -39,9 +39,9 @@ class PaymentTypesSeeder extends Seeder
         foreach ($paymentTypes as $paymentType) {
             $record = PaymentType::where('name', '=', $paymentType['name'])->first();
 
-            if ( $record) {
+            if ($record) {
                 $record->name = $paymentType['name'];
-                $record->gateway_type_id = ! empty($paymentType['gateway_type_id']) ? $paymentType['gateway_type_id'] : null;
+                $record->gateway_type_id = !empty($paymentType['gateway_type_id']) ? $paymentType['gateway_type_id'] : null;
 
                 $record->save();
             } else {

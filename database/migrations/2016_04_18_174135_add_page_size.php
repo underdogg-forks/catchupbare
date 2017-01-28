@@ -22,21 +22,21 @@ class AddPageSize extends Migration
             $table->dropColumn('is_early_access');
         });
 
-        Schema::create('expense_categories', function($table)
-        {
+        Schema::create('expense_categories', function ($table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('account_id')->index();
-            $table->timestamps();
-            $table->softDeletes();
             $table->string('name')->nullable();
             $table->unsignedInteger('public_id')->index();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('expense_categories', function ($table) {
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unique( array('account_id','public_id') );
+            $table->unique(array('account_id', 'public_id'));
         });
 
 

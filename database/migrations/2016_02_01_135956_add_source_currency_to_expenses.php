@@ -43,7 +43,7 @@ class AddSourceCurrencyToExpenses extends Migration
      */
     public function down()
     {
-        Schema::table('expenses', function($table) {
+        Schema::table('expenses', function ($table) {
 
         });
     }
