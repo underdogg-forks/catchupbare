@@ -1192,13 +1192,14 @@
         return invoice;
 	}
 
-    window.generatedPDF = false;
 	function getPDFString(cb, force) {
+		@if ( ! $account->live_preview)
+			return;
+		@endif
         var invoice = createInvoiceModel();
 		var design  = getDesignJavascript();
 		if (!design) return;
         generatePDF(invoice, design, force, cb);
-        window.generatedPDF = true;
 	}
 
 	function getDesignJavascript() {
@@ -1595,6 +1596,7 @@
         var number = '{{ $account->applyNumberPattern($invoice) }}';
         number = number.replace('{$custom1}', client.custom_value1 ? client.custom_value1 : '');
         number = number.replace('{$custom2}', client.custom_value2 ? client.custom_value1 : '');
+        number = number.replace('{$idNumber}', client.id_number ? client.id_number : '');
         model.invoice().invoice_number(number);
     }
 
