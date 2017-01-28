@@ -3,26 +3,9 @@
         <h3 class="panel-title">Application Settings</h3>
       </div>
       <div class="panel-body form-padding-right">
-        {!! Former::text('app[url]')->label(trans('texts.url'))->value(isset($_ENV['APP_URL']) ? $_ENV['APP_URL'] : Request::root()) !!}
         {!! Former::checkbox('https')->text(trans('texts.require'))->check(env('REQUIRE_HTTPS'))->value(1) !!}
         {!! Former::checkbox('debug')->text(trans('texts.enable'))->check(config('app.debug'))->value(1) !!}
 
-      </div>
-    </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Database Connection</h3>
-      </div>
-      <div class="panel-body form-padding-right">
-        {{--- Former::select('database[default]')->label('Driver')->options(['mysql' => 'MySQL', 'pgsql' => 'PostgreSQL', 'sqlite' => 'SQLite'])
-                ->value(isset($_ENV['DB_TYPE']) ? $_ENV['DB_TYPE'] : 'mysql') ---}}
-        {!! Former::plaintext('Driver')->value('MySQL') !!}
-        {!! Former::text('database[type][host]')->label('Host')->value(isset($_ENV['DB_HOST']) ? $_ENV['DB_HOST'] : 'localhost') !!}
-        {!! Former::text('database[type][database]')->label('Database')->value(isset($_ENV['DB_DATABASE']) ? $_ENV['DB_DATABASE'] : 'ninja') !!}
-        {!! Former::text('database[type][username]')->label('Username')->value(isset($_ENV['DB_USERNAME']) ? $_ENV['DB_USERNAME'] : 'ninja') !!}
-        {!! Former::password('database[type][password]')->label('Password')->value(isset($_ENV['DB_PASSWORD']) ? $_ENV['DB_PASSWORD'] : 'ninja') !!}
-        {!! Former::actions( Button::primary('Test connection')->small()->withAttributes(['onclick' => 'testDatabase()']), '&nbsp;&nbsp;<span id="dbTestResult"/>' ) !!}
       </div>
     </div>
 
