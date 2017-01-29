@@ -9,7 +9,4 @@ Route::group(['middleware' => 'api', 'prefix' => 'api/v1', 'namespace' => 'Modul
 });
 
 
-Route::group(['middleware' => 'auth:user', 'namespace' => 'Modules\Relations\Http\Controllers'], function()
-{
 
-});

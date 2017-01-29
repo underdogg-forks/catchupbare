@@ -26,7 +26,7 @@ Route::get('/keep_alive', 'HomeController@keepAlive');
 Route::post('/get_started', 'AccountController@getStarted');
 
 // Client visible pages
-Route::group(['middleware' => 'auth:client'], function() {
+Route::group(['middleware' => 'auth:client'], function () {
     Route::get('view/{invitation_key}', 'ClientPortalController@view');
     Route::get('download/{invitation_key}', 'ClientPortalController@download');
     Route::put('sign/{invitation_key}', 'ClientPortalController@sign');
@@ -54,13 +54,13 @@ Route::group(['middleware' => 'auth:client'], function() {
     Route::get('relation/documents/{invitation_key}/{documents}/{filename?}', 'ClientPortalController@getDocument');
     Route::get('relation/documents/{invitation_key}/{filename?}', 'ClientPortalController@getInvoiceDocumentsZip');
 
-    Route::get('api/relation.quotes', ['as'=>'api.relation.quotes', 'uses'=>'ClientPortalController@quoteDatatable']);
-    Route::get('api/relation.credits', ['as'=>'api.relation.credits', 'uses'=>'ClientPortalController@creditDatatable']);
-    Route::get('api/relation.invoices', ['as'=>'api.relation.invoices', 'uses'=>'ClientPortalController@invoiceDatatable']);
-    Route::get('api/relation.recurring_invoices', ['as'=>'api.relation.recurring_invoices', 'uses'=>'ClientPortalController@recurringInvoiceDatatable']);
-    Route::get('api/relation.documents', ['as'=>'api.relation.documents', 'uses'=>'ClientPortalController@documentDatatable']);
-    Route::get('api/relation.payments', ['as'=>'api.relation.payments', 'uses'=>'ClientPortalController@paymentDatatable']);
-    Route::get('api/relation.activity', ['as'=>'api.relation.activity', 'uses'=>'ClientPortalController@activityDatatable']);
+    Route::get('api/relation.quotes', ['as' => 'api.relation.quotes', 'uses' => 'ClientPortalController@quoteDatatable']);
+    Route::get('api/relation.credits', ['as' => 'api.relation.credits', 'uses' => 'ClientPortalController@creditDatatable']);
+    Route::get('api/relation.invoices', ['as' => 'api.relation.invoices', 'uses' => 'ClientPortalController@invoiceDatatable']);
+    Route::get('api/relation.recurring_invoices', ['as' => 'api.relation.recurring_invoices', 'uses' => 'ClientPortalController@recurringInvoiceDatatable']);
+    Route::get('api/relation.documents', ['as' => 'api.relation.documents', 'uses' => 'ClientPortalController@documentDatatable']);
+    Route::get('api/relation.payments', ['as' => 'api.relation.payments', 'uses' => 'ClientPortalController@paymentDatatable']);
+    Route::get('api/relation.activity', ['as' => 'api.relation.activity', 'uses' => 'ClientPortalController@activityDatatable']);
 });
 
 
@@ -84,36 +84,36 @@ Route::post('/payment_hook/{accKey}/{gatewayId}', 'OnlinePaymentController@handl
 //Auth::routes();
 
 // Laravel auth routes
-    // Authentication Routes...
-    Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
-    Route::post('login', ['as' => 'login', 'uses' => 'Auth\LoginController@login']);
-    Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
+// Authentication Routes...
+Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
+Route::post('login', ['as' => 'login', 'uses' => 'Auth\LoginController@login']);
+Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
-    // Registration Routes...
-    Route::get('signup', ['as' => 'signup', 'uses' => 'Auth\RegisterController@showRegistrationForm']);
-    Route::post('signup', ['as' => 'signup', 'uses' => 'Auth\RegisterController@register']);
+// Registration Routes...
+Route::get('signup', ['as' => 'signup', 'uses' => 'Auth\RegisterController@showRegistrationForm']);
+Route::post('signup', ['as' => 'signup', 'uses' => 'Auth\RegisterController@register']);
 
-    // Password Reset Routes...
-    Route::get('recover_password', ['as' => 'forgot', 'uses' => 'Auth\ForgotPasswordController@showLinkRequestForm']);
-    Route::post('recover_password', ['as' => 'forgot', 'uses' => 'Auth\ForgotPasswordController@sendResetLinkEmail']);
-    Route::get('password/reset/{token}', ['as' => 'forgot', 'uses' => 'Auth\ResetPasswordController@showResetForm']);
-    Route::post('password/reset', ['as' => 'forgot', 'uses' => 'Auth\ResetPasswordController@reset']);
+// Password Reset Routes...
+Route::get('recover_password', ['as' => 'forgot', 'uses' => 'Auth\ForgotPasswordController@showLinkRequestForm']);
+Route::post('recover_password', ['as' => 'forgot', 'uses' => 'Auth\ForgotPasswordController@sendResetLinkEmail']);
+Route::get('password/reset/{token}', ['as' => 'forgot', 'uses' => 'Auth\ResetPasswordController@showResetForm']);
+Route::post('password/reset', ['as' => 'forgot', 'uses' => 'Auth\ResetPasswordController@reset']);
 
 
 Route::get('/user/confirm/{code}', 'UserController@confirm');
 
 
-    Route::get('/relation/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@showLoginForm']);
-    Route::post('/relation/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@login']);
-    Route::get('/relation/logout', ['as' => 'clientlogout', 'uses' => 'ClientAuth\LoginController@logout']);
-    Route::get('/relation/sessionexpired', ['as' => 'sessionexpired', 'uses' => 'ClientAuth\LoginController@getSessionExpired']);
+Route::get('/relation/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@showLoginForm']);
+Route::post('/relation/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@login']);
+Route::get('/relation/logout', ['as' => 'clientlogout', 'uses' => 'ClientAuth\LoginController@logout']);
+Route::get('/relation/sessionexpired', ['as' => 'sessionexpired', 'uses' => 'ClientAuth\LoginController@getSessionExpired']);
 
 
-    // Password Reset Routes...
-    Route::get('/relation/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@showLinkRequestForm']);
-    Route::post('/relation/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@sendResetLinkEmail']);
-    Route::get('/relation/password/reset/{token}', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@showResetForm']);
-    Route::post('/relation/password/reset', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@reset']);
+// Password Reset Routes...
+Route::get('/relation/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@showLinkRequestForm']);
+Route::post('/relation/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@sendResetLinkEmail']);
+Route::get('/relation/password/reset/{token}', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@showResetForm']);
+Route::post('/relation/password/reset', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@reset']);
 
 
 // Relation auth
@@ -139,7 +139,7 @@ if (Utils::isReseller()) {
     Route::post('/reseller_stats', 'AppController@stats');
 }
 
-Route::group(['middleware' => 'auth:user'], function() {
+Route::group(['middleware' => 'auth:user'], function () {
     Route::get('dashboard', 'DashboardController@index');
     Route::get('dashboard_chart_data/{group_by}/{start_date}/{end_date}/{currency_id}/{include_expenses}', 'DashboardController@chartData');
     Route::get('set_entity_filter/{entity_type}/{filter?}', 'AccountController@setEntityFilter');
@@ -154,7 +154,6 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::post('settings/user_details', 'AccountController@saveUserDetails');
     Route::post('settings/payment_gateway_limits', 'AccountController@savePaymentGatewayLimits');
     Route::post('users/change_password', 'UserController@changePassword');
-
 
 
     Route::resource('tasks', 'TaskController');
@@ -210,10 +209,6 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::get('api/credits/{relation_id?}', 'CreditController@getDatatable');
     Route::post('credits/bulk', 'CreditController@bulk');
 
-    Route::get('api/products', 'ProductController@getDatatable');
-    Route::resource('products', 'ProductController');
-    Route::post('products/bulk', 'ProductController@bulk');
-
 
     Route::get('/resend_confirmation', 'AccountController@resendConfirmation');
     Route::post('/update_setup', 'AppController@updateSetup');
@@ -238,17 +233,17 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::get('expense_categories/{expense_categories}/edit', 'ExpenseCategoryController@edit');
     Route::post('expense_categories/bulk', 'ExpenseCategoryController@bulk');
 
-	// BlueVine
-	Route::post('bluevine/signup', 'BlueVineController@signup');
-	Route::get('bluevine/hide_message', 'BlueVineController@hideMessage');
-	Route::get('bluevine/completed', 'BlueVineController@handleCompleted');
+    // BlueVine
+    Route::post('bluevine/signup', 'BlueVineController@signup');
+    Route::get('bluevine/hide_message', 'BlueVineController@hideMessage');
+    Route::get('bluevine/completed', 'BlueVineController@handleCompleted');
     Route::get('white_label/hide_message', 'NinjaController@hideWhiteLabelMessage');
 });
 
 Route::group([
     'middleware' => ['auth:user', 'permissions.required'],
     'permissions' => 'admin',
-], function() {
+], function () {
     Route::get('api/users', 'UserController@getDatatable');
     Route::resource('users', 'UserController');
     Route::post('users/bulk', 'UserController@bulk');
@@ -303,13 +298,12 @@ Route::group([
     Route::get('self-update/download', 'SelfUpdateController@download');
 });
 
-Route::group(['middleware' => 'auth:user'], function() {
+Route::group(['middleware' => 'auth:user'], function () {
     Route::get('settings/{section?}', 'AccountController@showSection');
 });
 
 // Route groups for API
-Route::group(['middleware' => 'api', 'prefix' => 'api/v1'], function()
-{
+Route::group(['middleware' => 'api', 'prefix' => 'api/v1'], function () {
     Route::get('ping', 'AccountApiController@ping');
     Route::post('login', 'AccountApiController@login');
     Route::post('oauth_login', 'AccountApiController@oauthLogin');
@@ -317,7 +311,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'api/v1'], function()
     Route::get('static', 'AccountApiController@getStaticData');
     Route::get('companies', 'AccountApiController@show');
     Route::put('companies', 'AccountApiController@update');
-    Route::resource('relations', 'ClientApiController');
+
     Route::get('quotes', 'QuoteApiController@index');
     Route::get('invoices', 'InvoiceApiController@index');
     Route::get('download/{invoice_id}', 'InvoiceApiController@download');
@@ -328,10 +322,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'api/v1'], function()
     Route::post('hooks', 'IntegrationController@subscribe');
     Route::post('email_invoice', 'InvoiceApiController@emailInvoice');
     Route::get('user_companies', 'AccountApiController@getUserAccounts');
-    Route::resource('products', 'ProductApiController');
+
     Route::resource('tax_rates', 'TaxRateApiController');
     Route::resource('users', 'UserApiController');
-    Route::resource('expenses','ExpenseApiController');
+    Route::resource('expenses', 'ExpenseApiController');
     Route::post('add_token', 'AccountApiController@addDeviceToken');
     Route::post('update_notifications', 'AccountApiController@updatePushNotifications');
     Route::get('dashboard', 'DashboardApiController@index');
@@ -341,38 +335,38 @@ Route::group(['middleware' => 'api', 'prefix' => 'api/v1'], function()
 });
 
 // Redirects for legacy links
-Route::get('/rocksteady', function() {
+Route::get('/rocksteady', function () {
     return Redirect::to(NINJA_WEB_URL, 301);
 });
-Route::get('/about', function() {
+Route::get('/about', function () {
     return Redirect::to(NINJA_WEB_URL, 301);
 });
-Route::get('/contact', function() {
-    return Redirect::to(NINJA_WEB_URL.'/contact', 301);
+Route::get('/contact', function () {
+    return Redirect::to(NINJA_WEB_URL . '/contact', 301);
 });
-Route::get('/plans', function() {
-    return Redirect::to(NINJA_WEB_URL.'/pricing', 301);
+Route::get('/plans', function () {
+    return Redirect::to(NINJA_WEB_URL . '/pricing', 301);
 });
-Route::get('/faq', function() {
-    return Redirect::to(NINJA_WEB_URL.'/how-it-works', 301);
+Route::get('/faq', function () {
+    return Redirect::to(NINJA_WEB_URL . '/how-it-works', 301);
 });
-Route::get('/features', function() {
-    return Redirect::to(NINJA_WEB_URL.'/features', 301);
+Route::get('/features', function () {
+    return Redirect::to(NINJA_WEB_URL . '/features', 301);
 });
-Route::get('/testimonials', function() {
+Route::get('/testimonials', function () {
     return Redirect::to(NINJA_WEB_URL, 301);
 });
-Route::get('/compare-online-invoicing{sites?}', function() {
+Route::get('/compare-online-invoicing{sites?}', function () {
     return Redirect::to(NINJA_WEB_URL, 301);
 });
-Route::get('/forgot', function() {
-    return Redirect::to(NINJA_APP_URL.'/recover_password', 301);
+Route::get('/forgot', function () {
+    return Redirect::to(NINJA_APP_URL . '/recover_password', 301);
 });
-Route::get('/feed', function() {
-    return Redirect::to(NINJA_WEB_URL.'/feed', 301);
+Route::get('/feed', function () {
+    return Redirect::to(NINJA_WEB_URL . '/feed', 301);
 });
-Route::get('/comments/feed', function() {
-    return Redirect::to(NINJA_WEB_URL.'/comments/feed', 301);
+Route::get('/comments/feed', function () {
+    return Redirect::to(NINJA_WEB_URL . '/comments/feed', 301);
 });
 
 /*
