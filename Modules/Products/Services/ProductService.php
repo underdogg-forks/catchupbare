@@ -1,9 +1,12 @@
-<?php namespace App\Services;
+<?php
+namespace Modules\Products\Services;
 
 use Auth;
 use Utils;
-use App\Ninja\Repositories\ProductRepository;
-use App\Ninja\Datatables\ProductDatatable;
+use Modules\Products\Repositories\ProductRepository;
+use Modules\Products\Datatables\ProductDatatable;
+use App\Services\BaseService;
+
 
 class ProductService extends BaseService
 {

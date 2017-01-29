@@ -1,4 +1,5 @@
-<?php namespace App\Http\Controllers;
+<?php
+namespace Modules\Products\Http\Controllers;
 
 use Auth;
 use URL;
@@ -7,10 +8,11 @@ use Utils;
 use Input;
 use Session;
 use Redirect;
-use App\Models\Product;
-use App\Models\TaxRate;
-use App\Services\ProductService;
-use App\Ninja\Datatables\ProductDatatable;
+use Modules\Products\Models\Product;
+use Modules\Taxes\Models\TaxRate;
+use Modules\Products\Services\ProductService;
+use Modules\Products\Datatables\ProductDatatable;
+use App\Http\Controllers\BaseController;
 
 /**
  * Class ProductController
@@ -47,11 +49,11 @@ class ProductController extends BaseController
         ]);
     }
 
-    public function show($publicId)
+    public function show($Id)
     {
         Session::reflash();
 
-        return Redirect::to("products/$publicId/edit");
+        return Redirect::to("products/$Id/edit");
     }
 
 
@@ -64,13 +66,13 @@ class ProductController extends BaseController
     }
 
     /**
-     * @param $publicId
+     * @param $Id
      * @return \Illuminate\Contracts\View\View
      */
-    public function edit($publicId)
+    public function edit($Id)
     {
         $company = Auth::user()->company;
-        $product = Product::scope($publicId)->withTrashed()->firstOrFail();
+        $product = Product::scope($Id)->withTrashed()->firstOrFail();
 
         $data = [
           'company' => $company,
@@ -78,7 +80,7 @@ class ProductController extends BaseController
           'product' => $product,
           'entity' => $product,
           'method' => 'PUT',
-          'url' => 'products/'.$publicId,
+          'url' => 'products/'.$Id,
           'title' => trans('texts.edit_product'),
         ];
 
@@ -113,22 +115,22 @@ class ProductController extends BaseController
     }
 
     /**
-     * @param $publicId
+     * @param $Id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($publicId)
+    public function update($Id)
     {
-        return $this->save($publicId);
+        return $this->save($Id);
     }
 
     /**
-     * @param bool $productPublicId
+     * @param bool $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function save($productPublicId = false)
+    private function save($id = false)
     {
-        if ($productPublicId) {
-            $product = Product::scope($productPublicId)->withTrashed()->firstOrFail();
+        if ($id) {
+            $product = Product::scope($id)->withTrashed()->firstOrFail();
         } else {
             $product = Product::createNew();
         }
@@ -140,7 +142,7 @@ class ProductController extends BaseController
 
         $product->save();
 
-        $message = $productPublicId ? trans('texts.updated_product') : trans('texts.created_product');
+        $message = $id ? trans('texts.updated_product') : trans('texts.created_product');
         Session::flash('message', $message);
 
         return Redirect::to("products/{$product->public_id}/edit");

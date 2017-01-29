@@ -1,7 +1,9 @@
-<?php namespace App\Models;
+<?php
+namespace Modules\Products\Models;
 
 use Laracasts\Presenter\PresentableTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\EntityModel;
 
 /**
  * Class Product
