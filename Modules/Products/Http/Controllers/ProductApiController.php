@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Ninja\Repositories\ProductRepository;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;

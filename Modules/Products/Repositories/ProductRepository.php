@@ -3,13 +3,13 @@ namespace Modules\Products\Repositories;
 
 use DB;
 use Modules\Products\Models\Product;
-use App\Repositories\BaseRepository;
+use App\Ninja\Repositories\BaseRepository;
 
 class ProductRepository extends BaseRepository
 {
     public function getClassName()
     {
-        return 'App\Models\Product';
+        return 'Modules\Products\Models\Product';
     }
 
     public function all()
@@ -28,6 +28,7 @@ class ProductRepository extends BaseRepository
                 })
                 ->where('products.company_id', '=', $companyId)
                 ->select(
+                    'products.id',
                     'products.public_id',
                     'products.product_key',
                     'products.notes',

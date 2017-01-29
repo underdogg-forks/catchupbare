@@ -8,7 +8,7 @@ use Carbon;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Invitation;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\Task;
 use App\Models\Document;
 use App\Models\Expense;
@@ -62,6 +62,7 @@ class InvoiceRepository extends BaseRepository
                 'invoice_number as quote_number',
                 'invoice_status_id',
                 DB::raw("COALESCE(NULLIF(relations.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) relation_name"),
+                'invoices.id',
                 'invoices.public_id',
                 'invoices.amount',
                 'invoices.balance',

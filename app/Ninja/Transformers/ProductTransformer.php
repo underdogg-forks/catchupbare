@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Product;
+use Modules\Products\Models\Product;
 
 /**
  * @SWG\Definition(definition="Product", @SWG\Xml(name="Product"))

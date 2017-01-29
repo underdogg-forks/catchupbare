@@ -1,6 +1,6 @@
 <?php namespace App\Services;
 
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use stdClass;
 use Excel;
 use Cache;

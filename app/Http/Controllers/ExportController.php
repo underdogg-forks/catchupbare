@@ -12,7 +12,7 @@ use Modules\Relations\Models\Contact;
 use App\Models\Credit;
 use App\Models\Task;
 use App\Models\Invoice;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\Payment;
 use App\Models\Expense;
 use App\Models\Vendor;

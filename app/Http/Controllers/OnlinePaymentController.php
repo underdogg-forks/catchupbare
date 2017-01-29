@@ -13,7 +13,7 @@ use App\Models\Invitation;
 use App\Models\Company;
 use Modules\Relations\Models\Relation;
 use App\Models\Payment;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\PaymentMethod;
 use App\Services\PaymentService;
 use App\Ninja\Mailers\UserMailer;

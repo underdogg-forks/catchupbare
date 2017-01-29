@@ -12,7 +12,7 @@ use URL;
 use App\Models\Invoice;
 use Modules\Relations\Models\Relation;
 use App\Models\Company;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\TaxRate;

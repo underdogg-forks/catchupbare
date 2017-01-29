@@ -209,7 +209,7 @@ class Company extends Eloquent
      */
     public function products()
     {
-        return $this->hasMany('App\Models\Product');
+        return $this->hasMany('Modules\Products\Models\Product');
     }
 
     /**

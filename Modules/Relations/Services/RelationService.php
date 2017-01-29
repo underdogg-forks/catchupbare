@@ -1,9 +1,13 @@
-<?php namespace App\Services;
+<?php
+namespace Modules\Relations\Services;
 
 use Auth;
 use Modules\Relations\Repositories\RelationRepository;
 use App\Ninja\Repositories\NinjaRepository;
 use Modules\Relations\Datatables\RelationDatatable;
+use App\Ninja\Datatables\EntityDatatable;
+use App\Services\BaseService;
+use App\Services\DatatableService;
 
 /**
  * Class RelationService

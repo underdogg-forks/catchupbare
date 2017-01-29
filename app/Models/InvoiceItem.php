@@ -60,7 +60,7 @@ class InvoiceItem extends EntityModel
      */
     public function product()
     {
-        return $this->belongsTo('App\Models\Product');
+        return $this->belongsTo('Modules\Products\Models\Product');
     }
 
     /**

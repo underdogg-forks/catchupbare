@@ -9,7 +9,7 @@ use App\Models\Country;
 use App\Models\InvoiceDesign;
 use Modules\Relations\Models\Relation;
 use Modules\Relations\Models\Contact;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\DateFormat;
 use Faker\Factory;
 

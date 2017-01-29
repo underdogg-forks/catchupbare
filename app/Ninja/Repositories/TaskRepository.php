@@ -27,6 +27,7 @@ class TaskRepository extends BaseRepository
                     })
                     ->where('contacts.deleted_at', '=', null)
                     ->select(
+                        'tasks.id',
                         'tasks.public_id',
                         \DB::raw("COALESCE(NULLIF(relations.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) relation_name"),
                         'relations.public_id as relation_public_id',

@@ -17,7 +17,7 @@ use App\Models\Invoice;
 use App\Models\Credit;
 use App\Models\Task;
 use Modules\Relations\Repositories\RelationRepository;
-use App\Services\RelationService;
+use Modules\Relations\Services\RelationService;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\RelationRequest;
 use App\Http\Requests\CreateRelationRequest;

@@ -2,7 +2,7 @@
 
 use Auth;
 use Exception;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 
 
 class ListProductsIntent extends ProductIntent

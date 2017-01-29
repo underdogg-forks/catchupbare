@@ -40,6 +40,7 @@ class RelationRepository extends BaseRepository
                         DB::raw('COALESCE(relations.country_id, companies.country_id) country_id'),
                         DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name) contact"),
                         'relations.id',
+                        'relations.public_id',
                         'relations.name',
                         'contacts.first_name',
                         'contacts.last_name',

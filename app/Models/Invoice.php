@@ -4,6 +4,7 @@ use Utils;
 use DateTime;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laracasts\Presenter\PresentableTrait;
+use Modules\Relations\Models\OwnedByRelationTrait;
 use App\Events\QuoteWasCreated;
 use App\Events\QuoteWasUpdated;
 use App\Events\InvoiceWasCreated;

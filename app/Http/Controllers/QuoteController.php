@@ -11,7 +11,7 @@ use App\Models\Company;
 use Modules\Relations\Models\Relation;
 use App\Models\Country;
 use App\Models\InvoiceDesign;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\TaxRate;
 use App\Models\Invitation;
 use App\Models\Invoice;

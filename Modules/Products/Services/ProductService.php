@@ -6,6 +6,7 @@ use Utils;
 use Modules\Products\Repositories\ProductRepository;
 use Modules\Products\Datatables\ProductDatatable;
 use App\Services\BaseService;
+use App\Services\DatatableService;
 
 
 class ProductService extends BaseService

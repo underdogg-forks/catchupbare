@@ -27,7 +27,7 @@ use App\Models\Document;
 use App\Models\Gateway;
 use App\Models\InvoiceDesign;
 use App\Models\TaxRate;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use App\Models\PaymentTerm;
 use App\Ninja\Repositories\CompanyRepository;
 use App\Ninja\Repositories\ReferralRepository;

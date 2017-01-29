@@ -8,7 +8,7 @@ use Validator;
 use App\Models\Invoice;
 use Modules\Relations\Models\Relation;
 use Modules\Relations\Models\Contact;
-use App\Models\Product;
+use Modules\Products\Models\Product;
 use Modules\Relations\Repositories\RelationRepository;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\InvoiceRepository;
