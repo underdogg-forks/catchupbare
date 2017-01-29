@@ -8,6 +8,7 @@ use Input;
 use Session;
 use Redirect;
 use Cache;
+use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\Company;
 use App\Models\Contact;
@@ -78,9 +79,10 @@ class ClientController extends BaseController
      * @param  int      $id
      * @return Response
      */
-    public function show(ClientRequest $request)
+    public function show(Request $request, $client_id)
     {
-        $client = $request->entity();
+        $client = Client::scope($client_id)->withTrashed()->first();
+
         $user = Auth::user();
 
         $actionLinks = [];

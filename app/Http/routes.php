@@ -158,6 +158,7 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::resource('clients', 'ClientController');
     Route::get('api/clients', 'ClientController@getDatatable');
     Route::get('api/activities/{client_id?}', 'ActivityController@getDatatable');
+    Route::get('clients/{client_id}', 'ClientController@show');
     Route::post('clients/bulk', 'ClientController@bulk');
     Route::get('clients/statement/{client_id}', 'ClientController@statement');
 

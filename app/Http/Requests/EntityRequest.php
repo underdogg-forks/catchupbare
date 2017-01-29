@@ -1,7 +1,9 @@
-<?php namespace App\Http\Requests;
+<?php
+namespace App\Http\Requests;
 
 use Input;
 use Utils;
+use Illuminate\Http\Request;
 use App\Libraries\HistoryUtils;
 use App\Models\EntityModel;
 
@@ -12,6 +14,8 @@ class EntityRequest extends Request {
 
     public function entity()
     {
+        dd(Input::get("client_id"));
+
         if ($this->entity) {
 
             echo "this->entity:";
@@ -26,11 +30,11 @@ class EntityRequest extends Request {
 
 
         $field = $this->entityType . '_id';
-        if ( ! empty($this->$field)) {
-            $publicId = $this->$field;
-        }
+
+        $publicId = $this->$field;
 
 
+        /*if ( ! empty($this->$field)) {}*/
 
         if ( ! $publicId) {
             $field = Utils::pluralizeEntityType($this->entityType);
@@ -42,6 +46,7 @@ class EntityRequest extends Request {
         if ( ! $publicId) {
             $publicId = Input::get('public_id') ?: Input::get('id');
         }
+
         if ( ! $publicId) {
             //echo "hello world";
             return null;
