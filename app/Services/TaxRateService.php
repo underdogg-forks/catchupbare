@@ -39,13 +39,13 @@ class TaxRateService extends BaseService
     }
 
     /**
-     * @param $accountId
+     * @param $companyId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($accountId)
+    public function getDatatable($companyId)
     {
         $datatable = new TaxRateDatatable(false);
-        $query = $this->taxRateRepo->find($accountId);
+        $query = $this->taxRateRepo->find($companyId);
 
         return $this->datatableService->createDatatable($datatable, $query);
     }

@@ -23,8 +23,8 @@ class CreateClientRequest extends ClientRequest
             'contacts' => 'valid_contacts',
         ];
 
-        if ($this->user()->account->client_number_counter) {
-            $rules['id_number'] = 'unique:clients,id_number,,id,account_id,' . $this->user()->account_id;
+        if ($this->user()->company->client_number_counter) {
+            $rules['id_number'] = 'unique:clients,id_number,,id,company_id,' . $this->user()->company_id;
         }
 
         return $rules;

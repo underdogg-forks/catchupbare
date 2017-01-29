@@ -7,7 +7,7 @@ use Utils;
 use View;
 use Cache;
 use Session;
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Client;
 use App\Models\Country;
 use App\Models\InvoiceDesign;
@@ -56,10 +56,10 @@ class QuoteController extends BaseController
 
     public function getDatatable($clientPublicId = null)
     {
-        $accountId = Auth::user()->account_id;
+        $companyId = Auth::user()->company_id;
         $search = Input::get('sSearch');
 
-        return $this->invoiceService->getDatatable($accountId, $clientPublicId, ENTITY_QUOTE, $search);
+        return $this->invoiceService->getDatatable($companyId, $clientPublicId, ENTITY_QUOTE, $search);
     }
 
     public function create(InvoiceRequest $request, $clientPublicId = 0)
@@ -68,12 +68,12 @@ class QuoteController extends BaseController
             return Redirect::to('/invoices/create');
         }
 
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $clientId = null;
         if ($clientPublicId) {
             $clientId = Client::getPrivateId($clientPublicId);
         }
-        $invoice = $account->createInvoice(ENTITY_QUOTE, $clientId);
+        $invoice = $company->createInvoice(ENTITY_QUOTE, $clientId);
         $invoice->public_id = 0;
 
         $data = [
@@ -92,7 +92,7 @@ class QuoteController extends BaseController
     private static function getViewModel()
     {
         // Tax rate $options
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $rates = TaxRate::scope()->orderBy('name')->get();
         $options = [];
         $defaultTax = false;
@@ -101,14 +101,14 @@ class QuoteController extends BaseController
             $options[$rate->rate . ' ' . $rate->name] = $rate->name . ' ' . ($rate->rate+0) . '%';
 
             // load default invoice tax
-            if ($rate->id == $account->default_tax_rate_id) {
+            if ($rate->id == $company->default_tax_rate_id) {
                 $defaultTax = $rate;
             }
         }
 
         return [
           'entityType' => ENTITY_QUOTE,
-          'account' => Auth::user()->account,
+          'company' => Auth::user()->company,
           'products' => Product::scope()->orderBy('id')->get(['product_key', 'notes', 'cost', 'qty']),
           'taxRateOptions' => $options,
           'defaultTax' => $defaultTax,
@@ -122,7 +122,7 @@ class QuoteController extends BaseController
           'industries' => Cache::get('industries'),
           'invoiceDesigns' => InvoiceDesign::getDesigns(),
           'invoiceFonts' => Cache::get('fonts'),
-          'invoiceLabels' => Auth::user()->account->getInvoiceLabels(),
+          'invoiceLabels' => Auth::user()->company->getInvoiceLabels(),
           'isRecurring' => false,
         ];
     }

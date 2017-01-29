@@ -51,25 +51,25 @@ class EntityModel extends Eloquent
 
         if ($context) {
             $user = $context instanceof User ? $context : $context->user;
-            $account = $context->account;
+            $company = $context->company;
         } elseif (Auth::check()) {
             $user = Auth::user();
-            $account = Auth::user()->account;
+            $company = Auth::user()->company;
         } else {
             Utils::fatalError();
         }
 
         $entity->user_id = $user->id;
-        $entity->account_id = $account->id;
+        $entity->company_id = $company->id;
 
-        // store references to the original user/account to prevent needing to reload them
+        // store references to the original user/company to prevent needing to reload them
         $entity->setRelation('user', $user);
-        $entity->setRelation('account', $account);
+        $entity->setRelation('company', $company);
 
         if (method_exists($className, 'trashed')){
-            $lastEntity = $className::whereAccountId($entity->account_id)->withTrashed();
+            $lastEntity = $className::whereCompanyId($entity->company_id)->withTrashed();
         } else {
-            $lastEntity = $className::whereAccountId($entity->account_id);
+            $lastEntity = $className::whereCompanyId($entity->company_id);
         }
 
         if (static::$hasPublicId) {
@@ -135,16 +135,16 @@ class EntityModel extends Eloquent
     /**
      * @param $query
      * @param bool $publicId
-     * @param bool $accountId
+     * @param bool $companyId
      * @return mixed
      */
-    public function scopeScope($query, $publicId = false, $accountId = false)
+    public function scopeScope($query, $publicId = false, $companyId = false)
     {
-        if (!$accountId) {
-            $accountId = Auth::user()->account_id;
+        if (!$companyId) {
+            $companyId = Auth::user()->company_id;
         }
 
-        $query->where($this->getTable() .'.account_id', '=', $accountId);
+        $query->where($this->getTable() .'.company_id', '=', $companyId);
 
         if ($publicId) {
             if (is_array($publicId)) {

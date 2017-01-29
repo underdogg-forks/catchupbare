@@ -25,7 +25,7 @@ class CreateInvoiceAPIRequest extends InvoiceRequest
             'email' => 'required_without:client_id',
             'client_id' => 'required_without:email',
             'invoice_items' => 'valid_invoice_items',
-            'invoice_number' => 'unique:invoices,invoice_number,,id,account_id,' . $this->user()->account_id,
+            'invoice_number' => 'unique:invoices,invoice_number,,id,company_id,' . $this->user()->company_id,
             'discount' => 'positive',
             //'invoice_date' => 'date',
             //'due_date' => 'date',
@@ -33,9 +33,9 @@ class CreateInvoiceAPIRequest extends InvoiceRequest
             //'end_date' => 'date',
         ];
 
-        if ($this->user()->account->client_number_counter) {
+        if ($this->user()->company->client_number_counter) {
             $clientId = Client::getPrivateId(request()->input('client')['public_id']);
-            $rules['client.id_number'] = 'unique:clients,id_number,'.$clientId.',id,account_id,' . $this->user()->account_id;
+            $rules['client.id_number'] = 'unique:clients,id_number,'.$clientId.',id,company_id,' . $this->user()->company_id;
         }
 
         return $rules;

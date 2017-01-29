@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Account;
+use App\Models\Company;
 
 /**
  * Class AccountTransformer
@@ -28,131 +28,131 @@ class AccountTransformer extends EntityTransformer
     ];
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeExpenseCategories(Account $account)
+    public function includeExpenseCategories(Company $company)
     {
-        $transformer = new ExpenseCategoryTransformer($account, $this->serializer);
-        return $this->includeCollection($account->expense_categories, $transformer, 'expense_categories');
+        $transformer = new ExpenseCategoryTransformer($company, $this->serializer);
+        return $this->includeCollection($company->expense_categories, $transformer, 'expense_categories');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeProjects(Account $account)
+    public function includeProjects(Company $company)
     {
-        $transformer = new ProjectTransformer($account, $this->serializer);
-        return $this->includeCollection($account->projects, $transformer, 'projects');
+        $transformer = new ProjectTransformer($company, $this->serializer);
+        return $this->includeCollection($company->projects, $transformer, 'projects');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeUsers(Account $account)
+    public function includeUsers(Company $company)
     {
-        $transformer = new UserTransformer($account, $this->serializer);
-        return $this->includeCollection($account->users, $transformer, 'users');
+        $transformer = new UserTransformer($company, $this->serializer);
+        return $this->includeCollection($company->users, $transformer, 'users');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeClients(Account $account)
+    public function includeClients(Company $company)
     {
-        $transformer = new ClientTransformer($account, $this->serializer);
-        return $this->includeCollection($account->clients, $transformer, 'clients');
+        $transformer = new ClientTransformer($company, $this->serializer);
+        return $this->includeCollection($company->clients, $transformer, 'clients');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeInvoices(Account $account)
+    public function includeInvoices(Company $company)
     {
-        $transformer = new InvoiceTransformer($account, $this->serializer);
-        return $this->includeCollection($account->invoices, $transformer, 'invoices');
+        $transformer = new InvoiceTransformer($company, $this->serializer);
+        return $this->includeCollection($company->invoices, $transformer, 'invoices');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeProducts(Account $account)
+    public function includeProducts(Company $company)
     {
-        $transformer = new ProductTransformer($account, $this->serializer);
-        return $this->includeCollection($account->products, $transformer, 'products');
+        $transformer = new ProductTransformer($company, $this->serializer);
+        return $this->includeCollection($company->products, $transformer, 'products');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeTaxRates(Account $account)
+    public function includeTaxRates(Company $company)
     {
-        $transformer = new TaxRateTransformer($account, $this->serializer);
-        return $this->includeCollection($account->tax_rates, $transformer, 'taxRates');
+        $transformer = new TaxRateTransformer($company, $this->serializer);
+        return $this->includeCollection($company->tax_rates, $transformer, 'taxRates');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return \League\Fractal\Resource\Collection
      */
-    public function includePayments(Account $account)
+    public function includePayments(Company $company)
     {
-        $transformer = new PaymentTransformer($account, $this->serializer);
-        return $this->includeCollection($account->payments, $transformer, 'payments');
+        $transformer = new PaymentTransformer($company, $this->serializer);
+        return $this->includeCollection($company->payments, $transformer, 'payments');
     }
 
     /**
-     * @param Account $account
+     * @param Company $company
      * @return array
      * @throws \Laracasts\Presenter\Exceptions\PresenterException
      */
-    public function transform(Account $account)
+    public function transform(Company $company)
     {
         return [
-            'account_key' => $account->account_key,
-            'name' => $account->present()->name,
-            'id_number' => $account->id_number,
-            'currency_id' => (int) $account->currency_id,
-            'timezone_id' => (int) $account->timezone_id,
-            'date_format_id' => (int) $account->date_format_id,
-            'datetime_format_id' => (int) $account->datetime_format_id,
-            'updated_at' => $this->getTimestamp($account->updated_at),
-            'archived_at' => $this->getTimestamp($account->deleted_at),
-            'address1' => $account->address1,
-            'address2' => $account->address2,
-            'city' => $account->city,
-            'state' => $account->state,
-            'postal_code' => $account->postal_code,
-            'country_id' => (int) $account->country_id,
-            'invoice_terms' => $account->invoice_terms,
-            'email_footer' => $account->email_footer,
-            'industry_id' => (int) $account->industry_id,
-            'size_id' => (int) $account->size_id,
-            'invoice_taxes' => (bool) $account->invoice_taxes,
-            'invoice_item_taxes' => (bool) $account->invoice_item_taxes,
-            'invoice_design_id' => (int) $account->invoice_design_id,
-            'client_view_css' => (string) $account->client_view_css,
-            'work_phone' => $account->work_phone,
-            'work_email' => $account->work_email,
-            'language_id' => (int) $account->language_id,
-            'fill_products' => (bool) $account->fill_products,
-            'update_products' => (bool) $account->update_products,
-            'vat_number' => $account->vat_number,
-            'custom_invoice_label1' => $account->custom_invoice_label1,
-            'custom_invoice_label2' => $account->custom_invoice_label2,
-            'custom_invoice_taxes1' => $account->custom_invoice_taxes1,
-            'custom_invoice_taxes2' => $account->custom_invoice_taxes1,
-            'custom_label1' => $account->custom_label1,
-            'custom_label2' => $account->custom_label2,
-            'custom_value1' => $account->custom_value1,
-            'custom_value2' => $account->custom_value2,
-            'logo' => $account->logo,
+            'acc_key' => $company->acc_key,
+            'name' => $company->present()->name,
+            'id_number' => $company->id_number,
+            'currency_id' => (int) $company->currency_id,
+            'timezone_id' => (int) $company->timezone_id,
+            'date_format_id' => (int) $company->date_format_id,
+            'datetime_format_id' => (int) $company->datetime_format_id,
+            'updated_at' => $this->getTimestamp($company->updated_at),
+            'archived_at' => $this->getTimestamp($company->deleted_at),
+            'address1' => $company->address1,
+            'address2' => $company->address2,
+            'city' => $company->city,
+            'state' => $company->state,
+            'postal_code' => $company->postal_code,
+            'country_id' => (int) $company->country_id,
+            'invoice_terms' => $company->invoice_terms,
+            'email_footer' => $company->email_footer,
+            'industry_id' => (int) $company->industry_id,
+            'size_id' => (int) $company->size_id,
+            'invoice_taxes' => (bool) $company->invoice_taxes,
+            'invoice_item_taxes' => (bool) $company->invoice_item_taxes,
+            'invoice_design_id' => (int) $company->invoice_design_id,
+            'client_view_css' => (string) $company->client_view_css,
+            'work_phone' => $company->work_phone,
+            'work_email' => $company->work_email,
+            'language_id' => (int) $company->language_id,
+            'fill_products' => (bool) $company->fill_products,
+            'update_products' => (bool) $company->update_products,
+            'vat_number' => $company->vat_number,
+            'custom_invoice_label1' => $company->custom_invoice_label1,
+            'custom_invoice_label2' => $company->custom_invoice_label2,
+            'custom_invoice_taxes1' => $company->custom_invoice_taxes1,
+            'custom_invoice_taxes2' => $company->custom_invoice_taxes1,
+            'custom_label1' => $company->custom_label1,
+            'custom_label2' => $company->custom_label2,
+            'custom_value1' => $company->custom_value1,
+            'custom_value2' => $company->custom_value2,
+            'logo' => $company->logo,
         ];
     }
 }

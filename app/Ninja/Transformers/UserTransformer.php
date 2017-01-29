@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\User;
 
 class UserTransformer extends EntityTransformer
@@ -12,7 +12,7 @@ class UserTransformer extends EntityTransformer
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'account_key' => $user->account->account_key,
+            'acc_key' => $user->company->acc_key,
             'updated_at' => $this->getTimestamp($user->updated_at),
             'deleted_at' => $this->getTimestamp($user->deleted_at),
             'phone' => $user->phone,

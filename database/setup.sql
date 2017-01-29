@@ -347,8 +347,8 @@ CREATE TABLE `accounts` (
 --
 
 LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
+/*!40000 ALTER TABLE `companies` DISABLE KEYS */;
+/*!40000 ALTER TABLE `companies` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

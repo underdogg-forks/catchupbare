@@ -16,7 +16,7 @@ class AddSocialLogin extends Migration
             $table->unsignedInteger('oauth_provider_id')->nullable();
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->string('custom_invoice_text_label1')->nullable();
             $table->string('custom_invoice_text_label2')->nullable();
         });
@@ -45,7 +45,7 @@ class AddSocialLogin extends Migration
             $table->dropColumn('oauth_provider_id');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('custom_invoice_text_label1');
             $table->dropColumn('custom_invoice_text_label2');
         });

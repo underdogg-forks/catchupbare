@@ -42,7 +42,7 @@ class SupportMultipleTaxRates extends Migration
             $table->decimal('tax_rate2', 13, 3);
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->boolean('enable_client_portal_dashboard')->default(true);
         });
     }
@@ -70,7 +70,7 @@ class SupportMultipleTaxRates extends Migration
             $table->dropColumn('tax_rate2');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('enable_client_portal_dashboard');
         });
     }

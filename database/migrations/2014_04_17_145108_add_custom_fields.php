@@ -13,7 +13,7 @@ class AddCustomFields extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->string('custom_label1')->nullable();
             $table->string('custom_value1')->nullable();
 
@@ -37,7 +37,7 @@ class AddCustomFields extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('custom_label1');
             $table->dropColumn('custom_value1');
 

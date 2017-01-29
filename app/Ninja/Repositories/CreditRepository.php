@@ -15,15 +15,15 @@ class CreditRepository extends BaseRepository
     public function find($clientPublicId = null, $filter = null)
     {
         $query = DB::table('credits')
-                    ->join('accounts', 'accounts.id', '=', 'credits.account_id')
+                    ->join('companies', 'companies.id', '=', 'credits.company_id')
                     ->join('clients', 'clients.id', '=', 'credits.client_id')
                     ->join('contacts', 'contacts.client_id', '=', 'clients.id')
-                    ->where('clients.account_id', '=', \Auth::user()->account_id)
+                    ->where('clients.company_id', '=', \Auth::user()->company_id)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('contacts.is_primary', '=', true)
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, accounts.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, accounts.country_id) country_id'),
+                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
                         'credits.public_id',
                         DB::raw("COALESCE(NULLIF(clients.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) client_name"),
                         'clients.public_id as client_public_id',
@@ -60,15 +60,15 @@ class CreditRepository extends BaseRepository
     public function getClientDatatable($clientId)
     {
         $query = DB::table('credits')
-                    ->join('accounts', 'accounts.id', '=', 'credits.account_id')
+                    ->join('companies', 'companies.id', '=', 'credits.company_id')
                     ->join('clients', 'clients.id', '=', 'credits.client_id')
                     ->where('credits.client_id', '=', $clientId)
                     ->where('clients.deleted_at', '=', null)
                     ->where('credits.deleted_at', '=', null)
                     ->where('credits.balance', '>', 0)
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, accounts.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, accounts.country_id) country_id'),
+                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
                         'credits.amount',
                         'credits.balance',
                         'credits.credit_date'

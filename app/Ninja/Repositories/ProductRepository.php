@@ -17,14 +17,14 @@ class ProductRepository extends BaseRepository
                 ->get();
     }
 
-    public function find($accountId, $filter = null)
+    public function find($companyId, $filter = null)
     {
         $query = DB::table('products')
                 ->leftJoin('tax_rates', function($join) {
                     $join->on('tax_rates.id', '=', 'products.default_tax_rate_id')
                          ->whereNull('tax_rates.deleted_at');
                 })
-                ->where('products.account_id', '=', $accountId)
+                ->where('products.company_id', '=', $companyId)
                 ->select(
                     'products.public_id',
                     'products.product_key',

@@ -4,15 +4,15 @@
 
     {!! Former::vertical_open($url) !!}
 
-    <h3>{{ trans('texts.bank_account') }}</h3>
+    <h3>{{ trans('texts.bank_acc') }}</h3>
 
     @if (!empty($details))
-        <div>{{$details->bank_account_name}}</div>
-        <div>&bull;&bull;&bull;&bull;&bull;{{$details->bank_account_last_four}}</div>
+        <div>{{$details->bank_acc_name}}</div>
+        <div>&bull;&bull;&bull;&bull;&bull;{{$details->bank_acc_last_four}}</div>
     @endif
 
     {!! Former::checkbox('authorize_ach')
-            ->text(trans('texts.ach_authorization', ['corporation'=>$account->getDisplayName(), 'email' => $account->work_email]))
+            ->text(trans('texts.ach_authorization', ['corporation'=>$company->getDisplayName(), 'email' => $company->work_email]))
             ->label(' ')
             ->value(1) !!}
 
@@ -31,11 +31,11 @@
 
     <center>
         @if(isset($amount) && empty($paymentMethodPending))
-            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $account->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
+            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
                             ->submit()
                             ->large() !!}
         @else
-            {!! Button::success(strtoupper(trans('texts.add_bank_account') ))
+            {!! Button::success(strtoupper(trans('texts.add_bank_acc') ))
                         ->submit()
                         ->large() !!}
         @endif

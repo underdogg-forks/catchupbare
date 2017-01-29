@@ -27,15 +27,15 @@ class ClientRepository extends BaseRepository
     public function find($filter = null, $userId = false)
     {
         $query = DB::table('clients')
-                    ->join('accounts', 'accounts.id', '=', 'clients.account_id')
+                    ->join('companies', 'companies.id', '=', 'clients.company_id')
                     ->join('contacts', 'contacts.client_id', '=', 'clients.id')
-                    ->where('clients.account_id', '=', \Auth::user()->account_id)
+                    ->where('clients.company_id', '=', \Auth::user()->company_id)
                     ->where('contacts.is_primary', '=', true)
                     ->where('contacts.deleted_at', '=', null)
                     //->whereRaw('(clients.name != "" or contacts.first_name != "" or contacts.last_name != "" or contacts.email != "")') // filter out buy now invoices
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, accounts.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, accounts.country_id) country_id'),
+                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
                         DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name) contact"),
                         'clients.public_id',
                         'clients.name',
@@ -78,8 +78,8 @@ class ClientRepository extends BaseRepository
            // do nothing
         } elseif (!$publicId || $publicId == '-1') {
             $client = Client::createNew();
-            if (Auth::check() && Auth::user()->account->client_number_counter && empty($data['id_number'])) {
-                $data['id_number'] = Auth::user()->account->getNextNumber();
+            if (Auth::check() && Auth::user()->company->client_number_counter && empty($data['id_number'])) {
+                $data['id_number'] = Auth::user()->company->getNextNumber();
             }
         } else {
             $client = Client::scope($publicId)->with('contacts')->firstOrFail();

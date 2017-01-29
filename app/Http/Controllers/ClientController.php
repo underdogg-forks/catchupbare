@@ -9,7 +9,7 @@ use Session;
 use Redirect;
 use Cache;
 use App\Models\Client;
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Invoice;
 use App\Models\Credit;
@@ -170,9 +170,9 @@ class ClientController extends BaseController
 
         $data = array_merge($data, self::getViewModel());
 
-        if (Auth::user()->account->isNinjaAccount()) {
-            if ($account = Account::whereId($client->public_id)->first()) {
-                $data['planDetails'] = $account->getPlanDetails(false, false);
+        if (Auth::user()->company->isNinjaAccount()) {
+            if ($company = Company::whereId($client->public_id)->first()) {
+                $data['planDetails'] = $company->getPlanDetails(false, false);
             }
         }
 
@@ -183,12 +183,12 @@ class ClientController extends BaseController
     {
         return [
             'data' => Input::old('data'),
-            'account' => Auth::user()->account,
+            'company' => Auth::user()->company,
             'sizes' => Cache::get('sizes'),
             'paymentTerms' => Cache::get('paymentTerms'),
             'currencies' => Cache::get('currencies'),
-            'customLabel1' => Auth::user()->account->custom_client_label1,
-            'customLabel2' => Auth::user()->account->custom_client_label2,
+            'customLabel1' => Auth::user()->company->custom_client_label1,
+            'customLabel2' => Auth::user()->company->custom_client_label2,
         ];
     }
 
@@ -221,11 +221,11 @@ class ClientController extends BaseController
 
     public function statement()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $client = Client::scope(request()->client_id)->with('contacts')->firstOrFail();
-        $invoice = $account->createInvoice(ENTITY_INVOICE);
+        $invoice = $company->createInvoice(ENTITY_INVOICE);
         $invoice->client = $client;
-        $invoice->date_format = $account->date_format ? $account->date_format->format_moment : 'MMM D, YYYY';
+        $invoice->date_format = $company->date_format ? $company->date_format->format_moment : 'MMM D, YYYY';
         $invoice->invoice_items = Invoice::scope()
             ->with(['client'])
             ->whereClientId($client->id)

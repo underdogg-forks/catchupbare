@@ -26,9 +26,9 @@ class AddSourceCurrencyToExpenses extends Migration
 
         Schema::table('expenses', function (Blueprint $table) {
 
-            // set account value so we're able to create foreign constraint
+            // set company value so we're able to create foreign constraint
             DB::statement('update expenses e
-                            left join accounts a on a.id = e.account_id
+                            left join companies a on a.id = e.company_id
                             set e.expense_currency_id = COALESCE(a.currency_id, 1)');
 
             $table->foreign('invoice_currency_id')->references('id')->on('currencies');

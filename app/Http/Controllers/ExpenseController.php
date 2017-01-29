@@ -243,16 +243,16 @@ class ExpenseController extends BaseController
     {
         return [
             'data' => Input::old('data'),
-            'account' => Auth::user()->account,
+            'company' => Auth::user()->company,
             'sizes' => Cache::get('sizes'),
             'paymentTerms' => Cache::get('paymentTerms'),
             'industries' => Cache::get('industries'),
             'currencies' => Cache::get('currencies'),
             'languages' => Cache::get('languages'),
             'countries' => Cache::get('countries'),
-            'customLabel1' => Auth::user()->account->custom_vendor_label1,
-            'customLabel2' => Auth::user()->account->custom_vendor_label2,
-            'categories' => ExpenseCategory::whereAccountId(Auth::user()->account_id)->withArchived()->orderBy('name')->get(),
+            'customLabel1' => Auth::user()->company->custom_vendor_label1,
+            'customLabel2' => Auth::user()->company->custom_vendor_label2,
+            'categories' => ExpenseCategory::whereCompanyId(Auth::user()->company_id)->withArchived()->orderBy('name')->get(),
             'taxRates' => TaxRate::scope()->whereIsInclusive(false)->orderBy('name')->get(),
         ];
     }

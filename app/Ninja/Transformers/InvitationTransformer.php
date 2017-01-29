@@ -6,7 +6,7 @@ class InvitationTransformer extends EntityTransformer
 {
     public function transform(Invitation $invitation)
     {
-        $invitation->setRelation('account', $this->account);
+        $invitation->setRelation('company', $this->company);
 
         return [
             'id' => (int) $invitation->public_id,

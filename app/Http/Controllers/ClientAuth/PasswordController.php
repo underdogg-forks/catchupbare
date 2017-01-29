@@ -52,9 +52,9 @@ class PasswordController extends Controller
         if ($contactKey) {
             $contact = Contact::where('contact_key', '=', $contactKey)->first();
             if ($contact && !$contact->is_deleted) {
-                $account = $contact->account;
-                $data['account'] = $account;
-                $data['clientFontUrl'] = $account->getFontsUrl();
+                $company = $contact->company;
+                $data['company'] = $company;
+                $data['clientFontUrl'] = $company->getFontsUrl();
             }
         } else {
             return \Redirect::to('/client/sessionexpired');
@@ -117,20 +117,20 @@ class PasswordController extends Controller
         if ($key) {
             $contact = Contact::where('contact_key', '=', $key)->first();
             if ($contact && !$contact->is_deleted) {
-                $account = $contact->account;
+                $company = $contact->company;
                 $data['contact_key'] = $contact->contact_key;
             } else {
                 // Maybe it's an invitation key
                 $invitation = Invitation::where('invitation_key', '=', $key)->first();
                 if ($invitation && !$invitation->is_deleted) {
-                    $account = $invitation->account;
+                    $company = $invitation->company;
                     $data['contact_key'] = $invitation->contact->contact_key;
                 }
             }
 
-            if (!empty($account)) {
-                $data['account'] = $account;
-                $data['clientFontUrl'] = $account->getFontsUrl();
+            if (!empty($company)) {
+                $data['company'] = $company;
+                $data['clientFontUrl'] = $company->getFontsUrl();
             } else {
                 return \Redirect::to('/client/sessionexpired');
             }

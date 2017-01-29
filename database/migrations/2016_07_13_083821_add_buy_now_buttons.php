@@ -12,7 +12,7 @@ class AddBuyNowButtons extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->boolean('enable_buy_now_buttons')->default(false);
             $table->dropColumn('invoice_design');
         });
@@ -33,7 +33,7 @@ class AddBuyNowButtons extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('enable_buy_now_buttons');
             $table->text('invoice_design')->nullable();
         });

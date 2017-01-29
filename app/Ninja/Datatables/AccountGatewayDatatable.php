@@ -10,7 +10,7 @@ use App\Models\AccountGateway;
 
 class AccountGatewayDatatable extends EntityDatatable
 {
-    private static $accountGateways;
+    private static $accGateways;
 
     public $entityType = ENTITY_ACCOUNT_GATEWAY;
 
@@ -23,19 +23,19 @@ class AccountGatewayDatatable extends EntityDatatable
                     if ($model->deleted_at) {
                         return $model->name;
                     } elseif ($model->gateway_id == GATEWAY_CUSTOM) {
-                        $accountGateway = $this->getAccountGateway($model->id);
-                        $name = $accountGateway->getConfigField('name') . ' [' . trans('texts.custom') . ']';
+                        $accGateway = $this->getAccountGateway($model->id);
+                        $name = $accGateway->getConfigField('name') . ' [' . trans('texts.custom') . ']';
                         return link_to("gateways/{$model->public_id}/edit", $name)->toHtml();
                     } elseif ($model->gateway_id != GATEWAY_WEPAY) {
                         return link_to("gateways/{$model->public_id}/edit", $model->name)->toHtml();
                     } else {
-                        $accountGateway = $this->getAccountGateway($model->id);
-                        $config = $accountGateway->getConfig();
+                        $accGateway = $this->getAccountGateway($model->id);
+                        $config = $accGateway->getConfig();
                         $endpoint = WEPAY_ENVIRONMENT == WEPAY_STAGE ? 'https://stage.wepay.com/' : 'https://www.wepay.com/';
-                        $wepayAccountId = $config->accountId;
+                        $wepayAccountId = $config->companyId;
                         $wepayState = isset($config->state)?$config->state:null;
                         $linkText = $model->name;
-                        $url = $endpoint.'account/'.$wepayAccountId;
+                        $url = $endpoint.'company/'.$wepayAccountId;
                         $html = link_to($url, $linkText, ['target'=>'_blank'])->toHtml();
 
                         try {
@@ -47,7 +47,7 @@ class AccountGatewayDatatable extends EntityDatatable
                                 $model->setupUrl = $url;
                             } elseif ($wepayState == 'pending') {
                                 $linkText .= ' ('.trans('texts.resend_confirmation_email').')';
-                                $model->resendConfirmationUrl = $url = URL::to("gateways/{$accountGateway->public_id}/resend_confirmation");
+                                $model->resendConfirmationUrl = $url = URL::to("gateways/{$accGateway->public_id}/resend_confirmation");
                                 $html = link_to($url, $linkText)->toHtml();
                             }
                         } catch(\WePayException $ex){}
@@ -62,15 +62,15 @@ class AccountGatewayDatatable extends EntityDatatable
                     if ($model->gateway_id == GATEWAY_CUSTOM) {
                         $gatewayTypes = [GATEWAY_TYPE_CUSTOM];
                     } else {
-                        $accountGateway = $this->getAccountGateway($model->id);
-                        $paymentDriver = $accountGateway->paymentDriver();
+                        $accGateway = $this->getAccountGateway($model->id);
+                        $paymentDriver = $accGateway->paymentDriver();
                         $gatewayTypes = $paymentDriver->gatewayTypes();
                         $gatewayTypes = array_diff($gatewayTypes, array(GATEWAY_TYPE_TOKEN));
                     }
 
                     $html = '';
                     foreach ($gatewayTypes as $gatewayTypeId) {
-                        $accountGatewaySettings = AccountGatewaySettings::scope()->where('account_gateway_settings.gateway_type_id',
+                        $accGatewaySettings = AccountGatewaySettings::scope()->where('acc_gateway_settings.gateway_type_id',
                             '=', $gatewayTypeId)->first();
                         $gatewayType = GatewayType::find($gatewayTypeId);
 
@@ -82,15 +82,15 @@ class AccountGatewayDatatable extends EntityDatatable
                             $html .= $gatewayType->name . ' &mdash; ';
                         }
 
-                        if ($accountGatewaySettings && $accountGatewaySettings->min_limit !== null && $accountGatewaySettings->max_limit !== null) {
-                            $html .= Utils::formatMoney($accountGatewaySettings->min_limit) . ' - ' . Utils::formatMoney($accountGatewaySettings->max_limit);
-                        } elseif ($accountGatewaySettings && $accountGatewaySettings->min_limit !== null) {
+                        if ($accGatewaySettings && $accGatewaySettings->min_limit !== null && $accGatewaySettings->max_limit !== null) {
+                            $html .= Utils::formatMoney($accGatewaySettings->min_limit) . ' - ' . Utils::formatMoney($accGatewaySettings->max_limit);
+                        } elseif ($accGatewaySettings && $accGatewaySettings->min_limit !== null) {
                             $html .= trans('texts.min_limit',
-                                array('min' => Utils::formatMoney($accountGatewaySettings->min_limit))
+                                array('min' => Utils::formatMoney($accGatewaySettings->min_limit))
                             );
-                        } elseif ($accountGatewaySettings && $accountGatewaySettings->max_limit !== null) {
+                        } elseif ($accGatewaySettings && $accGatewaySettings->max_limit !== null) {
                             $html .= trans('texts.max_limit',
-                                array('max' => Utils::formatMoney($accountGatewaySettings->max_limit))
+                                array('max' => Utils::formatMoney($accGatewaySettings->max_limit))
                             );
                         } else {
                             $html .= trans('texts.no_limit');
@@ -133,10 +133,10 @@ class AccountGatewayDatatable extends EntityDatatable
             ], [
                 uctrans('texts.manage_account'),
                 function ($model) {
-                    $accountGateway = $this->getAccountGateway($model->id);
+                    $accGateway = $this->getAccountGateway($model->id);
                     $endpoint = WEPAY_ENVIRONMENT == WEPAY_STAGE ? 'https://stage.wepay.com/' : 'https://www.wepay.com/';
                     return [
-                        'url' => $endpoint.'account/'.$accountGateway->getConfig()->accountId,
+                        'url' => $endpoint.'company/'.$accGateway->getConfig()->companyId,
                         'attributes' => 'target="_blank"'
                     ];
                 },
@@ -158,11 +158,11 @@ class AccountGatewayDatatable extends EntityDatatable
             $actions[] = [
                 trans('texts.set_limits', ['gateway_type' => $gatewayType->name]),
                 function () use ($gatewayType) {
-                    $accountGatewaySettings = AccountGatewaySettings::scope()
-                        ->where('account_gateway_settings.gateway_type_id', '=', $gatewayType->id)
+                    $accGatewaySettings = AccountGatewaySettings::scope()
+                        ->where('acc_gateway_settings.gateway_type_id', '=', $gatewayType->id)
                         ->first();
-                    $min = $accountGatewaySettings && $accountGatewaySettings->min_limit !== null ? $accountGatewaySettings->min_limit : 'null';
-                    $max = $accountGatewaySettings && $accountGatewaySettings->max_limit !== null ? $accountGatewaySettings->max_limit : 'null';
+                    $min = $accGatewaySettings && $accGatewaySettings->min_limit !== null ? $accGatewaySettings->min_limit : 'null';
+                    $max = $accGatewaySettings && $accGatewaySettings->max_limit !== null ? $accGatewaySettings->max_limit : 'null';
 
                     return "javascript:showLimitsModal('{$gatewayType->name}', {$gatewayType->id}, $min, $max)";
                 },
@@ -171,8 +171,8 @@ class AccountGatewayDatatable extends EntityDatatable
                     if ($model->gateway_id == GATEWAY_CUSTOM) {
                         return $gatewayType->id == GATEWAY_TYPE_CUSTOM;
                     } else {
-                        $accountGateway = $this->getAccountGateway($model->id);
-                        $paymentDriver = $accountGateway->paymentDriver();
+                        $accGateway = $this->getAccountGateway($model->id);
+                        $paymentDriver = $accGateway->paymentDriver();
                         $gatewayTypes = $paymentDriver->gatewayTypes();
 
                         return in_array($gatewayType->id, $gatewayTypes);
@@ -186,13 +186,13 @@ class AccountGatewayDatatable extends EntityDatatable
 
     private function getAccountGateway($id)
     {
-        if (isset(static::$accountGateways[$id])) {
-            return static::$accountGateways[$id];
+        if (isset(static::$accGateways[$id])) {
+            return static::$accGateways[$id];
         }
 
-        static::$accountGateways[$id] = AccountGateway::find($id);
+        static::$accGateways[$id] = AccountGateway::find($id);
 
-        return static::$accountGateways[$id];
+        return static::$accGateways[$id];
     }
 
 }

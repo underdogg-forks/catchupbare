@@ -13,29 +13,42 @@ class EntityRequest extends Request {
     public function entity()
     {
         if ($this->entity) {
+
+            echo "this->entity:";
+            dd($this->entity);
+
             return $this->entity;
         }
 
         // The entity id can appear as invoices, invoice_id, public_id or id
         $publicId = false;
+
+
+
         $field = $this->entityType . '_id';
         if ( ! empty($this->$field)) {
             $publicId = $this->$field;
         }
+
+
+
         if ( ! $publicId) {
             $field = Utils::pluralizeEntityType($this->entityType);
             if ( ! empty($this->$field)) {
                 $publicId = $this->$field;
             }
         }
+
         if ( ! $publicId) {
             $publicId = Input::get('public_id') ?: Input::get('id');
         }
         if ( ! $publicId) {
+            //echo "hello world";
             return null;
         }
 
         $class = EntityModel::getClassName($this->entityType);
+
 
         if (method_exists($class, 'trashed')) {
             $this->entity = $class::scope($publicId)->withTrashed()->firstOrFail();
@@ -55,7 +68,7 @@ class EntityRequest extends Request {
     {
         if ($this->entity()) {
             if ($this->user()->can('view', $this->entity())) {
-                HistoryUtils::trackViewed($this->entity());
+                //HistoryUtils::trackViewed($this->entity());
                 return true;
             }
         } else {

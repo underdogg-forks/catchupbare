@@ -19,9 +19,9 @@ class AnalyticsListener
 
         $payment = $event->payment;
         $invoice = $payment->invoice;
-        $account = $payment->account;
+        $company = $payment->company;
 
-        if ($account->account_key != NINJA_ACCOUNT_KEY) {
+        if ($company->acc_key != NINJA_COMPANY_KEY) {
             return;
         }
 

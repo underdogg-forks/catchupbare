@@ -13,7 +13,7 @@ class MultiCorporationSupport extends Migration
      */
     public function up()
     {
-        Schema::create('user_accounts', function ($table) {
+        Schema::create('user_companies', function ($table) {
             $table->increments('id');
 
             $table->unsignedInteger('user_id1')->nullable();
@@ -37,6 +37,6 @@ class MultiCorporationSupport extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_accounts');
+        Schema::dropIfExists('user_companies');
     }
 }

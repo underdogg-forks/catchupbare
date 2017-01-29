@@ -9,13 +9,13 @@ class ListProductsIntent extends ProductIntent
 {
     public function process()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $products = Product::scope()
             ->orderBy('product_key')
             ->limit(5)
             ->get()
-            ->transform(function($item, $key) use ($account) {
-                $card = $item->present()->skypeBot($account);
+            ->transform(function($item, $key) use ($company) {
+                $card = $item->present()->skypeBot($company);
                 if ($this->stateEntity(ENTITY_INVOICE)) {
                     $card->addButton('imBack', trans('texts.add_to_invoice', ['invoice' => '']), trans('texts.add_product_to_invoice', ['product' => $item->product_key]));
                 }

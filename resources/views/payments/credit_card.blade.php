@@ -40,7 +40,7 @@
                 'email' => 'required|email',
                 'authorize_ach' => 'required',
                 'tos_agree' => 'required',
-                'account_number' => 'required',
+                'acc_number' => 'required',
                 'routing_number' => 'required',
                 'account_holder_name' => 'required',
                 'account_holder_type' => 'required',
@@ -52,12 +52,12 @@
         {{ Former::populateField('first_name', $contact->first_name) }}
         {{ Former::populateField('last_name', $contact->last_name) }}
         {{ Former::populateField('email', $contact->email) }}
-        @if (!$client->country_id && $client->account->country_id)
-            {{ Former::populateField('country_id', $client->account->country_id) }}
+        @if (!$client->country_id && $client->company->country_id)
+            {{ Former::populateField('country_id', $client->company->country_id) }}
         @endif
-        @if (!$client->currency_id && $client->account->currency_id)
-            {{ Former::populateField('currency_id', $client->account->currency_id) }}
-            {{ Former::populateField('currency', $client->account->currency->code) }}
+        @if (!$client->currency_id && $client->company->currency_id)
+            {{ Former::populateField('currency_id', $client->company->currency_id) }}
+            {{ Former::populateField('currency', $client->company->currency->code) }}
         @endif
     @endif
 
@@ -159,7 +159,7 @@
 
     <div class="row">
         <div class="col-md-9">
-            @if ($accountGateway->gateway_id == GATEWAY_BRAINTREE)
+            @if ($accGateway->gateway_id == GATEWAY_BRAINTREE)
                 <div id="card_number" class="braintree-hosted form-control"></div>
             @else
                 {!! Former::text(!empty($tokenize) ? '' : 'card_number')
@@ -170,7 +170,7 @@
             @endif
         </div>
         <div class="col-md-3">
-            @if ($accountGateway->gateway_id == GATEWAY_BRAINTREE)
+            @if ($accGateway->gateway_id == GATEWAY_BRAINTREE)
                 <div id="cvv" class="braintree-hosted form-control"></div>
             @else
                 {!! Former::text(!empty($tokenize) ? '' : 'cvv')
@@ -183,7 +183,7 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            @if ($accountGateway->gateway_id == GATEWAY_BRAINTREE)
+            @if ($accGateway->gateway_id == GATEWAY_BRAINTREE)
                 <div id="expiration_month" class="braintree-hosted form-control"></div>
             @else
                 {!! Former::select(!empty($tokenize) ? '' : 'expiration_month')
@@ -206,7 +206,7 @@
             @endif
         </div>
         <div class="col-md-6">
-            @if ($accountGateway->gateway_id == GATEWAY_BRAINTREE)
+            @if ($accGateway->gateway_id == GATEWAY_BRAINTREE)
                 <div id="expiration_year" class="braintree-hosted form-control"></div>
             @else
                 {!! Former::select(!empty($tokenize) ? '' : 'expiration_year')
@@ -230,8 +230,8 @@
     </div>
     <div class="row" style="padding-top:18px">
         <div class="col-md-5">
-            @if (isset($amount) && $client && $account->showTokenCheckbox($storageGateway/* will contain gateway id */))
-                <input id="token_billing" type="checkbox" name="token_billing" {{ $account->selectTokenCheckbox() ? 'CHECKED' : '' }} value="1" style="margin-left:0px; vertical-align:top">
+            @if (isset($amount) && $client && $company->showTokenCheckbox($storageGateway/* will contain gateway id */))
+                <input id="token_billing" type="checkbox" name="token_billing" {{ $company->selectTokenCheckbox() ? 'CHECKED' : '' }} value="1" style="margin-left:0px; vertical-align:top">
                 <label for="token_billing" class="checkbox" style="display: inline;">{{ trans('texts.token_billing') }}</label>
                 <span class="help-block" style="font-size:15px">
                     @if ($storageGateway == GATEWAY_STRIPE)
@@ -261,7 +261,7 @@
     <p>&nbsp;</p>
     <center>
         @if(isset($amount))
-            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $account->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
+            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
                             ->submit()
                             ->large() !!}
         @else

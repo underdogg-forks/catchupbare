@@ -14,8 +14,8 @@ body {
 .container input[type=email],
 .container select,
 .braintree-hosted {
-    @if(!empty($account))
-        {!! $account->getBodyFontCss() !!}
+    @if(!empty($company))
+        {!! $company->getBodyFontCss() !!}
     @else
         font-weight: 300;
         font-family: 'Roboto', sans-serif;

@@ -19,11 +19,11 @@ class CreateGatewayTypes extends Migration
             $table->string('name');
         });
 
-        Schema::dropIfExists('account_gateway_settings');
-        Schema::create('account_gateway_settings', function ($table) {
+        Schema::dropIfExists('acc_gateway_settings');
+        Schema::create('acc_gateway_settings', function ($table) {
             $table->increments('id');
 
-            $table->unsignedInteger('account_id');
+            $table->unsignedInteger('company_id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('gateway_type_id')->nullable();
 
@@ -34,8 +34,8 @@ class CreateGatewayTypes extends Migration
             $table->unsignedInteger('max_limit')->nullable();
         });
 
-        Schema::table('account_gateway_settings', function ($table) {
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+        Schema::table('acc_gateway_settings', function ($table) {
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('gateway_type_id')->references('id')->on('gateway_types')->onDelete('cascade');
         });
@@ -64,7 +64,7 @@ class CreateGatewayTypes extends Migration
             $table->dropColumn('gateway_type_id');
         });
 
-        Schema::dropIfExists('account_gateway_settings');
+        Schema::dropIfExists('acc_gateway_settings');
         Schema::dropIfExists('gateway_types');
     }
 }

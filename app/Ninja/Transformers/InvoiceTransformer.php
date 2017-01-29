@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Client;
 use App\Models\Invoice;
 
@@ -30,46 +30,46 @@ class InvoiceTransformer extends EntityTransformer
         'documents',
     ];
 
-    public function __construct($account = null, $serializer = null, $client = null)
+    public function __construct($company = null, $serializer = null, $client = null)
     {
-        parent::__construct($account, $serializer);
+        parent::__construct($company, $serializer);
 
         $this->client = $client;
     }
 
     public function includeInvoiceItems(Invoice $invoice)
     {
-        $transformer = new InvoiceItemTransformer($this->account, $this->serializer);
+        $transformer = new InvoiceItemTransformer($this->company, $this->serializer);
         return $this->includeCollection($invoice->invoice_items, $transformer, ENTITY_INVOICE_ITEM);
     }
 
     public function includeInvitations(Invoice $invoice)
     {
-        $transformer = new InvitationTransformer($this->account, $this->serializer);
+        $transformer = new InvitationTransformer($this->company, $this->serializer);
         return $this->includeCollection($invoice->invitations, $transformer, ENTITY_INVITATION);
     }
 
     public function includePayments(Invoice $invoice)
     {
-        $transformer = new PaymentTransformer($this->account, $this->serializer, $invoice);
+        $transformer = new PaymentTransformer($this->company, $this->serializer, $invoice);
         return $this->includeCollection($invoice->payments, $transformer, ENTITY_PAYMENT);
     }
 
     public function includeClient(Invoice $invoice)
     {
-        $transformer = new ClientTransformer($this->account, $this->serializer);
+        $transformer = new ClientTransformer($this->company, $this->serializer);
         return $this->includeItem($invoice->client, $transformer, ENTITY_CLIENT);
     }
 
     public function includeExpenses(Invoice $invoice)
     {
-        $transformer = new ExpenseTransformer($this->account, $this->serializer);
+        $transformer = new ExpenseTransformer($this->company, $this->serializer);
         return $this->includeCollection($invoice->expenses, $transformer, ENTITY_EXPENSE);
     }
 
     public function includeDocuments(Invoice $invoice)
     {
-        $transformer = new DocumentTransformer($this->account, $this->serializer);
+        $transformer = new DocumentTransformer($this->company, $this->serializer);
         return $this->includeCollection($invoice->documents, $transformer, ENTITY_DOCUMENT);
     }
 

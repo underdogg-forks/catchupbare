@@ -36,7 +36,7 @@ class ProductDatatable extends EntityDatatable
                 function ($model) {
                     return $model->tax_rate ? ($model->tax_name . ' ' . $model->tax_rate . '%') : '';
                 },
-                Auth::user()->account->invoice_item_taxes
+                Auth::user()->company->invoice_item_taxes
             ]
         ];
     }

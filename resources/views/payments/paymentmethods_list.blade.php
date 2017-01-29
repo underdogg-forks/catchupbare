@@ -34,7 +34,7 @@
                     enableShippingAddress: false,
                     enableBillingAddress: false,
                     headless: true,
-                    locale: "{{$client->language?$client->language->locale:$client->account->language->locale}}"
+                    locale: "{{$client->language?$client->language->locale:$client->company->language->locale}}"
                 },
                 dataCollector: {
                     paypal: true
@@ -61,13 +61,13 @@
                 var email = {!! json_encode($contact->email) !!} || prompt('{{ trans('texts.ach_email_prompt') }}');
                 if(!email)return;
 
-                WePay.bank_account.create({
+                WePay.bank_acc.create({
                     'client_id': '{{ WEPAY_CLIENT_ID }}',
                     'email':email
                 }, function(data){
                     dataObj = JSON.parse(data);
-                    if(dataObj.bank_account_id) {
-                        window.location.href = $('#add-ach').attr('href') + '/' + dataObj.bank_account_id + "?details=" + encodeURIComponent(data);
+                    if(dataObj.bank_acc_id) {
+                        window.location.href = $('#add-ach').attr('href') + '/' + dataObj.bank_acc_id + "?details=" + encodeURIComponent(data);
                     } else if(dataObj.error) {
                         $('#add-ach').after($('<div id="wepay-error" style="margin-top:20px" class="alert alert-danger"></div>').text(dataObj.error_description));
                     }
@@ -91,7 +91,7 @@
             @if($paymentMethod->bank_name)
                 {{ $paymentMethod->bank_name }}
             @else
-                {{ trans('texts.bank_account') }}
+                {{ trans('texts.bank_acc') }}
             @endif
         @elseif($paymentMethod->payment_type_id == PAYMENT_TYPE_PAYPAL)
             {{ trans('texts.paypal') . ': ' . $paymentMethod->email }}
@@ -113,7 +113,7 @@
             @endif
         @endif
 
-        @if($paymentMethod->id == $paymentMethod->account_gateway_token->default_payment_method_id)
+        @if($paymentMethod->id == $paymentMethod->acc_gateway_token->default_payment_method_id)
             [{{trans('texts.used_for_auto_bill')}}]
         @elseif($paymentMethod->payment_type_id != PAYMENT_TYPE_ACH || $paymentMethod->status == PAYMENT_METHOD_STATUS_VERIFIED)
             [<a href="#" onclick="setDefault('{{$paymentMethod->public_id}}')">{{trans('texts.use_for_auto_bill')}}</a>]
@@ -126,18 +126,18 @@
 
 
 <center>
-    @if (false && $account->getGatewayByType(GATEWAY_TYPE_CREDIT_CARD) && $account->getGatewayByType(GATEWAY_TYPE_TOKEN))
+    @if (false && $company->getGatewayByType(GATEWAY_TYPE_CREDIT_CARD) && $company->getGatewayByType(GATEWAY_TYPE_TOKEN))
         {!! Button::success(strtoupper(trans('texts.add_credit_card')))
         ->asLinkTo(URL::to('/client/add/credit_card')) !!}
         &nbsp;
     @endif
-    @if (false && $account->getGatewayByType(GATEWAY_TYPE_BANK_TRANSFER) && $account->getGatewayByType(GATEWAY_TYPE_TOKEN))
-        {!! Button::success(strtoupper(trans('texts.add_bank_account')))
+    @if (false && $company->getGatewayByType(GATEWAY_TYPE_BANK_TRANSFER) && $company->getGatewayByType(GATEWAY_TYPE_TOKEN))
+        {!! Button::success(strtoupper(trans('texts.add_bank_acc')))
             ->withAttributes(['id'=>'add-ach'])
             ->asLinkTo(URL::to('/client/add/bank_transfer')) !!}
         &nbsp;
     @endif
-    @if (false && $account->getGatewayByType(GATEWAY_TYPE_PAYPAL) && $account->getGatewayByType(GATEWAY_TYPE_TOKEN))
+    @if (false && $company->getGatewayByType(GATEWAY_TYPE_PAYPAL) && $company->getGatewayByType(GATEWAY_TYPE_TOKEN))
         {!! Button::success(strtoupper(trans('texts.add_paypal_account')))
             ->withAttributes(['id'=>'add-paypal'])
             ->asLinkTo(URL::to('/client/add/paypal')) !!}
@@ -168,7 +168,7 @@
                 <div style="display:none">
                     {!! Former::text('source_id') !!}
                 </div>
-                <p>{{ trans('texts.bank_account_verification_help') }}</p>
+                <p>{{ trans('texts.bank_acc_verification_help') }}</p>
                 <div class="form-group">
                     <label for="verification1" class="control-label col-sm-5">{{ trans('texts.verification_amount1') }}</label>
                     <div class="col-sm-3">

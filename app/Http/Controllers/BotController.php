@@ -71,12 +71,12 @@ class BotController extends Controller
                     } elseif ($text == 'status') {
                         $response = SkypeResponse::message(trans('texts.intent_not_supported'));
                     } else {
-                        if ( ! $user = User::whereBotUserId($botUserId)->with('account')->first()) {
+                        if ( ! $user = User::whereBotUserId($botUserId)->with('company')->first()) {
                             return SkypeResponse::message(trans('texts.not_authorized'));
                         }
 
                         Auth::onceUsingId($user->id);
-                        $user->account->loadLocalizationSettings();
+                        $user->company->loadLocalizationSettings();
 
                         $data = $this->parseMessage($text);
                         $intent = BaseIntent::createIntent($state, $data);
@@ -209,7 +209,7 @@ class BotController extends Controller
 
         $code = new SecurityCode();
         $code->user_id = $user->id;
-        $code->account_id = $user->account_id;
+        $code->company_id = $user->company_id;
         $code->code = mt_rand(100000, 999999);
         $code->bot_user_id = $botUserId;
         $code->save();

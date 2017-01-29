@@ -8,7 +8,7 @@ use DB;
 use Session;
 use Str;
 use View;
-use App\Models\Account;
+use App\Models\Company;
 
 /**
  * Class ReportController
@@ -23,12 +23,12 @@ class ReportController extends BaseController
         $message = '';
         $fileName = storage_path().'/dataviz_sample.txt';
 
-        if (Auth::user()->account->hasFeature(FEATURE_REPORTS)) {
-            $account = Account::where('id', '=', Auth::user()->account->id)
+        if (Auth::user()->company->hasFeature(FEATURE_REPORTS)) {
+            $company = Company::where('id', '=', Auth::user()->company->id)
                             ->with(['clients.invoices.invoice_items', 'clients.contacts'])
                             ->first();
-            $account = $account->hideFieldsForViz();
-            $clients = $account->clients->toJson();
+            $company = $company->hideFieldsForViz();
+            $clients = $company->clients->toJson();
         } elseif (file_exists($fileName)) {
             $clients = file_get_contents($fileName);
             $message = trans('texts.sample_data');
@@ -82,10 +82,10 @@ class ReportController extends BaseController
             'reportTypes' => array_combine($reportTypes, Utils::trans($reportTypes)),
             'reportType' => $reportType,
             'title' => trans('texts.charts_and_reports'),
-            'account' => Auth::user()->account,
+            'company' => Auth::user()->company,
         ];
 
-        if (Auth::user()->account->hasFeature(FEATURE_REPORTS)) {
+        if (Auth::user()->company->hasFeature(FEATURE_REPORTS)) {
             $isExport = $action == 'export';
             $reportClass = '\\App\\Ninja\\Reports\\' . Str::studly($reportType) . 'Report';
             $options = [

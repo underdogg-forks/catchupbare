@@ -34,7 +34,7 @@ class AccountGatewayToken extends Eloquent
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account_gateway()
+    public function acc_gateway()
     {
         return $this->belongsTo('App\Models\AccountGateway');
     }
@@ -62,13 +62,13 @@ class AccountGatewayToken extends Eloquent
     /**
      * @param $query
      * @param $clientId
-     * @param $accountGatewayId
+     * @param $accGatewayId
      * @return mixed
      */
-    public function scopeClientAndGateway($query, $clientId, $accountGatewayId)
+    public function scopeClientAndGateway($query, $clientId, $accGatewayId)
     {
         $query->where('client_id', '=', $clientId)
-            ->where('account_gateway_id', '=', $accountGatewayId);
+            ->where('acc_gateway_id', '=', $accGatewayId);
 
         return $query;
     }
@@ -78,7 +78,7 @@ class AccountGatewayToken extends Eloquent
      */
     public function gatewayName()
     {
-        return $this->account_gateway->gateway->name;
+        return $this->acc_gateway->gateway->name;
     }
 
     /**
@@ -86,13 +86,13 @@ class AccountGatewayToken extends Eloquent
      */
     public function gatewayLink()
     {
-        $accountGateway = $this->account_gateway;
+        $accGateway = $this->acc_gateway;
 
-        if ($accountGateway->gateway_id == GATEWAY_STRIPE) {
+        if ($accGateway->gateway_id == GATEWAY_STRIPE) {
             return "https://dashboard.stripe.com/customers/{$this->token}";
-        } elseif ($accountGateway->gateway_id == GATEWAY_BRAINTREE) {
-            $merchantId = $accountGateway->getConfigField('merchantId');
-            $testMode = $accountGateway->getConfigField('testMode');
+        } elseif ($accGateway->gateway_id == GATEWAY_BRAINTREE) {
+            $merchantId = $accGateway->getConfigField('merchantId');
+            $testMode = $accGateway->getConfigField('testMode');
             return $testMode ? "https://sandbox.braintreegateway.com/merchants/{$merchantId}/customers/{$this->token}" : "https://www.braintreegateway.com/merchants/{$merchantId}/customers/{$this->token}";
         } else {
             return false;

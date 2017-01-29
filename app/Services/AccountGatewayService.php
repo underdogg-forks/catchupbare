@@ -11,7 +11,7 @@ class AccountGatewayService extends BaseService
     /**
      * @var AccountGatewayRepository
      */
-    protected $accountGatewayRepo;
+    protected $accGatewayRepo;
 
     /**
      * @var DatatableService
@@ -21,12 +21,12 @@ class AccountGatewayService extends BaseService
     /**
      * AccountGatewayService constructor.
      *
-     * @param AccountGatewayRepository $accountGatewayRepo
+     * @param AccountGatewayRepository $accGatewayRepo
      * @param DatatableService $datatableService
      */
-    public function __construct(AccountGatewayRepository $accountGatewayRepo, DatatableService $datatableService)
+    public function __construct(AccountGatewayRepository $accGatewayRepo, DatatableService $datatableService)
     {
-        $this->accountGatewayRepo = $accountGatewayRepo;
+        $this->accGatewayRepo = $accGatewayRepo;
         $this->datatableService = $datatableService;
     }
 
@@ -35,16 +35,16 @@ class AccountGatewayService extends BaseService
      */
     protected function getRepo()
     {
-        return $this->accountGatewayRepo;
+        return $this->accGatewayRepo;
     }
 
     /**
-     * @param $accountId
+     * @param $companyId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($accountId)
+    public function getDatatable($companyId)
     {
-        $query = $this->accountGatewayRepo->find($accountId);
+        $query = $this->accGatewayRepo->find($companyId);
 
         return $this->datatableService->createDatatable(new AccountGatewayDatatable(false), $query);
     }

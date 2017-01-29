@@ -9,7 +9,7 @@ use Session;
 use Redirect;
 use Cache;
 use App\Models\Vendor;
-use App\Models\Account;
+use App\Models\Company;
 use App\Ninja\Repositories\VendorRepository;
 use App\Services\VendorService;
 use App\Http\Requests\VendorRequest;
@@ -133,9 +133,9 @@ class VendorController extends BaseController
 
         $data = array_merge($data, self::getViewModel());
 
-        if (Auth::user()->account->isNinjaAccount()) {
-            if ($account = Account::whereId($client->public_id)->first()) {
-                $data['planDetails'] = $account->getPlanDetails(false, false);
+        if (Auth::user()->company->isNinjaAccount()) {
+            if ($company = Company::whereId($client->public_id)->first()) {
+                $data['planDetails'] = $company->getPlanDetails(false, false);
             }
         }
 
@@ -146,7 +146,7 @@ class VendorController extends BaseController
     {
         return [
             'data' => Input::old('data'),
-            'account' => Auth::user()->account,
+            'company' => Auth::user()->company,
             'currencies' => Cache::get('currencies'),
             'countries' => Cache::get('countries'),
         ];

@@ -7,6 +7,11 @@ use Eloquent;
  */
 class UserAccount extends Eloquent
 {
+
+//user_companies
+
+    protected $table = 'user_companies';
+
     /**
      * @var bool
      */

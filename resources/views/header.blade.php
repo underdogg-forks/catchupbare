@@ -108,7 +108,7 @@
   function handleSignedUp() {
       localStorage.setItem('guest_key', '');
       fbq('track', 'CompleteRegistration');
-      trackEvent('/account', '/signed_up');
+      trackEvent('/company', '/signed_up');
   }
 
   function checkForEnter(event)
@@ -177,25 +177,25 @@
             hint: true,
             highlight: true,
           }
-          @if (Auth::check() && Auth::user()->account->custom_client_label1)
+          @if (Auth::check() && Auth::user()->company->custom_client_label1)
           ,{
             name: 'data',
             limit: 3,
             display: 'value',
-            source: searchData(data['{{ Auth::user()->account->custom_client_label1 }}'], 'tokens'),
+            source: searchData(data['{{ Auth::user()->company->custom_client_label1 }}'], 'tokens'),
             templates: {
-              header: '&nbsp;<span style="font-weight:600;font-size:16px">{{ Auth::user()->account->custom_client_label1 }}</span>'
+              header: '&nbsp;<span style="font-weight:600;font-size:16px">{{ Auth::user()->company->custom_client_label1 }}</span>'
             }
           }
           @endif
-          @if (Auth::check() && Auth::user()->account->custom_client_label2)
+          @if (Auth::check() && Auth::user()->company->custom_client_label2)
           ,{
             name: 'data',
             limit: 3,
             display: 'value',
-            source: searchData(data['{{ Auth::user()->account->custom_client_label2 }}'], 'tokens'),
+            source: searchData(data['{{ Auth::user()->company->custom_client_label2 }}'], 'tokens'),
             templates: {
-              header: '&nbsp;<span style="font-weight:600;font-size:16px">{{ Auth::user()->account->custom_client_label2 }}</span>'
+              header: '&nbsp;<span style="font-weight:600;font-size:16px">{{ Auth::user()->company->custom_client_label2 }}</span>'
             }
           }
           @endif
@@ -245,7 +245,7 @@
     validateSignUp();
 
     $('#signUpModal').on('shown.bs.modal', function () {
-      trackEvent('/account', '/view_sign_up');
+      trackEvent('/company', '/view_sign_up');
       $(['first_name','last_name','email','password']).each(function(i, field) {
         var $input = $('form.signUpForm #new_'+field);
         if (!$input.val()) {
@@ -264,8 +264,8 @@
     @endif
 
     $('ul.navbar-settings, ul.navbar-search').hover(function () {
-        if ($('.user-accounts').css('display') == 'block') {
-            $('.user-accounts').dropdown('toggle');
+        if ($('.user-companies').css('display') == 'block') {
+            $('.user-companies').dropdown('toggle');
         }
     });
 
@@ -374,7 +374,7 @@
           @if (!Auth::user()->registered)
             {!! Button::success(trans('texts.sign_up'))->withAttributes(array('id' => 'signUpButton', 'data-toggle'=>'modal', 'data-target'=>'#signUpModal', 'style' => 'max-width:100px;;overflow:hidden'))->small() !!} &nbsp;
           @elseif (Utils::isNinjaProd() && (!Auth::user()->isPro() || Auth::user()->isTrial()))
-            @if (Auth::user()->account->corporation->hasActivePromo())
+            @if (Auth::user()->company->corporation->hasActivePromo())
                 {!! Button::warning(trans('texts.plan_upgrade'))->withAttributes(array('onclick' => 'showUpgradeModal()', 'style' => 'max-width:100px;overflow:hidden'))->small() !!} &nbsp;
             @else
                 {!! Button::success(trans('texts.plan_upgrade'))->withAttributes(array('onclick' => 'showUpgradeModal()', 'style' => 'max-width:100px;overflow:hidden'))->small() !!} &nbsp;
@@ -385,34 +385,34 @@
         <div class="btn-group user-dropdown">
           <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
             <div id="myAccountButton" class="ellipsis" style="max-width:{{ Utils::hasFeature(FEATURE_USERS) ? '130' : '100' }}px;">
-                @if (session(SESSION_USER_ACCOUNTS) && count(session(SESSION_USER_ACCOUNTS)))
-                    {{ Auth::user()->account->getDisplayName() }}
+                @if (session(SESSION_USERACCS) && count(session(SESSION_USERACCS)))
+                    {{ Auth::user()->company->getDisplayName() }}
                 @else
                     {{ Auth::user()->getDisplayName() }}
                 @endif
               <span class="caret"></span>
             </div>
           </button>
-          <ul class="dropdown-menu user-accounts">
-            @if (session(SESSION_USER_ACCOUNTS))
-                @foreach (session(SESSION_USER_ACCOUNTS) as $item)
+          <ul class="dropdown-menu user-companies">
+            @if (session(SESSION_USERACCS))
+                @foreach (session(SESSION_USERACCS) as $item)
                     @if ($item->user_id == Auth::user()->id)
                         @include('user_account', [
                             'user_account_id' => $item->id,
                             'user_id' => $item->user_id,
-                            'account_name' => $item->account_name,
+                            'acc_name' => $item->acc_name,
                             'user_name' => $item->user_name,
                             'logo_url' => isset($item->logo_url) ? $item->logo_url : "",
                             'selected' => true,
                         ])
                     @endif
                 @endforeach
-                @foreach (session(SESSION_USER_ACCOUNTS) as $item)
+                @foreach (session(SESSION_USERACCS) as $item)
                     @if ($item->user_id != Auth::user()->id)
                         @include('user_account', [
                             'user_account_id' => $item->id,
                             'user_id' => $item->user_id,
-                            'account_name' => $item->account_name,
+                            'acc_name' => $item->acc_name,
                             'user_name' => $item->user_name,
                             'logo_url' => isset($item->logo_url) ? $item->logo_url : "",
                             'selected' => false,
@@ -421,17 +421,17 @@
                 @endforeach
             @else
                 @include('user_account', [
-                    'account_name' => Auth::user()->account->name ?: trans('texts.untitled'),
+                    'acc_name' => Auth::user()->company->name ?: trans('texts.untitled'),
                     'user_name' => Auth::user()->getDisplayName(),
-                    'logo_url' => Auth::user()->account->getLogoURL(),
+                    'logo_url' => Auth::user()->company->getLogoURL(),
                     'selected' => true,
                 ])
             @endif
             <li class="divider"></li>
             @if (Utils::isAdmin())
-              @if (count(session(SESSION_USER_ACCOUNTS)) > 1)
+              @if (count(session(SESSION_USERACCS)) > 1)
                   <li>{!! link_to('/manage_corporations', trans('texts.manage_corporations')) !!}</li>
-              @elseif (!session(SESSION_USER_ACCOUNTS) || count(session(SESSION_USER_ACCOUNTS)) < 5)
+              @elseif (!session(SESSION_USERACCS) || count(session(SESSION_USERACCS)) < 5)
                   <li>{!! link_to('/invoice_now?new_corporation=true&sign_up=true', trans('texts.add_corporation')) !!}</li>
               @endif
             @endif
@@ -547,7 +547,7 @@
 
     <div id="right-sidebar-wrapper" class="hide-phone" style="overflow-y:hidden">
         <ul class="sidebar-nav">
-            {!! \App\Libraries\HistoryUtils::renderHtml(Auth::user()->account_id) !!}
+            {!! \App\Libraries\HistoryUtils::renderHtml(Auth::user()->company_id) !!}
         </ul>
     </div>
 
@@ -587,13 +587,13 @@
 
               @if (Utils::isNinjaProd())
                 @if (Auth::check() && Auth::user()->isTrial())
-                  {!! trans(Auth::user()->account->getCountTrialDaysLeft() == 0 ? 'texts.trial_footer_last_day' : 'texts.trial_footer', [
-                          'count' => Auth::user()->account->getCountTrialDaysLeft(),
+                  {!! trans(Auth::user()->company->getCountTrialDaysLeft() == 0 ? 'texts.trial_footer_last_day' : 'texts.trial_footer', [
+                          'count' => Auth::user()->company->getCountTrialDaysLeft(),
                           'link' => '<a href="javascript:showUpgradeModal()">' . trans('texts.click_here') . '</a>'
                       ]) !!}
                 @endif
               @else
-                {{--@include('partials.white_label', ['corporation' => Auth::user()->account->corporation])--}}
+                {{--@include('partials.white_label', ['corporation' => Auth::user()->company->corporation])--}}
               @endif
             </div>
         </div>

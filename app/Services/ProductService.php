@@ -38,13 +38,13 @@ class ProductService extends BaseService
     }
 
     /**
-     * @param $accountId
+     * @param $companyId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($accountId, $search)
+    public function getDatatable($companyId, $search)
     {
         $datatable = new ProductDatatable(true);
-        $query = $this->productRepo->find($accountId, $search);
+        $query = $this->productRepo->find($companyId, $search);
 
         if(!Utils::hasPermission('view_all')){
             $query->where('products.user_id', '=', Auth::user()->id);

@@ -4,11 +4,11 @@ use App\Models\Invoice;
 use Utils;
 use Auth;
 use Exception;
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Client;
 use App\Models\Activity;
 use App\Ninja\Repositories\PaymentRepository;
-use App\Ninja\Repositories\AccountRepository;
+use App\Ninja\Repositories\CompanyRepository;
 use App\Ninja\Datatables\PaymentDatatable;
 
 class PaymentService extends BaseService
@@ -17,18 +17,18 @@ class PaymentService extends BaseService
      * PaymentService constructor.
      *
      * @param PaymentRepository $paymentRepo
-     * @param AccountRepository $accountRepo
+     * @param CompanyRepository $companyRepo
      * @param DatatableService $datatableService
      */
     public function __construct(
         PaymentRepository $paymentRepo,
-        AccountRepository $accountRepo,
+        CompanyRepository $companyRepo,
         DatatableService $datatableService
     )
     {
         $this->datatableService = $datatableService;
         $this->paymentRepo = $paymentRepo;
-        $this->accountRepo = $accountRepo;
+        $this->companyRepo = $companyRepo;
     }
 
     /**
@@ -48,8 +48,8 @@ class PaymentService extends BaseService
         /** @var \App\Models\Client $client */
         $client = $invoice->client;
 
-        /** @var \App\Models\Account $account */
-        $account = $client->account;
+        /** @var \App\Models\Company $company */
+        $company = $client->company;
 
         /** @var \App\Models\Invitation $invitation */
         $invitation = $invoice->invitations->first();
@@ -75,7 +75,7 @@ class PaymentService extends BaseService
             }
         }
 
-        $paymentDriver = $account->paymentDriver($invitation, GATEWAY_TYPE_TOKEN);
+        $paymentDriver = $company->paymentDriver($invitation, GATEWAY_TYPE_TOKEN);
 
         if ( ! $paymentDriver) {
             return false;
@@ -156,8 +156,8 @@ class PaymentService extends BaseService
             foreach ($payments as $payment) {
                 if (Auth::user()->can('edit', $payment)) {
                     $amount = !empty($params['amount']) ? floatval($params['amount']) : null;
-                    if ($accountGateway = $payment->account_gateway) {
-                        $paymentDriver = $accountGateway->paymentDriver();
+                    if ($accGateway = $payment->acc_gateway) {
+                        $paymentDriver = $accGateway->paymentDriver();
                         if ($paymentDriver->refundPayment($payment, $amount)) {
                             $successful++;
                         }

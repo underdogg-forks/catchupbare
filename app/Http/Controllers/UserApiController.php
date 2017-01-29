@@ -25,7 +25,7 @@ class UserApiController extends BaseAPIController
 
     public function index()
     {
-        $users = User::whereAccountId(Auth::user()->account_id)
+        $users = User::whereCompanyId(Auth::user()->company_id)
                         ->withTrashed()
                         ->orderBy('created_at', 'desc');
         
@@ -46,7 +46,7 @@ class UserApiController extends BaseAPIController
         if ($request->action == ACTION_ARCHIVE) {
             $this->userRepo->archive($user);
 
-            $transformer = new UserTransformer(Auth::user()->account, $request->serializer);
+            $transformer = new UserTransformer(Auth::user()->company, $request->serializer);
             $data = $this->createItem($user, $transformer, 'users');
 
             return $this->response($data);
@@ -59,7 +59,7 @@ class UserApiController extends BaseAPIController
     {
         $user = $this->userRepo->save($request->input(), $user);
 
-        $transformer = new UserTransformer(\Auth::user()->account, $request->serializer);
+        $transformer = new UserTransformer(\Auth::user()->company, $request->serializer);
         $data = $this->createItem($user, $transformer, 'users');
 
         return $this->response($data);

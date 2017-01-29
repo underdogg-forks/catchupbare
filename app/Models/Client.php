@@ -144,9 +144,9 @@ class Client extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     /**
@@ -276,14 +276,14 @@ class Client extends EntityModel
             $contact = Contact::createNew();
             $contact->send_invoice = true;
 
-            if (isset($data['contact_key']) && $this->account->account_key == env('NINJA_LICENSE_ACCOUNT_KEY')) {
+            if (isset($data['contact_key']) && $this->company->acc_key == env('NINJA_LICENSE_COMPANY_KEY')) {
                 $contact->contact_key = $data['contact_key'];
             } else {
                 $contact->contact_key = str_random(RANDOM_KEY_LENGTH);
             }
         }
 
-        if (Utils::hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $this->account->enable_portal_password){
+        if (Utils::hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $this->company->enable_portal_password){
             if(!empty($data['password']) && $data['password']!='-%unchanged%-'){
                 $contact->password = bcrypt($data['password']);
             } else if(empty($data['password'])){
@@ -433,13 +433,13 @@ class Client extends EntityModel
      */
     public function getGatewayToken()
     {
-        $accountGateway = $this->account->getGatewayByType(GATEWAY_TYPE_TOKEN);
+        $accGateway = $this->company->getGatewayByType(GATEWAY_TYPE_TOKEN);
 
-        if ( ! $accountGateway) {
+        if ( ! $accGateway) {
             return false;
         }
 
-        return AccountGatewayToken::clientAndGateway($this->id, $accountGateway->id)->first();
+        return AccountGatewayToken::clientAndGateway($this->id, $accGateway->id)->first();
     }
 
     /**
@@ -460,7 +460,7 @@ class Client extends EntityModel
     public function autoBillLater()
     {
         if ($token = $this->getGatewayToken()) {
-            if ($this->account->auto_bill_on_due_date) {
+            if ($this->company->auto_bill_on_due_date) {
                 return true;
             }
 
@@ -487,11 +487,11 @@ class Client extends EntityModel
             return $this->currency_id;
         }
 
-        if (!$this->account) {
-            $this->load('account');
+        if (!$this->company) {
+            $this->load('company');
         }
 
-        return $this->account->currency_id ?: DEFAULT_CURRENCY;
+        return $this->company->currency_id ?: DEFAULT_CURRENCY;
     }
 
     /**
@@ -503,11 +503,11 @@ class Client extends EntityModel
             return $this->currency->code;
         }
 
-        if (!$this->account) {
-            $this->load('account');
+        if (!$this->company) {
+            $this->load('company');
         }
 
-        return $this->account->currency ? $this->account->currency->code : 'USD';
+        return $this->company->currency ? $this->company->currency->code : 'USD';
     }
 
     /**
@@ -535,7 +535,7 @@ class Client extends EntityModel
 
 Client::creating(function ($client) {
     $client->setNullValues();
-    $client->account->incrementCounter($client);
+    $client->company->incrementCounter($client);
 });
 
 Client::updating(function ($client) {

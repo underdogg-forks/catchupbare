@@ -39,7 +39,7 @@ class AbstractReport
 
     protected function addToTotals($currencyId, $field, $value, $dimension = false)
     {
-        $currencyId = $currencyId ?: Auth::user()->account->getCurrencyId();
+        $currencyId = $currencyId ?: Auth::user()->company->getCurrencyId();
 
         if ( ! isset($this->totals[$currencyId][$dimension])) {
             $this->totals[$currencyId][$dimension] = [];

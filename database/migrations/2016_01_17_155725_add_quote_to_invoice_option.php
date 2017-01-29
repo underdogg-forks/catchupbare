@@ -13,7 +13,7 @@ class AddQuoteToInvoiceOption extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table) {
             $table->boolean('auto_convert_quote')->default(true);
         });
 
@@ -37,7 +37,7 @@ class AddQuoteToInvoiceOption extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table) {
             $table->dropColumn('auto_convert_quote');
         });
 

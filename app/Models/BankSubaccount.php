@@ -23,7 +23,7 @@ class BankSubaccount extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function bank_account()
+    public function bank_acc()
     {
         return $this->belongsTo('App\Models\BankAccount');
     }

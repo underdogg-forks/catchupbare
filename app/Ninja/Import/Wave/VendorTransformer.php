@@ -22,7 +22,7 @@ class VendorTransformer extends BaseTransformer
         return new Item($data, function ($data) {
             return [
                 'name' => $data->customer_name,
-                'id_number' => $data->account_number,
+                'id_number' => $data->acc_number,
                 'work_phone' => $data->phone,
                 'website' => $data->website,
                 'address1' => $data->address_line_1,

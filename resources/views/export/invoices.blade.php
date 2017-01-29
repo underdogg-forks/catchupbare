@@ -11,17 +11,17 @@
     <td>{{ trans('texts.status') }}</td>
     <td>{{ trans(isset($entityType) && $entityType == ENTITY_QUOTE ? 'texts.quote_date' : 'texts.invoice_date') }}</td>
     <td>{{ trans('texts.due_date') }}</td>
-    @if ($account->custom_invoice_label1)
-        <td>{{ $account->custom_invoice_label1 }}</td>
+    @if ($company->custom_invoice_label1)
+        <td>{{ $company->custom_invoice_label1 }}</td>
     @endif
-    @if ($account->custom_invoice_label2)
-        <td>{{ $account->custom_invoice_label2 }}</td>
+    @if ($company->custom_invoice_label2)
+        <td>{{ $company->custom_invoice_label2 }}</td>
     @endif
-    @if ($account->custom_invoice_text_label1)
-        <td>{{ $account->custom_invoice_text_label1 }}</td>
+    @if ($company->custom_invoice_text_label1)
+        <td>{{ $company->custom_invoice_text_label1 }}</td>
     @endif
-    @if ($account->custom_invoice_text_label2)
-        <td>{{ $account->custom_invoice_text_label2 }}</td>
+    @if ($company->custom_invoice_text_label2)
+        <td>{{ $company->custom_invoice_text_label2 }}</td>
     @endif
 </tr>
 
@@ -34,22 +34,22 @@
                 <td>{{ $invoice->present()->user }}</td>
             @endif
             <td>{{ $invoice->invoice_number }}</td>
-            <td>{{ $account->formatMoney($invoice->amount, $invoice->client) }}</td>
-            <td>{{ $account->formatMoney($invoice->amount - $invoice->balance, $invoice->client) }}</td>
+            <td>{{ $company->formatMoney($invoice->amount, $invoice->client) }}</td>
+            <td>{{ $company->formatMoney($invoice->amount - $invoice->balance, $invoice->client) }}</td>
             <td>{{ $invoice->po_number }}</td>
             <td>{{ $invoice->present()->status }}</td>
             <td>{{ $invoice->present()->invoice_date }}</td>
             <td>{{ $invoice->present()->due_date }}</td>
-            @if ($account->custom_invoice_label1)
+            @if ($company->custom_invoice_label1)
                 <td>{{ $invoice->custom_value1 }}</td>
             @endif
-            @if ($account->custom_invoice_label2)
+            @if ($company->custom_invoice_label2)
                 <td>{{ $invoice->custom_value2 }}</td>
             @endif
-            @if ($account->custom_invoice_label1)
+            @if ($company->custom_invoice_label1)
                 <td>{{ $invoice->custom_text_value1 }}</td>
             @endif
-            @if ($account->custom_invoice_label2)
+            @if ($company->custom_invoice_label2)
                 <td>{{ $invoice->custom_text_value2 }}</td>
             @endif
         </tr>

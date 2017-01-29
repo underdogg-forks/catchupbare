@@ -6,7 +6,7 @@ use Hash;
 use App\Models\BankSubaccount;
 use App\Models\Vendor;
 use App\Models\Expense;
-use App\Ninja\Repositories\BankAccountRepository;
+use App\Ninja\Repositories\BankCompanyRepository;
 use App\Ninja\Repositories\ExpenseRepository;
 use App\Ninja\Repositories\VendorRepository;
 use App\Ninja\Datatables\BankAccountDatatable;
@@ -19,7 +19,7 @@ use App\Libraries\Login;
 class BankAccountService extends BaseService
 {
     /**
-     * @var BankAccountRepository
+     * @var BankCompanyRepository
      */
     protected $bankAccountRepo;
 
@@ -41,12 +41,12 @@ class BankAccountService extends BaseService
     /**
      * BankAccountService constructor.
      *
-     * @param BankAccountRepository $bankAccountRepo
+     * @param BankCompanyRepository $bankAccountRepo
      * @param ExpenseRepository $expenseRepo
      * @param VendorRepository $vendorRepo
      * @param DatatableService $datatableService
      */
-    public function __construct(BankAccountRepository $bankAccountRepo, ExpenseRepository $expenseRepo, VendorRepository $vendorRepo, DatatableService $datatableService)
+    public function __construct(BankCompanyRepository $bankAccountRepo, ExpenseRepository $expenseRepo, VendorRepository $vendorRepo, DatatableService $datatableService)
     {
         $this->bankAccountRepo = $bankAccountRepo;
         $this->vendorRepo = $vendorRepo;
@@ -55,7 +55,7 @@ class BankAccountService extends BaseService
     }
 
     /**
-     * @return BankAccountRepository
+     * @return BankCompanyRepository
      */
     protected function getRepo()
     {
@@ -97,7 +97,7 @@ class BankAccountService extends BaseService
         $expenses = $this->getExpenses();
         $vendorMap = $this->createVendorMap();
         $bankAccounts = BankSubaccount::scope()
-                            ->whereHas('bank_account', function ($query) use ($bankId) {
+                            ->whereHas('bank_acc', function ($query) use ($bankId) {
                                 $query->where('bank_id', '=', $bankId);
                             })
                             ->get();
@@ -113,10 +113,10 @@ class BankAccountService extends BaseService
             foreach ($finance->banks as $bank) {
                 foreach ($bank->logins as $login) {
                     $login->setup();
-                    foreach ($login->accounts as $account) {
-                        $account->setup($includeTransactions);
-                        if ($account = $this->parseBankAccount($account, $bankAccounts, $expenses, $includeTransactions, $vendorMap)) {
-                            $data[] = $account;
+                    foreach ($login->companies as $company) {
+                        $company->setup($includeTransactions);
+                        if ($company = $this->parseBankAccount($company, $bankAccounts, $expenses, $includeTransactions, $vendorMap)) {
+                            $data[] = $company;
                         }
                     }
                 }
@@ -129,57 +129,57 @@ class BankAccountService extends BaseService
     }
 
     /**
-     * @param $account
+     * @param $company
      * @param $bankAccounts
      * @param $expenses
      * @param $includeTransactions
      * @param $vendorMap
      * @return bool|stdClass
      */
-    private function parseBankAccount($account, $bankAccounts, $expenses, $includeTransactions, $vendorMap)
+    private function parseBankAccount($company, $bankAccounts, $expenses, $includeTransactions, $vendorMap)
     {
         $obj = new stdClass();
-        $obj->account_name = '';
+        $obj->acc_name = '';
 
-        // look up bank account name
+        // look up bank company name
         foreach ($bankAccounts as $bankAccount) {
-            if (Hash::check($account->id, $bankAccount->account_number)) {
-                $obj->account_name = $bankAccount->account_name;
+            if (Hash::check($company->id, $bankAccount->acc_number)) {
+                $obj->acc_name = $bankAccount->acc_name;
             }
         }
 
-        // if we can't find a match skip the account
-        if (count($bankAccounts) && ! $obj->account_name) {
+        // if we can't find a match skip the company
+        if (count($bankAccounts) && ! $obj->acc_name) {
             return false;
         }
 
-        $obj->masked_account_number = Utils::maskAccountNumber($account->id);
-        $obj->hashed_account_number = bcrypt($account->id);
-        $obj->type = $account->type;
-        $obj->balance = Utils::formatMoney($account->ledgerBalance, CURRENCY_DOLLAR);
+        $obj->masked_acc_number = Utils::maskAccountNumber($company->id);
+        $obj->hashed_acc_number = bcrypt($company->id);
+        $obj->type = $company->type;
+        $obj->balance = Utils::formatMoney($company->ledgerBalance, CURRENCY_DOLLAR);
 
         if ($includeTransactions) {
-            $obj = $this->parseTransactions($obj, $account->response, $expenses, $vendorMap);
+            $obj = $this->parseTransactions($obj, $company->response, $expenses, $vendorMap);
         }
 
         return $obj;
     }
 
     /**
-     * @param $account
+     * @param $company
      * @param $data
      * @param $expenses
      * @param $vendorMap
      * @return mixed
      */
-    private function parseTransactions($account, $data, $expenses, $vendorMap)
+    private function parseTransactions($company, $data, $expenses, $vendorMap)
     {
         $ofxParser = new \OfxParser\Parser();
         $ofx = $ofxParser->loadFromString($data);
 
-        $account->start_date = $ofx->BankAccount->Statement->startDate;
-        $account->end_date = $ofx->BankAccount->Statement->endDate;
-        $account->transactions = [];
+        $company->start_date = $ofx->BankAccount->Statement->startDate;
+        $company->end_date = $ofx->BankAccount->Statement->endDate;
+        $company->transactions = [];
 
         foreach ($ofx->BankAccount->Statement->transactions as $transaction) {
             // ensure transactions aren't imported as expenses twice
@@ -198,12 +198,12 @@ class BankAccountService extends BaseService
             $transaction->vendor = $vendor ? $vendor->name : $this->prepareValue($vendorName);
             $transaction->info = $this->prepareValue(substr($transaction->name, 20));
             $transaction->memo = $this->prepareValue($transaction->memo);
-            $transaction->date = \Auth::user()->account->formatDate($transaction->date);
+            $transaction->date = \Auth::user()->company->formatDate($transaction->date);
             $transaction->amount *= -1;
-            $account->transactions[] = $transaction;
+            $company->transactions[] = $transaction;
         }
 
-        return $account;
+        return $company;
     }
 
     /**
@@ -221,11 +221,11 @@ class BankAccountService extends BaseService
      */
     public function parseOFX($data)
     {
-        $account = new stdClass;
+        $company = new stdClass;
         $expenses = $this->getExpenses();
         $vendorMap = $this->createVendorMap();
 
-        return $this->parseTransactions($account, $data, $expenses, $vendorMap);
+        return $this->parseTransactions($company, $data, $expenses, $vendorMap);
     }
 
     /**
@@ -302,9 +302,9 @@ class BankAccountService extends BaseService
         }
     }
 
-    public function getDatatable($accountId)
+    public function getDatatable($companyId)
     {
-        $query = $this->bankAccountRepo->find($accountId);
+        $query = $this->bankAccountRepo->find($companyId);
 
         return $this->datatableService->createDatatable(new BankAccountDatatable(false), $query);
     }

@@ -9,13 +9,13 @@ class ProductPresenter extends EntityPresenter
         return $this->entity->user->getDisplayName();
     }
 
-    public function skypeBot($account)
+    public function skypeBot($company)
     {
         $product = $this->entity;
 
         $card = new HeroCard();
         $card->setTitle($product->product_key);
-        $card->setSubitle($account->formatMoney($product->cost));
+        $card->setSubitle($company->formatMoney($product->cost));
         $card->setText($product->notes);
 
         return $card;

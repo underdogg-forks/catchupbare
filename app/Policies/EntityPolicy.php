@@ -74,6 +74,6 @@ class EntityPolicy
     {
         $entityType = is_string($item) ? $item : $item->getEntityType();
         
-        return $user->account->isModuleEnabled($entityType);
+        return $user->company->isModuleEnabled($entityType);
     }
 }

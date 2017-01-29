@@ -66,9 +66,9 @@ class User extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     /**
@@ -118,7 +118,7 @@ class User extends Authenticatable
      */
     public function isPro()
     {
-        return $this->account->isPro();
+        return $this->company->isPro();
     }
 
     /**
@@ -127,7 +127,7 @@ class User extends Authenticatable
      */
     public function hasFeature($feature)
     {
-        return $this->account->hasFeature($feature);
+        return $this->company->hasFeature($feature);
     }
 
     /**
@@ -135,7 +135,7 @@ class User extends Authenticatable
      */
     public function isTrial()
     {
-        return $this->account->isTrial();
+        return $this->company->isTrial();
     }
 
     /**
@@ -233,7 +233,7 @@ class User extends Authenticatable
     public function clearSession()
     {
         $keys = [
-            SESSION_USER_ACCOUNTS,
+            SESSION_USERACCS,
             SESSION_TIMEZONE,
             SESSION_DATE_FORMAT,
             SESSION_DATE_PICKER_FORMAT,
@@ -378,16 +378,23 @@ class User extends Authenticatable
             return false;
         }
 
-        $account = $this->account;
-        $corporation = $account->corporation;
+        $company = $this->company;
+        $corporation = $company->corporation;
 
         $numUsers = 1;
-        foreach ($corporation->accounts as $account) {
-            $numUsers += $account->users->count() - 1;
+        foreach ($corporation->companies as $company) {
+            $numUsers += $company->users->count() - 1;
         }
 
         return $numUsers < $corporation->num_users;
     }
+
+    /*public function can($ability, $arguments = array())
+    {
+        return true;
+    }*/
+
+
 
     public function canCreateOrEdit($entityType, $entity = false)
     {
@@ -397,7 +404,7 @@ class User extends Authenticatable
 
     public function primaryAccount()
     {
-        return $this->account->corporation->accounts->sortBy('id')->first();
+        return $this->company->corporation->companies->sortBy('id')->first();
     }
 }
 

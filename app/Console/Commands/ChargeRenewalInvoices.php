@@ -2,10 +2,10 @@
 
 use Illuminate\Console\Command;
 use App\Ninja\Mailers\ContactMailer as Mailer;
-use App\Ninja\Repositories\AccountRepository;
+use App\Ninja\Repositories\CompanyRepository;
 use App\Services\PaymentService;
 use App\Models\Invoice;
-use App\Models\Account;
+use App\Models\Company;
 
 /**
  * Class ChargeRenewalInvoices
@@ -28,9 +28,9 @@ class ChargeRenewalInvoices extends Command
     protected $mailer;
 
     /**
-     * @var AccountRepository
+     * @var CompanyRepository
      */
-    protected $accountRepo;
+    protected $companyRepo;
 
     /**
      * @var PaymentService
@@ -40,15 +40,15 @@ class ChargeRenewalInvoices extends Command
     /**
      * ChargeRenewalInvoices constructor.
      * @param Mailer $mailer
-     * @param AccountRepository $repo
+     * @param CompanyRepository $repo
      * @param PaymentService $paymentService
      */
-    public function __construct(Mailer $mailer, AccountRepository $repo, PaymentService $paymentService)
+    public function __construct(Mailer $mailer, CompanyRepository $repo, PaymentService $paymentService)
     {
         parent::__construct();
 
         $this->mailer = $mailer;
-        $this->accountRepo = $repo;
+        $this->companyRepo = $repo;
         $this->paymentService = $paymentService;
     }
 
@@ -56,8 +56,8 @@ class ChargeRenewalInvoices extends Command
     {
         $this->info(date('Y-m-d').' ChargeRenewalInvoices...');
 
-        $ninjaAccount = $this->accountRepo->getNinjaAccount();
-        $invoices = Invoice::whereAccountId($ninjaAccount->id)
+        $ninjaAccount = $this->companyRepo->getNinjaAccount();
+        $invoices = Invoice::whereCompanyId($ninjaAccount->id)
                         ->whereDueDate(date('Y-m-d'))
                         ->where('balance', '>', 0)
                         ->with('client')
@@ -68,14 +68,14 @@ class ChargeRenewalInvoices extends Command
 
         foreach ($invoices as $invoice) {
 
-            // check if account has switched to free since the invoice was created
-            $account = Account::find($invoice->client->public_id);
+            // check if company has switched to free since the invoice was created
+            $company = Company::find($invoice->client->public_id);
 
-            if ( ! $account) {
+            if ( ! $company) {
                 continue;
             }
 
-            $corporation = $account->corporation;
+            $corporation = $company->corporation;
             if ( ! $corporation->plan || $corporation->plan == PLAN_FREE) {
                 continue;
             }

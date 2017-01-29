@@ -20,7 +20,7 @@ class ProjectRepository extends BaseRepository
     public function find($filter = null, $userId = false)
     {
         $query = DB::table('projects')
-                ->where('projects.account_id', '=', Auth::user()->account_id)
+                ->where('projects.company_id', '=', Auth::user()->company_id)
                 ->leftjoin('clients', 'clients.id', '=', 'projects.client_id')
                 ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
                 ->where('contacts.deleted_at', '=', null)

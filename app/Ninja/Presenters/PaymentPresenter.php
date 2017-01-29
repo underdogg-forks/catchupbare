@@ -27,8 +27,8 @@ class PaymentPresenter extends EntityPresenter {
 
     public function method()
     {
-        if ($this->entity->account_gateway) {
-            return $this->entity->account_gateway->gateway->name;
+        if ($this->entity->acc_gateway) {
+            return $this->entity->acc_gateway->gateway->name;
         } elseif ($this->entity->payment_type) {
             return $this->entity->payment_type->name;
         }

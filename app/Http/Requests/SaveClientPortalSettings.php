@@ -25,7 +25,7 @@ class SaveClientPortalSettings extends Request
         $rules = [];
 
         if ($this->custom_link == 'subdomain' && Utils::isNinja()) {
-            $rules['subdomain'] = "unique:accounts,subdomain,{$this->user()->account_id},id|valid_subdomain";
+            $rules['subdomain'] = "unique:companies,subdomain,{$this->user()->company_id},id|valid_subdomain";
         }
 
         return $rules;

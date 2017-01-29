@@ -17,7 +17,7 @@ class ProductReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $clients = Client::scope()
                         ->withTrashed()

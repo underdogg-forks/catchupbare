@@ -62,15 +62,15 @@ class Authenticate
             } else {
                 return \Redirect::to('client/sessionexpired');
             }
-            $account = $contact->account;
+            $company = $contact->company;
 
-            if (Auth::guard('user')->check() && Auth::user('user')->account_id === $account->id) {
+            if (Auth::guard('user')->check() && Auth::user('user')->company_id === $company->id) {
                 // This is an admin; let them pretend to be a client
                 $authenticated = true;
             }
 
-            // Does this account require portal passwords?
-            if ($account && (!$account->enable_portal_password || !$account->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD))) {
+            // Does this company require portal passwords?
+            if ($company && (!$company->enable_portal_password || !$company->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD))) {
                 $authenticated = true;
             }
 

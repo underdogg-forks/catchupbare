@@ -13,20 +13,20 @@ class AddTokens extends Migration
      */
     public function up()
     {
-        Schema::create('account_tokens', function ($table) {
+        Schema::create('acc_tokens', function ($table) {
             $table->increments('id');
-            $table->unsignedInteger('account_id')->index();
+            $table->unsignedInteger('company_id')->index();
             $table->unsignedInteger('user_id');
 
 
             $table->string('name')->nullable();
             $table->string('token')->unique();
 
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->unsignedInteger('public_id')->nullable();
-            $table->unique(['account_id', 'public_id']);
+            $table->unique(['company_id', 'public_id']);
 
 
             $table->timestamps();
@@ -45,7 +45,7 @@ class AddTokens extends Migration
      */
     public function down()
     {
-        Schema::drop('account_tokens');
+        Schema::drop('acc_tokens');
 
         Schema::table('activities', function ($table) {
             $table->dropColumn('token_id');

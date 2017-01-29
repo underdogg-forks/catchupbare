@@ -13,7 +13,7 @@ class ClientTransformer extends EntityTransformer
     * @SWG\Property(property="balance", type="float", example=10, readOnly=true)
     * @SWG\Property(property="paid_to_date", type="float", example=10, readOnly=true)
     * @SWG\Property(property="user_id", type="integer", example=1)
-    * @SWG\Property(property="account_key", type="string", example="123456")
+    * @SWG\Property(property="acc_key", type="string", example="123456")
     * @SWG\Property(property="updated_at", type="timestamp", example="")
     * @SWG\Property(property="archived_at", type="timestamp", example="1451160233")
     * @SWG\Property(property="address1", type="string", example="10 Main St.")
@@ -55,7 +55,7 @@ class ClientTransformer extends EntityTransformer
      */
     public function includeContacts(Client $client)
     {
-        $transformer = new ContactTransformer($this->account, $this->serializer);
+        $transformer = new ContactTransformer($this->company, $this->serializer);
         return $this->includeCollection($client->contacts, $transformer, ENTITY_CONTACT);
     }
 
@@ -65,7 +65,7 @@ class ClientTransformer extends EntityTransformer
      */
     public function includeInvoices(Client $client)
     {
-        $transformer = new InvoiceTransformer($this->account, $this->serializer, $client);
+        $transformer = new InvoiceTransformer($this->company, $this->serializer, $client);
         return $this->includeCollection($client->invoices, $transformer, ENTITY_INVOICE);
     }
 
@@ -75,7 +75,7 @@ class ClientTransformer extends EntityTransformer
      */
     public function includeCredits(Client $client)
     {
-        $transformer = new CreditTransformer($this->account, $this->serializer);
+        $transformer = new CreditTransformer($this->company, $this->serializer);
         return $this->includeCollection($client->credits, $transformer, ENTITY_CREDIT);
     }
 
@@ -85,7 +85,7 @@ class ClientTransformer extends EntityTransformer
      */
     public function includeExpenses(Client $client)
     {
-        $transformer = new ExpenseTransformer($this->account, $this->serializer);
+        $transformer = new ExpenseTransformer($this->company, $this->serializer);
         return $this->includeCollection($client->expenses, $transformer, ENTITY_EXPENSE);
     }
 

@@ -78,22 +78,22 @@
   logoImages.imageLogoWidth3 =325/2;
   logoImages.imageLogoHeight3 = 81/2;
 
-  @if ($account->hasLogo())
-  window.accountLogo = "{{ Form::image_data($account->getLogoRaw(), true) }}";
+  @if ($company->hasLogo())
+  window.accountLogo = "{{ Form::image_data($company->getLogoRaw(), true) }}";
   if (window.invoice) {
     invoice.image = window.accountLogo;
-    invoice.imageWidth = {{ $account->getLogoWidth() }};
-    invoice.imageHeight = {{ $account->getLogoHeight() }};
+    invoice.imageWidth = {{ $company->getLogoWidth() }};
+    invoice.imageHeight = {{ $company->getLogoHeight() }};
   }
   @endif
 
   var NINJA = NINJA || {};
-  @if ($account->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN))
-      NINJA.primaryColor = "{{ $account->primary_color }}";
-      NINJA.secondaryColor = "{{ $account->secondary_color }}";
-      NINJA.fontSize = {{ $account->font_size }};
-      NINJA.headerFont = {!! json_encode($account->getHeaderFontName()) !!};
-      NINJA.bodyFont = {!! json_encode($account->getBodyFontName()) !!};
+  @if ($company->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN))
+      NINJA.primaryColor = "{{ $company->primary_color }}";
+      NINJA.secondaryColor = "{{ $company->secondary_color }}";
+      NINJA.fontSize = {{ $company->font_size }};
+      NINJA.headerFont = {!! json_encode($company->getHeaderFontName()) !!};
+      NINJA.bodyFont = {!! json_encode($company->getBodyFontName()) !!};
   @else
       NINJA.primaryColor = "";
       NINJA.secondaryColor = "";
@@ -102,7 +102,7 @@
       NINJA.bodyFont = "Roboto";
   @endif
 
-  var invoiceLabels = {!! json_encode($account->getInvoiceLabels()) !!};
+  var invoiceLabels = {!! json_encode($company->getInvoiceLabels()) !!};
 
   if (window.invoice) {
     //invoiceLabels.item = invoice.has_tasks ? invoiceLabels.date : invoiceLabels.item_orig;
@@ -161,7 +161,7 @@
 
   function showMoreDesigns() {
     loadImages('#designThumbs');
-    trackEvent('/account', '/view_more_designs');
+    trackEvent('/company', '/view_more_designs');
     $('#moreDesignsModal').modal('show');
   }
 

@@ -44,7 +44,7 @@ class SupportNewPricing extends Migration
         }
 
         // https://github.com/invoiceninja/invoiceninja/pull/950
-        Schema::table('accounts', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table) {
             $table->integer('start_of_week');
         });
 
@@ -88,7 +88,7 @@ class SupportNewPricing extends Migration
             $table->dropColumn('task_id');
         });
 
-        Schema::table('accounts', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table) {
             $table->dropColumn('start_of_week');
         });
 

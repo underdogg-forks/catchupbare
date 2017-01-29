@@ -113,9 +113,9 @@ class Document extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     /**
@@ -319,7 +319,7 @@ class Document extends EntityModel
 
 Document::deleted(function ($document) {
     $same_path_count = DB::table('documents')
-        ->where('documents.account_id', '=', $document->account_id)
+        ->where('documents.company_id', '=', $document->company_id)
         ->where('documents.path', '=', $document->path)
         ->where('documents.disk', '=', $document->disk)
         ->count();
@@ -330,7 +330,7 @@ Document::deleted(function ($document) {
 
     if($document->preview){
         $same_preview_count = DB::table('documents')
-            ->where('documents.account_id', '=', $document->account_id)
+            ->where('documents.company_id', '=', $document->company_id)
             ->where('documents.preview', '=', $document->preview)
             ->where('documents.disk', '=', $document->disk)
             ->count();

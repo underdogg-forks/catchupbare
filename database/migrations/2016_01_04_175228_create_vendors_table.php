@@ -17,7 +17,7 @@ class CreateVendorsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('account_id');
+            $table->unsignedInteger('company_id');
             $table->unsignedInteger('currency_id')->nullable();
             $table->string('name')->nullable();
             $table->string('address1');
@@ -34,7 +34,7 @@ class CreateVendorsTable extends Migration
             $table->string('vat_number')->nullable();
             $table->string('id_number')->nullable();
 
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('country_id')->references('id')->on('countries');
             $table->foreign('currency_id')->references('id')->on('currencies');
@@ -42,7 +42,7 @@ class CreateVendorsTable extends Migration
 
         Schema::create('vendor_contacts', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('account_id');
+            $table->unsignedInteger('company_id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('vendor_id')->index();
             $table->timestamps();
@@ -56,10 +56,10 @@ class CreateVendorsTable extends Migration
 
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
             $table->unsignedInteger('public_id')->nullable();
-            $table->unique(array('account_id', 'public_id'));
+            $table->unique(array('company_id', 'public_id'));
         });
 
         Schema::create('expenses', function (Blueprint $table) {
@@ -67,7 +67,7 @@ class CreateVendorsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unsignedInteger('account_id')->index();
+            $table->unsignedInteger('company_id')->index();
             $table->unsignedInteger('vendor_id')->nullable();
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('invoice_id')->nullable();
@@ -83,24 +83,24 @@ class CreateVendorsTable extends Migration
             $table->boolean('should_be_invoiced')->default(true);
 
             // Relations
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             // Indexes
             $table->unsignedInteger('public_id')->index();
-            $table->unique(array('account_id', 'public_id'));
+            $table->unique(array('company_id', 'public_id'));
         });
 
         Schema::table('payment_terms', function (Blueprint $table) {
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('account_id');
+            $table->unsignedInteger('company_id');
             $table->unsignedInteger('public_id')->index();
 
-            //$table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            //$table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             //$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            //$table->unique(array('account_id', 'public_id'));
+            //$table->unique(array('company_id', 'public_id'));
         });
 
         // Update public id
@@ -119,7 +119,7 @@ class CreateVendorsTable extends Migration
         });
 
         Schema::table('payment_terms', function (Blueprint $table) {
-            $table->unique(array('account_id', 'public_id'));
+            $table->unique(array('company_id', 'public_id'));
         });
     }
 

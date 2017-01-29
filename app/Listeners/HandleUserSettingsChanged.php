@@ -3,7 +3,7 @@
 use Auth;
 use Session;
 use App\Events\UserSettingsChanged;
-use App\Ninja\Repositories\AccountRepository;
+use App\Ninja\Repositories\CompanyRepository;
 use App\Ninja\Mailers\UserMailer;
 
 /**
@@ -14,12 +14,12 @@ class HandleUserSettingsChanged {
 	/**
 	 * Create the event handler.
 	 * 
-	 * @param AccountRepository $accountRepo
+	 * @param CompanyRepository $companyRepo
 	 * @param UserMailer $userMailer
 	 */
-	public function __construct(AccountRepository $accountRepo, UserMailer $userMailer)
+	public function __construct(CompanyRepository $companyRepo, UserMailer $userMailer)
 	{
-        $this->accountRepo = $accountRepo;
+        $this->companyRepo = $companyRepo;
         $this->userMailer = $userMailer;
 	}
 
@@ -36,11 +36,11 @@ class HandleUserSettingsChanged {
             return;
         }
 
-        $account = Auth::user()->account;
-        $account->loadLocalizationSettings();
+        $company = Auth::user()->company;
+        $company->loadLocalizationSettings();
 
-        $users = $this->accountRepo->loadAccounts(Auth::user()->id);
-        Session::put(SESSION_USER_ACCOUNTS, $users);
+        $users = $this->companyRepo->loadAccounts(Auth::user()->id);
+        Session::put(SESSION_USERACCS, $users);
 
         if ($event->user && $event->user->isEmailBeingChanged()) {
             $this->userMailer->sendConfirmation($event->user);

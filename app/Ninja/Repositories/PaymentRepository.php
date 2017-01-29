@@ -16,21 +16,21 @@ class PaymentRepository extends BaseRepository
     public function find($clientPublicId = null, $filter = null)
     {
         $query = DB::table('payments')
-                    ->join('accounts', 'accounts.id', '=', 'payments.account_id')
+                    ->join('companies', 'companies.id', '=', 'payments.company_id')
                     ->join('clients', 'clients.id', '=', 'payments.client_id')
                     ->join('invoices', 'invoices.id', '=', 'payments.invoice_id')
                     ->join('contacts', 'contacts.client_id', '=', 'clients.id')
                     ->join('payment_statuses', 'payment_statuses.id', '=', 'payments.payment_status_id')
                     ->leftJoin('payment_types', 'payment_types.id', '=', 'payments.payment_type_id')
-                    ->leftJoin('account_gateways', 'account_gateways.id', '=', 'payments.account_gateway_id')
-                    ->leftJoin('gateways', 'gateways.id', '=', 'account_gateways.gateway_id')
-                    ->where('payments.account_id', '=', \Auth::user()->account_id)
+                    ->leftJoin('acc_gateways', 'acc_gateways.id', '=', 'payments.acc_gateway_id')
+                    ->leftJoin('gateways', 'gateways.id', '=', 'acc_gateways.gateway_id')
+                    ->where('payments.company_id', '=', \Auth::user()->company_id)
                     ->where('contacts.is_primary', '=', true)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('invoices.is_deleted', '=', false)
                     ->select('payments.public_id',
-                        DB::raw('COALESCE(clients.currency_id, accounts.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, accounts.country_id) country_id'),
+                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
                         'payments.transaction_reference',
                         DB::raw("COALESCE(NULLIF(clients.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) client_name"),
                         'clients.public_id as client_public_id',
@@ -49,7 +49,7 @@ class PaymentRepository extends BaseRepository
                         'contacts.email',
                         'payment_types.name as method',
                         'payment_types.name as payment_type',
-                        'payments.account_gateway_id',
+                        'payments.acc_gateway_id',
                         'payments.deleted_at',
                         'payments.is_deleted',
                         'payments.user_id',
@@ -92,7 +92,7 @@ class PaymentRepository extends BaseRepository
     public function findForContact($contactId = null, $filter = null)
     {
         $query = DB::table('payments')
-                    ->join('accounts', 'accounts.id', '=', 'payments.account_id')
+                    ->join('companies', 'companies.id', '=', 'payments.company_id')
                     ->join('clients', 'clients.id', '=', 'payments.client_id')
                     ->join('invoices', 'invoices.id', '=', 'payments.invoice_id')
                     ->join('contacts', 'contacts.client_id', '=', 'clients.id')
@@ -109,8 +109,8 @@ class PaymentRepository extends BaseRepository
                     ->where('invoices.is_public', '=', true)
                     ->where('invitations.contact_id', '=', $contactId)
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, accounts.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, accounts.country_id) country_id'),
+                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
                         'invitations.invitation_key',
                         'payments.public_id',
                         'payments.transaction_reference',
@@ -125,7 +125,7 @@ class PaymentRepository extends BaseRepository
                         'contacts.last_name',
                         'contacts.email',
                         'payment_types.name as payment_type',
-                        'payments.account_gateway_id',
+                        'payments.acc_gateway_id',
                         'payments.refunded',
                         'payments.expiration',
                         'payments.last4',

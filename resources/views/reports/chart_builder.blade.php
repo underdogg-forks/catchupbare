@@ -30,14 +30,14 @@
 
             // Initialize date range selector
             function cb(start, end) {
-                $('#reportrange span').html(start.format('{{ $account->getMomentDateFormat() }}') + ' - ' + end.format('{{ $account->getMomentDateFormat() }}'));
+                $('#reportrange span').html(start.format('{{ $company->getMomentDateFormat() }}') + ' - ' + end.format('{{ $company->getMomentDateFormat() }}'));
                 $('#start_date').val(start.format('YYYY-MM-DD'));
                 $('#end_date').val(end.format('YYYY-MM-DD'));
             }
 
             $('#reportrange').daterangepicker({
                 locale: {
-                    "format": "{{ $account->getMomentDateFormat() }}",
+                    "format": "{{ $company->getMomentDateFormat() }}",
                 },
                 startDate: chartStartDate,
                 endDate: chartEndDate,

@@ -16,7 +16,7 @@ class BraintreePaymentDriver extends BasePaymentDriver
             GATEWAY_TYPE_TOKEN,
         ];
 
-        if ($this->accountGateway && $this->accountGateway->getPayPalEnabled()) {
+        if ($this->accGateway && $this->accGateway->getPayPalEnabled()) {
             $types[] = GATEWAY_TYPE_PAYPAL;
         }
 

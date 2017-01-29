@@ -27,15 +27,15 @@ class InvoiceListener
             return;
         }
 
-        // Make sure the account has the same design set as the invoice does
+        // Make sure the company has the same design set as the invoice does
         if (Auth::check()) {
             $invoice = $event->invoice;
-            $account = Auth::user()->account;
+            $company = Auth::user()->company;
 
             if ($invoice->invoice_design_id
-                    && $account->invoice_design_id != $invoice->invoice_design_id) {
-                $account->invoice_design_id = $invoice->invoice_design_id;
-                $account->save();
+                    && $company->invoice_design_id != $invoice->invoice_design_id) {
+                $company->invoice_design_id = $invoice->invoice_design_id;
+                $company->save();
             }
         }
     }

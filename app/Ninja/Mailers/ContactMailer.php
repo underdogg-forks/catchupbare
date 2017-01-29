@@ -17,7 +17,7 @@ class ContactMailer extends Mailer
      */
     public static $variableFields = [
         'footer',
-        'account',
+        'company',
         'dueDate',
         'invoiceDate',
         'client',
@@ -59,11 +59,11 @@ class ContactMailer extends Mailer
      */
     public function sendInvoice(Invoice $invoice, $reminder = false, $pdfString = false)
     {
-        $invoice->load('invitations', 'client.language', 'account');
+        $invoice->load('invitations', 'client.language', 'company');
         $entityType = $invoice->getEntityType();
 
         $client = $invoice->client;
-        $account = $invoice->account;
+        $company = $invoice->company;
 
         $response = null;
 
@@ -73,18 +73,18 @@ class ContactMailer extends Mailer
             return trans('texts.email_error_inactive_invoice');
         }
 
-        $account->loadLocalizationSettings($client);
-        $emailTemplate = $account->getEmailTemplate($reminder ?: $entityType);
-        $emailSubject = $account->getEmailSubject($reminder ?: $entityType);
+        $company->loadLocalizationSettings($client);
+        $emailTemplate = $company->getEmailTemplate($reminder ?: $entityType);
+        $emailSubject = $company->getEmailSubject($reminder ?: $entityType);
 
         $sent = false;
 
-        if ($account->attachPDF() && !$pdfString) {
+        if ($company->attachPDF() && !$pdfString) {
             $pdfString = $invoice->getPDFString();
         }
 
         $documentStrings = [];
-        if ($account->document_email_attachment && $invoice->hasDocuments()) {
+        if ($company->document_email_attachment && $invoice->hasDocuments()) {
             $documents = $invoice->documents;
 
             foreach($invoice->expenses as $expense){
@@ -113,7 +113,7 @@ class ContactMailer extends Mailer
             }
         }
 
-        $account->loadLocalizationSettings();
+        $company->loadLocalizationSettings();
 
         if ($sent === true) {
             if ($invoice->isType(INVOICE_TYPE_QUOTE)) {
@@ -148,14 +148,14 @@ class ContactMailer extends Mailer
     {
 
         $client = $invoice->client;
-        $account = $invoice->account;
+        $company = $invoice->company;
 
         if (Auth::check()) {
             $user = Auth::user();
         } else {
             $user = $invitation->user;
             if ($invitation->user->trashed()) {
-                $user = $account->users()->orderBy('id')->first();
+                $user = $company->users()->orderBy('id')->first();
             }
         }
 
@@ -170,7 +170,7 @@ class ContactMailer extends Mailer
         }
 
         $variables = [
-            'account' => $account,
+            'company' => $company,
             'client' => $client,
             'invitation' => $invitation,
             'amount' => $invoice->getRequestedAmount()
@@ -181,7 +181,7 @@ class ContactMailer extends Mailer
             $variables['autobill'] = $invoice->present()->autoBillEmailMessage();
         }
 
-        if (empty($invitation->contact->password) && $account->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $account->enable_portal_password && $account->send_portal_password) {
+        if (empty($invitation->contact->password) && $company->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $company->enable_portal_password && $company->send_portal_password) {
             // The contact needs a password
             $variables['password'] = $password = $this->generatePassword();
             $invitation->contact->password = bcrypt($password);
@@ -194,25 +194,25 @@ class ContactMailer extends Mailer
             'entityType' => $invoice->getEntityType(),
             'invoiceId' => $invoice->id,
             'invitation' => $invitation,
-            'account' => $account,
+            'company' => $company,
             'client' => $client,
             'invoice' => $invoice,
             'documents' => $documentStrings,
             'notes' => $reminder,
-            'bccEmail' => $account->getBccEmail(),
-            'fromEmail' => $account->getFromEmail(),
+            'bccEmail' => $company->getBccEmail(),
+            'fromEmail' => $company->getFromEmail(),
         ];
 
-        if ($account->attachPDF()) {
+        if ($company->attachPDF()) {
             $data['pdfString'] = $pdfString;
             $data['pdfFileName'] = $invoice->getFileName();
         }
 
         $subject = $this->templateService->processVariables($subject, $variables);
         $fromEmail = $user->email;
-        $view = $account->getTemplateView(ENTITY_INVOICE);
+        $view = $company->getTemplateView(ENTITY_INVOICE);
 
-        $response = $this->sendTo($invitation->contact->email, $fromEmail, $account->getDisplayName(), $subject, $view, $data);
+        $response = $this->sendTo($invitation->contact->email, $fromEmail, $company->getDisplayName(), $subject, $view, $data);
 
         if ($response === true) {
             return true;
@@ -252,15 +252,15 @@ class ContactMailer extends Mailer
      */
     public function sendPaymentConfirmation(Payment $payment)
     {
-        $account = $payment->account;
+        $company = $payment->company;
         $client = $payment->client;
 
-        $account->loadLocalizationSettings($client);
+        $company->loadLocalizationSettings($client);
 
         $invoice = $payment->invoice;
-        $accountName = $account->getDisplayName();
-        $emailTemplate = $account->getEmailTemplate(ENTITY_PAYMENT);
-        $emailSubject = $invoice->account->getEmailSubject(ENTITY_PAYMENT);
+        $accountName = $company->getDisplayName();
+        $emailTemplate = $company->getEmailTemplate(ENTITY_PAYMENT);
+        $emailSubject = $invoice->company->getEmailSubject(ENTITY_PAYMENT);
 
         if ($payment->invitation) {
             $user = $payment->invitation->user;
@@ -273,7 +273,7 @@ class ContactMailer extends Mailer
         }
 
         $variables = [
-            'account' => $account,
+            'company' => $company,
             'client' => $client,
             'invitation' => $invitation,
             'amount' => $payment->amount,
@@ -284,14 +284,14 @@ class ContactMailer extends Mailer
             'link' => $invitation->getLink(),
             'invoice' => $invoice,
             'client' => $client,
-            'account' => $account,
+            'company' => $company,
             'payment' => $payment,
             'entityType' => ENTITY_INVOICE,
-            'bccEmail' => $account->getBccEmail(),
-            'fromEmail' => $account->getFromEmail(),
+            'bccEmail' => $company->getBccEmail(),
+            'fromEmail' => $company->getFromEmail(),
         ];
 
-        if ($account->attachPDF()) {
+        if ($company->attachPDF()) {
             $data['pdfString'] = $invoice->getPDFString();
             $data['pdfFileName'] = $invoice->getFileName();
         }
@@ -299,13 +299,13 @@ class ContactMailer extends Mailer
         $subject = $this->templateService->processVariables($emailSubject, $variables);
         $data['invoice_id'] = $payment->invoice->id;
 
-        $view = $account->getTemplateView('payment_confirmation');
+        $view = $company->getTemplateView('payment_confirmation');
 
         if ($user->email && $contact->email) {
             $this->sendTo($contact->email, $user->email, $accountName, $subject, $view, $data);
         }
 
-        $account->loadLocalizationSettings();
+        $company->loadLocalizationSettings();
     }
 
     /**

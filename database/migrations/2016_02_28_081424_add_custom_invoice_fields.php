@@ -12,7 +12,7 @@ class AddCustomInvoiceFields extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->string('custom_invoice_item_label1')->nullable();
             $table->string('custom_invoice_item_label2')->nullable();
             $table->string('recurring_invoice_number_prefix')->default('R');
@@ -34,7 +34,7 @@ class AddCustomInvoiceFields extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('custom_invoice_item_label1');
             $table->dropColumn('custom_invoice_item_label2');
             $table->dropColumn('recurring_invoice_number_prefix');

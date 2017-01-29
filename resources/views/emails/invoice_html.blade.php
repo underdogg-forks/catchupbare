@@ -4,7 +4,7 @@
   <meta charset="utf-8">
 </head>
 <body>
-    @if ($account->emailMarkupEnabled())
+    @if ($company->emailMarkupEnabled())
         @include('emails.partials.client_view_action')
     @endif
     {!! $body !!}

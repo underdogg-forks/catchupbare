@@ -19,7 +19,7 @@ class InvoiceReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $status = $this->options['invoice_status'];
 
         $clients = Client::scope()
@@ -38,7 +38,7 @@ class InvoiceReport extends AbstractReport
                                   ->with(['payments' => function($query) {
                                         $query->withArchived()
                                               ->excludeFailed()
-                                              ->with('payment_type', 'account_gateway.gateway');
+                                              ->with('payment_type', 'acc_gateway.gateway');
                                   }, 'invoice_items']);
                         }]);
 
@@ -56,9 +56,9 @@ class InvoiceReport extends AbstractReport
                         $this->isExport ? $client->getDisplayName() : $client->present()->link,
                         $this->isExport ? $invoice->invoice_number : $invoice->present()->link,
                         $invoice->present()->invoice_date,
-                        $account->formatMoney($invoice->amount, $client),
+                        $company->formatMoney($invoice->amount, $client),
                         $payment ? $payment->present()->payment_date : '',
-                        $payment ? $account->formatMoney($payment->getCompletedAmount(), $client) : '',
+                        $payment ? $company->formatMoney($payment->getCompletedAmount(), $client) : '',
                         $payment ? $payment->present()->method : '',
                     ];
 

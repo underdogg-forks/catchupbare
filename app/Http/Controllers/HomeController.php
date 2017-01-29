@@ -8,7 +8,7 @@ use View;
 use Input;
 use Mail;
 use Session;
-use App\Models\Account;
+use App\Models\Company;
 use App\Libraries\Utils;
 use App\Ninja\Mailers\Mailer;
 
@@ -41,7 +41,7 @@ class HomeController extends BaseController
     {
         Session::reflash();
 
-        if (!Utils::isNinja() && (!Utils::isDatabaseSetup() || Account::count() == 0)) {
+        if (!Utils::isNinja() && (!Utils::isDatabaseSetup() || Company::count() == 0)) {
             return Redirect::to('/setup');
         } elseif (Auth::check()) {
             return Redirect::to('/dashboard');

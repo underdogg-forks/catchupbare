@@ -32,10 +32,10 @@ class AuthController extends Controller
         if ($contactKey) {
             $contact = Contact::where('contact_key', '=', $contactKey)->first();
             if ($contact && !$contact->is_deleted) {
-                $account = $contact->account;
+                $company = $contact->company;
 
-                $data['account'] = $account;
-                $data['clientFontUrl'] = $account->getFontsUrl();
+                $data['company'] = $company;
+                $data['clientFontUrl'] = $company->getFontsUrl();
             }
         }
 

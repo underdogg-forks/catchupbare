@@ -5,7 +5,7 @@
 
     @include('money_script')
 
-    @foreach ($account->getFontFolders() as $font)
+    @foreach ($company->getFontFolders() as $font)
         <script src="{{ asset('js/vfs_fonts/'.$font.'.js') }}" type="text/javascript"></script>
     @endforeach
 	<script src="{{ asset('pdf.built.js') }}?no_cache={{ NINJA_VERSION }}" type="text/javascript"></script>
@@ -149,7 +149,7 @@
 				{!! Former::text('invoice_date')->data_bind("datePicker: invoice_date, valueUpdate: 'afterkeydown'")->label(trans("texts.{$entityType}_date"))
 							->data_date_format(Session::get(SESSION_DATE_PICKER_FORMAT, DEFAULT_DATE_PICKER_FORMAT))->appendIcon('calendar')->addGroupClass('invoice_date') !!}
 				{!! Former::text('due_date')->data_bind("datePicker: due_date, valueUpdate: 'afterkeydown'")->label(trans("texts.{$entityType}_due_date"))
-							->placeholder($invoice->exists ? ' ' : $account->present()->dueDatePlaceholder())
+							->placeholder($invoice->exists ? ' ' : $company->present()->dueDatePlaceholder())
 							->data_date_format(Session::get(SESSION_DATE_PICKER_FORMAT, DEFAULT_DATE_PICKER_FORMAT))->appendIcon('calendar')->addGroupClass('due_date') !!}
 
                 {!! Former::text('partial')->data_bind("value: partial, valueUpdate: 'afterkeydown'")->onkeyup('onPartialChange()')
@@ -167,8 +167,8 @@
 			</div>
             @endif
 
-            @if ($account->showCustomField('custom_invoice_text_label1', $invoice))
-                {!! Former::text('custom_text_value1')->label($account->custom_invoice_text_label1)->data_bind("value: custom_text_value1, valueUpdate: 'afterkeydown'") !!}
+            @if ($company->showCustomField('custom_invoice_text_label1', $invoice))
+                {!! Former::text('custom_text_value1')->label($company->custom_invoice_text_label1)->data_bind("value: custom_text_value1, valueUpdate: 'afterkeydown'") !!}
             @endif
 		</div>
 
@@ -180,7 +180,7 @@
                         ->addGroupClass('invoice-number')
                         ->data_bind("value: invoice_number, valueUpdate: 'afterkeydown'") !!}
             </span>
-            @if($account->getTokenGatewayId())
+            @if($company->getTokenGatewayId())
             <span data-bind="visible: is_recurring()" style="display: none">
                 <div data-bind="visible: !(auto_bill() == {{AUTO_BILL_OPT_IN}} &amp;&amp; client_enable_auto_bill()) &amp;&amp; !(auto_bill() == {{AUTO_BILL_OPT_OUT}} &amp;&amp; !client_enable_auto_bill())" style="display: none">
                 {!! Former::select('auto_bill')
@@ -214,8 +214,8 @@
 						->addOption(trans('texts.discount_amount'), '1')->data_bind("value: is_amount_discount")->raw()
 			) !!}
 
-            @if ($account->showCustomField('custom_invoice_text_label2', $invoice))
-                {!! Former::text('custom_text_value2')->label($account->custom_invoice_text_label2)->data_bind("value: custom_text_value2, valueUpdate: 'afterkeydown'") !!}
+            @if ($company->showCustomField('custom_invoice_text_label2', $invoice))
+                {!! Former::text('custom_text_value2')->label($company->custom_invoice_text_label2)->data_bind("value: custom_text_value2, valueUpdate: 'afterkeydown'") !!}
             @endif
 
             @if ($entityType == ENTITY_INVOICE)
@@ -228,11 +228,11 @@
                             {!! trans('texts.last_sent_on', ['date' => link_to('/invoices/'.$lastSent->public_id, $invoice->last_sent_date, ['id' => 'lastSent'])]) !!} <br/>
                         @endif
                         @if ($invoice->is_recurring && $invoice->getNextSendDate())
-                           {!! trans('texts.next_send_on', ['date' => '<span data-bind="tooltip: {title: \''.$invoice->getPrettySchedule().'\', html: true}">'.$account->formatDate($invoice->getNextSendDate()).
+                           {!! trans('texts.next_send_on', ['date' => '<span data-bind="tooltip: {title: \''.$invoice->getPrettySchedule().'\', html: true}">'.$company->formatDate($invoice->getNextSendDate()).
                                 '<span class="glyphicon glyphicon-info-sign" style="padding-left:10px;color:#B1B5BA"></span></span>']) !!}
                             @if ($invoice->getDueDate())
                                 <br>
-                                {!! trans('texts.next_due_on', ['date' => '<span>'.$account->formatDate($invoice->getDueDate($invoice->getNextSendDate())).'</span>']) !!}
+                                {!! trans('texts.next_due_on', ['date' => '<span>'.$company->formatDate($invoice->getDueDate($invoice->getNextSendDate())).'</span>']) !!}
                             @endif
                         @endif
                     @endif
@@ -249,15 +249,15 @@
 				<th style="min-width:32px;" class="hide-border"></th>
 				<th style="width:25%">{{ $invoiceLabels['item'] }}</th>
 				<th style="width:100%">{{ $invoiceLabels['description'] }}</th>
-                @if ($account->showCustomField('custom_invoice_item_label1'))
-                    <th style="min-width:120px">{{ $account->custom_invoice_item_label1 }}</th>
+                @if ($company->showCustomField('custom_invoice_item_label1'))
+                    <th style="min-width:120px">{{ $company->custom_invoice_item_label1 }}</th>
                 @endif
-                @if ($account->showCustomField('custom_invoice_item_label2'))
-                    <th style="min-width:120px">{{ $account->custom_invoice_item_label2 }}</th>
+                @if ($company->showCustomField('custom_invoice_item_label2'))
+                    <th style="min-width:120px">{{ $company->custom_invoice_item_label2 }}</th>
                 @endif
 				<th style="min-width:120px" data-bind="text: costLabel">{{ $invoiceLabels['unit_cost'] }}</th>
-				<th style="{{ $account->hide_quantity ? 'display:none' : 'min-width:120px' }}" data-bind="text: qtyLabel">{{ $invoiceLabels['quantity'] }}</th>
-				<th style="min-width:{{ $account->enable_second_tax_rate ? 180 : 120 }}px;display:none;" data-bind="visible: $root.invoice_item_taxes.show">{{ trans('texts.tax') }}</th>
+				<th style="{{ $company->hide_quantity ? 'display:none' : 'min-width:120px' }}" data-bind="text: qtyLabel">{{ $invoiceLabels['quantity'] }}</th>
+				<th style="min-width:{{ $company->enable_second_tax_rate ? 180 : 120 }}px;display:none;" data-bind="visible: $root.invoice_item_taxes.show">{{ trans('texts.tax') }}</th>
 				<th style="min-width:120px;">{{ trans('texts.line_total') }}</th>
 				<th style="min-width:32px;" class="hide-border"></th>
 			</tr>
@@ -279,12 +279,12 @@
                         <input type="text" data-bind="value: task_public_id, attr: {name: 'invoice_items[' + $index() + '][task_public_id]'}" style="display: none"/>
 						<input type="text" data-bind="value: expense_public_id, attr: {name: 'invoice_items[' + $index() + '][expense_public_id]'}" style="display: none"/>
 				</td>
-                @if ($account->showCustomField('custom_invoice_item_label1'))
+                @if ($company->showCustomField('custom_invoice_item_label1'))
                     <td>
                         <input data-bind="value: custom_value1, valueUpdate: 'afterkeydown', attr: {name: 'invoice_items[' + $index() + '][custom_value1]'}" class="form-control invoice-item"/>
                     </td>
                 @endif
-                @if ($account->showCustomField('custom_invoice_item_label2'))
+                @if ($company->showCustomField('custom_invoice_item_label2'))
                     <td>
                         <input data-bind="value: custom_value2, valueUpdate: 'afterkeydown', attr: {name: 'invoice_items[' + $index() + '][custom_value2]'}" class="form-control invoice-item"/>
                     </td>
@@ -293,7 +293,7 @@
 					<input data-bind="value: prettyCost, valueUpdate: 'afterkeydown', attr: {name: 'invoice_items[' + $index() + '][cost]'}"
                         style="text-align: right" class="form-control invoice-item"/>
 				</td>
-				<td style="{{ $account->hide_quantity ? 'display:none' : '' }}">
+				<td style="{{ $company->hide_quantity ? 'display:none' : '' }}">
 					<input data-bind="value: prettyQty, valueUpdate: 'afterkeydown', attr: {name: 'invoice_items[' + $index() + '][qty]'}"
                         style="text-align: right" class="form-control invoice-item" name="quantity"/>
 				</td>
@@ -302,11 +302,11 @@
 	                            ->addOption('', '')
 	                            ->options($taxRateOptions)
 	                            ->data_bind('value: tax1, event:{change:onTax1Change}')
-	                            ->addClass($account->enable_second_tax_rate ? 'tax-select' : '')
+	                            ->addClass($company->enable_second_tax_rate ? 'tax-select' : '')
 	                            ->raw() !!}
                     <input type="text" data-bind="value: tax_name1, attr: {name: 'invoice_items[' + $index() + '][tax_name1]'}" style="display:none">
                     <input type="text" data-bind="value: tax_rate1, attr: {name: 'invoice_items[' + $index() + '][tax_rate1]'}" style="display:none">
-                    <div data-bind="visible: $root.invoice().account.enable_second_tax_rate == '1'">
+                    <div data-bind="visible: $root.invoice().company.enable_second_tax_rate == '1'">
                         {!! Former::select('')
                                 ->addOption('', '')
                                 ->options($taxRateOptions)
@@ -332,7 +332,7 @@
 		<tfoot>
 			<tr>
 				<td class="hide-border"/>
-				<td class="hide-border" colspan="{{ 2 + ($account->showCustomField('custom_invoice_item_label1') ? 1 : 0) + ($account->showCustomField('custom_invoice_item_label2') ? 1 : 0) }}" rowspan="6" style="vertical-align:top">
+				<td class="hide-border" colspan="{{ 2 + ($company->showCustomField('custom_invoice_item_label1') ? 1 : 0) + ($company->showCustomField('custom_invoice_item_label2') ? 1 : 0) }}" rowspan="6" style="vertical-align:top">
 					<br/>
                     <div role="tabpanel">
 
@@ -340,7 +340,7 @@
                         <li role="presentation" class="active"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">{{ trans('texts.note_to_client') }}</a></li>
                         <li role="presentation"><a href="#terms" aria-controls="terms" role="tab" data-toggle="tab">{{ trans("texts.terms") }}</a></li>
                         <li role="presentation"><a href="#footer" aria-controls="footer" role="tab" data-toggle="tab">{{ trans("texts.footer") }}</a></li>
-                        @if ($account->hasFeature(FEATURE_DOCUMENTS))
+                        @if ($company->hasFeature(FEATURE_DOCUMENTS))
                             <li role="presentation"><a href="#attached-documents" aria-controls="attached-documents" role="tab" data-toggle="tab">
                                 {{ trans("texts.invoice_documents") }}
                                 @if (count($invoice->documents))
@@ -379,7 +379,7 @@
                                         </div>
                                     </div>') !!}
                         </div>
-                        @if ($account->hasFeature(FEATURE_DOCUMENTS))
+                        @if ($company->hasFeature(FEATURE_DOCUMENTS))
                         <div role="tabpanel" class="tab-pane" id="attached-documents" style="position:relative;z-index:9">
                             <div id="document-upload">
                                 <div class="dropzone">
@@ -403,38 +403,38 @@
 
 				</td>
 				<td class="hide-border" style="display:none" data-bind="visible: $root.invoice_item_taxes.show"/>
-				<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ trans('texts.subtotal') }}</td>
+				<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ trans('texts.subtotal') }}</td>
 				<td style="text-align: right"><span data-bind="text: totals.subtotal"/></td>
 			</tr>
 
 			<tr style="display:none" data-bind="visible: discount() != 0">
 				<td class="hide-border" colspan="3"/>
 				<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-				<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ trans('texts.discount') }}</td>
+				<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ trans('texts.discount') }}</td>
 				<td style="text-align: right"><span data-bind="text: totals.discounted"/></td>
 			</tr>
 
-            @if ($account->showCustomField('custom_invoice_label1', $invoice) && $account->custom_invoice_taxes1)
+            @if ($company->showCustomField('custom_invoice_label1', $invoice) && $company->custom_invoice_taxes1)
 				<tr>
 					<td class="hide-border" colspan="3"/>
 					<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-					<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ $account->custom_invoice_label1 ?: trans('texts.adjustment') }}</td>
+					<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ $company->custom_invoice_label1 ?: trans('texts.adjustment') }}</td>
 					<td style="text-align: right;padding-right: 28px" colspan="2"><input name="custom_value1" class="form-control" data-bind="value: custom_value1, valueUpdate: 'afterkeydown'"/></td>
 				</tr>
 			@endif
 
-            @if ($account->showCustomField('custom_invoice_label2', $invoice) && $account->custom_invoice_taxes2)
+            @if ($company->showCustomField('custom_invoice_label2', $invoice) && $company->custom_invoice_taxes2)
 				<tr>
 					<td class="hide-border" colspan="3"/>
 					<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-					<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ $account->custom_invoice_label2 ?: trans('texts.adjustment') }}</td>
+					<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ $company->custom_invoice_label2 ?: trans('texts.adjustment') }}</td>
 					<td style="text-align: right;padding-right: 28px" colspan="2"><input name="custom_value2" class="form-control" data-bind="value: custom_value2, valueUpdate: 'afterkeydown'"/></td>
 				</tr>
 			@endif
 
             <tr style="display:none" data-bind="visible: $root.invoice_item_taxes.show &amp;&amp; totals.hasItemTaxes">
                 <td class="hide-border" colspan="4"/>
-                @if (!$account->hide_quantity)
+                @if (!$company->hide_quantity)
                     <td>{{ trans('texts.tax') }}</td>
                 @endif
                 <td style="min-width:120px"><span data-bind="html: totals.itemTaxRates"/></td>
@@ -444,7 +444,7 @@
 			<tr style="display:none" data-bind="visible: $root.invoice_taxes.show">
 				<td class="hide-border" colspan="3"/>
 				<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-				@if (!$account->hide_quantity)
+				@if (!$company->hide_quantity)
 					<td>{{ trans('texts.tax') }}</td>
 				@endif
 				<td style="min-width:120px">
@@ -452,12 +452,12 @@
                             ->id('taxRateSelect1')
                             ->addOption('', '')
                             ->options($taxRateOptions)
-                            ->addClass($account->enable_second_tax_rate ? 'tax-select' : '')
+                            ->addClass($company->enable_second_tax_rate ? 'tax-select' : '')
                             ->data_bind('value: tax1, event:{change:onTax1Change}')
                             ->raw() !!}
                     <input type="text" name="tax_name1" data-bind="value: tax_name1" style="display:none">
                     <input type="text" name="tax_rate1" data-bind="value: tax_rate1" style="display:none">
-                    <div data-bind="visible: $root.invoice().account.enable_second_tax_rate == '1'">
+                    <div data-bind="visible: $root.invoice().company.enable_second_tax_rate == '1'">
                     {!! Former::select('')
                             ->addOption('', '')
                             ->options($taxRateOptions)
@@ -471,29 +471,29 @@
 				<td style="text-align: right"><span data-bind="text: totals.taxAmount"/></td>
 			</tr>
 
-            @if ($account->showCustomField('custom_invoice_label1', $invoice) && !$account->custom_invoice_taxes1)
+            @if ($company->showCustomField('custom_invoice_label1', $invoice) && !$company->custom_invoice_taxes1)
 				<tr>
 					<td class="hide-border" colspan="3"/>
 					<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-					<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ $account->custom_invoice_label1 ?: trans('texts.adjustment') }}</td>
+					<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ $company->custom_invoice_label1 ?: trans('texts.adjustment') }}</td>
 					<td style="text-align: right;padding-right: 28px" colspan="2"><input name="custom_value1" class="form-control" data-bind="value: custom_value1, valueUpdate: 'afterkeydown'"/></td>
 				</tr>
 			@endif
 
-            @if ($account->showCustomField('custom_invoice_label2', $invoice) && !$account->custom_invoice_taxes2)
+            @if ($company->showCustomField('custom_invoice_label2', $invoice) && !$company->custom_invoice_taxes2)
 				<tr>
 					<td class="hide-border" colspan="3"/>
 					<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-					<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ $account->custom_invoice_label2 ?: trans('texts.adjustment') }}</td>
+					<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ $company->custom_invoice_label2 ?: trans('texts.adjustment') }}</td>
 					<td style="text-align: right;padding-right: 28px" colspan="2"><input name="custom_value2" class="form-control" data-bind="value: custom_value2, valueUpdate: 'afterkeydown'"/></td>
 				</tr>
 			@endif
 
-			@if (!$account->hide_paid_to_date)
+			@if (!$company->hide_paid_to_date)
 				<tr>
 					<td class="hide-border" colspan="3"/>
 					<td style="display:none" class="hide-border" data-bind="visible: $root.invoice_item_taxes.show"/>
-					<td colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ trans('texts.paid_to_date') }}</td>
+					<td colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ trans('texts.paid_to_date') }}</td>
 					<td style="text-align: right" data-bind="text: totals.paidToDate"></td>
 				</tr>
 			@endif
@@ -501,14 +501,14 @@
 			<tr data-bind="style: { 'font-weight': partial() ? 'normal' : 'bold', 'font-size': partial() ? '1em' : '1.05em' }">
 				<td class="hide-border" colspan="3"/>
 				<td class="hide-border" style="display:none" data-bind="visible: $root.invoice_item_taxes.show"/>
-				<td class="hide-border" data-bind="css: {'hide-border': !partial()}" colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ $entityType == ENTITY_INVOICE ? $invoiceLabels['balance_due'] : trans('texts.total') }}</td>
+				<td class="hide-border" data-bind="css: {'hide-border': !partial()}" colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ $entityType == ENTITY_INVOICE ? $invoiceLabels['balance_due'] : trans('texts.total') }}</td>
 				<td class="hide-border" data-bind="css: {'hide-border': !partial()}" style="text-align: right"><span data-bind="text: totals.total"></span></td>
 			</tr>
 
 			<tr style="font-size:1.05em; display:none; font-weight:bold" data-bind="visible: partial">
 				<td class="hide-border" colspan="3"/>
 				<td class="hide-border" style="display:none" data-bind="visible: $root.invoice_item_taxes.show"/>
-				<td class="hide-border" colspan="{{ $account->hide_quantity ? 1 : 2 }}">{{ $invoiceLabels['partial_due'] }}</td>
+				<td class="hide-border" colspan="{{ $company->hide_quantity ? 1 : 2 }}">{{ $invoiceLabels['partial_due'] }}</td>
 				<td class="hide-border" style="text-align: right"><span data-bind="text: totals.partial"></span></td>
 			</tr>
 
@@ -581,9 +581,9 @@
 	</div>
 	<p>&nbsp;</p>
 
-	@include('invoices.pdf', ['account' => Auth::user()->account, 'hide_pdf' => ! Auth::user()->account->live_preview])
+	@include('invoices.pdf', ['company' => Auth::user()->company, 'hide_pdf' => ! Auth::user()->company->live_preview])
 
-	@if (!Auth::user()->account->isPro())
+	@if (!Auth::user()->company->isPro())
 		<div style="font-size:larger">
 			{!! trans('texts.pro_plan_remove_logo', ['link'=>'<a href="javascript:showUpgradeModal()">' . trans('texts.pro_plan_remove_logo_link') . '</a>']) !!}
 		</div>
@@ -610,16 +610,16 @@
                     ->data_bind("value: name, valueUpdate: 'afterkeydown', attr { placeholder: name.placeholder }")
                     ->label('client_name') !!}
 
-				@if ( ! $account->client_number_counter)
+				@if ( ! $company->client_number_counter)
                 <span data-bind="visible: $root.showMore">
 				@endif
 
             	{!! Former::text('client[id_number]')
                             ->label('id_number')
-							->placeholder($account->clientNumbersEnabled() ? $account->getNextNumber() : ' ')
+							->placeholder($company->clientNumbersEnabled() ? $company->getNextNumber() : ' ')
                             ->data_bind("value: id_number, valueUpdate: 'afterkeydown'") !!}
 
-				@if ( ! $account->client_number_counter)
+				@if ( ! $company->client_number_counter)
 				</span>
 				@endif
 
@@ -638,14 +638,14 @@
                 </span>
 
                 @if (Auth::user()->hasFeature(FEATURE_INVOICE_SETTINGS))
-                    @if ($account->custom_client_label1)
+                    @if ($company->custom_client_label1)
                         {!! Former::text('client[custom_value1]')
-                            ->label($account->custom_client_label1)
+                            ->label($company->custom_client_label1)
                             ->data_bind("value: custom_value1, valueUpdate: 'afterkeydown'") !!}
                     @endif
-                    @if ($account->custom_client_label2)
+                    @if ($company->custom_client_label2)
                         {!! Former::text('client[custom_value2]')
-                            ->label($account->custom_client_label2)
+                            ->label($company->custom_client_label2)
                             ->data_bind("value: custom_value2, valueUpdate: 'afterkeydown'") !!}
                     @endif
                 @endif
@@ -692,7 +692,7 @@
                             ->addClass('client-email') !!}
                     {!! Former::text('phone')->data_bind("value: phone, valueUpdate: 'afterkeydown',
                             attr: {name: 'client[contacts][' + \$index() + '][phone]'}") !!}
-                    @if ($account->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $account->enable_portal_password)
+                    @if ($company->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $company->enable_portal_password)
                         {!! Former::password('password')->data_bind("value: (typeof password=='function'?password():null)?'-%unchanged%-':'', valueUpdate: 'afterkeydown',
                             attr: {name: 'client[contacts][' + \$index() + '][password]'}") !!}
                     @endif
@@ -713,14 +713,14 @@
                 </span>
 
                 {!! Former::select('client[currency_id]')->addOption('','')
-                        ->placeholder($account->currency ? $account->currency->name : '')
+                        ->placeholder($company->currency ? $company->currency->name : '')
                         ->label(trans('texts.currency_id'))
                         ->data_bind('value: currency_id')
                         ->fromQuery($currencies, 'name', 'id') !!}
 
                 <span data-bind="visible: $root.showMore">
                 {!! Former::select('client[language_id]')->addOption('','')
-                        ->placeholder($account->language ? $account->language->name : '')
+                        ->placeholder($company->language ? $company->language->name : '')
                         ->label(trans('texts.language_id'))
                         ->data_bind('value: language_id')
                         ->fromQuery($languages, 'name', 'id') !!}
@@ -815,7 +815,7 @@
 
     var products = {!! $products !!};
     var clients = {!! $clients !!};
-    var account = {!! Auth::user()->account !!};
+    var company = {!! Auth::user()->company !!};
     var dropzone;
 
     var clientMap = {};
@@ -868,10 +868,10 @@
                 }
                 model.invoice().addItem(); // add blank item
             @else
-                model.invoice().custom_taxes1({{ $account->custom_invoice_taxes1 ? 'true' : 'false' }});
-                model.invoice().custom_taxes2({{ $account->custom_invoice_taxes2 ? 'true' : 'false' }});
-                // set the default account tax rate
-                @if ($account->invoice_taxes && ! empty($defaultTax))
+                model.invoice().custom_taxes1({{ $company->custom_invoice_taxes1 ? 'true' : 'false' }});
+                model.invoice().custom_taxes2({{ $company->custom_invoice_taxes2 ? 'true' : 'false' }});
+                // set the default company tax rate
+                @if ($company->invoice_taxes && ! empty($defaultTax))
                     var defaultTax = {!! $defaultTax->toJson() !!};
                     model.invoice().tax_rate1(defaultTax.rate);
                     model.invoice().tax_name1(defaultTax.name);
@@ -1043,7 +1043,7 @@
 
         applyComboboxListeners();
 
-        @if (Auth::user()->account->hasFeature(FEATURE_DOCUMENTS))
+        @if (Auth::user()->company->hasFeature(FEATURE_DOCUMENTS))
         $('.main-form').submit(function(){
             if($('#document-upload .dropzone .fallback input').val())$(this).attr('enctype', 'multipart/form-data')
             else $(this).removeAttr('enctype')
@@ -1172,17 +1172,17 @@
 
         @if (!$invoice->id)
             if (!invoice.terms) {
-                invoice.terms = account['{{ $entityType }}_terms'];
+                invoice.terms = company['{{ $entityType }}_terms'];
             }
             if (!invoice.invoice_footer) {
-                invoice.invoice_footer = account['invoice_footer'];
+                invoice.invoice_footer = company['invoice_footer'];
             }
         @endif
 
-		@if ($account->hasLogo())
-			invoice.image = "{{ Form::image_data($account->getLogoRaw(), true) }}";
-			invoice.imageWidth = {{ $account->getLogoWidth() }};
-			invoice.imageHeight = {{ $account->getLogoHeight() }};
+		@if ($company->hasLogo())
+			invoice.image = "{{ Form::image_data($company->getLogoRaw(), true) }}";
+			invoice.imageWidth = {{ $company->getLogoWidth() }};
+			invoice.imageHeight = {{ $company->getLogoHeight() }};
 		@endif
 
         //invoiceLabels.item = invoice.has_tasks ? invoiceLabels.date : invoiceLabels.item_orig;
@@ -1193,7 +1193,7 @@
 	}
 
 	function getPDFString(cb, force) {
-		@if ( ! $account->live_preview)
+		@if ( ! $company->live_preview)
 			return;
 		@endif
         var invoice = createInvoiceModel();
@@ -1279,9 +1279,9 @@
 
 		sweetConfirm(function() {
 			model.invoice().is_public(true);
-            var accountLanguageId = parseInt({{ $account->language_id ?: '0' }});
+            var accountLanguageId = parseInt({{ $company->language_id ?: '0' }});
             var clientLanguageId = parseInt(model.invoice().client().language_id()) || 0;
-            var attachPDF = {{ $account->attachPDF() ? 'true' : 'false' }};
+            var attachPDF = {{ $company->attachPDF() ? 'true' : 'false' }};
 
             // if they aren't attaching the pdf no need to generate it
             if ( ! attachPDF) {
@@ -1397,7 +1397,7 @@
 
         // check currency matches for expenses
         var expenseCurrencyId = model.expense_currency_id();
-        var clientCurrencyId = model.invoice().client().currency_id() || {{ $account->getCurrencyId() }};
+        var clientCurrencyId = model.invoice().client().currency_id() || {{ $company->getCurrencyId() }};
         if (expenseCurrencyId && expenseCurrencyId != clientCurrencyId) {
             swal("{!! trans('texts.expense_error_mismatch_currencies') !!}");
             return false;
@@ -1590,10 +1590,10 @@
     }
 
     function setInvoiceNumber(client) {
-        @if ($invoice->id || !$account->hasClientNumberPattern($invoice))
+        @if ($invoice->id || !$company->hasClientNumberPattern($invoice))
             return;
         @endif
-        var number = '{{ $account->applyNumberPattern($invoice) }}';
+        var number = '{{ $company->applyNumberPattern($invoice) }}';
         number = number.replace('{$custom1}', client.custom_value1 ? client.custom_value1 : '');
         number = number.replace('{$custom2}', client.custom_value2 ? client.custom_value1 : '');
         number = number.replace('{$idNumber}', client.id_number ? client.id_number : '');
@@ -1631,7 +1631,7 @@
         window.countUploadingDocuments--;
         file.public_id = response.document.public_id
         model.invoice().documents()[file.index].update(response.document);
-        @if ($account->invoice_embed_documents)
+        @if ($company->invoice_embed_documents)
             refreshPDF(true);
         @endif
         if(response.document.preview_url){
@@ -1648,7 +1648,7 @@
     }
 
 	</script>
-    @if ($account->hasFeature(FEATURE_DOCUMENTS) && $account->invoice_embed_documents)
+    @if ($company->hasFeature(FEATURE_DOCUMENTS) && $company->invoice_embed_documents)
         @foreach ($invoice->documents as $document)
             @if($document->isPDFEmbeddable())
                 <script src="{{ $document->getVFSJSUrl() }}" type="text/javascript" async></script>

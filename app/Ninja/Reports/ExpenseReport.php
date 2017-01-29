@@ -18,7 +18,7 @@ class ExpenseReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $expenses = Expense::scope()
                         ->withArchived()

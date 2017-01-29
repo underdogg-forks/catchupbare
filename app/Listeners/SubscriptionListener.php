@@ -30,7 +30,7 @@ class SubscriptionListener
      */
     public function createdClient(ClientWasCreated $event)
     {
-        $transformer = new ClientTransformer($event->client->account);
+        $transformer = new ClientTransformer($event->client->company);
         $this->checkSubscriptions(EVENT_CREATE_CLIENT, $event->client, $transformer);
     }
 
@@ -39,7 +39,7 @@ class SubscriptionListener
      */
     public function createdQuote(QuoteWasCreated $event)
     {
-        $transformer = new InvoiceTransformer($event->quote->account);
+        $transformer = new InvoiceTransformer($event->quote->company);
         $this->checkSubscriptions(EVENT_CREATE_QUOTE, $event->quote, $transformer, ENTITY_CLIENT);
     }
 
@@ -48,7 +48,7 @@ class SubscriptionListener
      */
     public function createdPayment(PaymentWasCreated $event)
     {
-        $transformer = new PaymentTransformer($event->payment->account);
+        $transformer = new PaymentTransformer($event->payment->company);
         $this->checkSubscriptions(EVENT_CREATE_PAYMENT, $event->payment, $transformer, [ENTITY_CLIENT, ENTITY_INVOICE]);
     }
 
@@ -57,7 +57,7 @@ class SubscriptionListener
      */
     public function createdInvoice(InvoiceWasCreated $event)
     {
-        $transformer = new InvoiceTransformer($event->invoice->account);
+        $transformer = new InvoiceTransformer($event->invoice->company);
         $this->checkSubscriptions(EVENT_CREATE_INVOICE, $event->invoice, $transformer, ENTITY_CLIENT);
     }
 
@@ -90,7 +90,7 @@ class SubscriptionListener
 	 */
     public function updatedInvoice(InvoiceWasUpdated $event)
     {
-	    $transformer = new InvoiceTransformer($event->invoice->account);
+	    $transformer = new InvoiceTransformer($event->invoice->company);
 	    $this->checkSubscriptions(EVENT_UPDATE_INVOICE, $event->invoice, $transformer, ENTITY_CLIENT);
     }
 
@@ -99,7 +99,7 @@ class SubscriptionListener
 	 */
     public function deletedInvoice(InvoiceWasDeleted $event)
     {
-	    $transformer = new InvoiceTransformer($event->invoice->account);
+	    $transformer = new InvoiceTransformer($event->invoice->company);
 	    $this->checkSubscriptions(EVENT_DELETE_INVOICE, $event->invoice, $transformer, ENTITY_CLIENT);
     }
 
@@ -108,7 +108,7 @@ class SubscriptionListener
 	 */
     public function updatedQuote(QuoteWasUpdated $event)
     {
-	    $transformer = new InvoiceTransformer($event->quote->account);
+	    $transformer = new InvoiceTransformer($event->quote->company);
 	    $this->checkSubscriptions(EVENT_UPDATE_QUOTE, $event->quote, $transformer, ENTITY_CLIENT);
     }
 
@@ -117,7 +117,7 @@ class SubscriptionListener
 	 */
     public function deletedQuote(QuoteWasDeleted $event)
     {
-	    $transformer = new InvoiceTransformer($event->quote->account);
+	    $transformer = new InvoiceTransformer($event->quote->company);
 	    $this->checkSubscriptions(EVENT_DELETE_QUOTE, $event->quote, $transformer, ENTITY_CLIENT);
     }
 
@@ -133,7 +133,7 @@ class SubscriptionListener
             return;
         }
 
-        $subscription = $entity->account->getSubscription($eventId);
+        $subscription = $entity->company->getSubscription($eventId);
 
         if ($subscription) {
             $manager = new Manager();

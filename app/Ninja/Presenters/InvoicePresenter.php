@@ -21,17 +21,17 @@ class InvoicePresenter extends EntityPresenter {
     public function amount()
     {
         $invoice = $this->entity;
-        $account = $invoice->account;
+        $company = $invoice->company;
 
-        return $account->formatMoney($invoice->amount, $invoice->client);
+        return $company->formatMoney($invoice->amount, $invoice->client);
     }
 
     public function requestedAmount()
     {
         $invoice = $this->entity;
-        $account = $invoice->account;
+        $company = $invoice->company;
 
-        return $account->formatMoney($invoice->getRequestedAmount(), $invoice->client);
+        return $company->formatMoney($invoice->getRequestedAmount(), $invoice->client);
     }
 
     public function balanceDueLabel()
@@ -91,7 +91,7 @@ class InvoicePresenter extends EntityPresenter {
         $invoice = $this->entity;
 
         if ($invoice->is_amount_discount) {
-            return $invoice->account->formatMoney($invoice->discount);
+            return $invoice->company->formatMoney($invoice->discount);
         } else {
             return $invoice->discount . '%';
         }
@@ -227,7 +227,7 @@ class InvoicePresenter extends EntityPresenter {
             foreach ($invoice->payments as $payment) {
                 $label = trans('texts.view_payment');
                 if (count($invoice->payments) > 1) {
-                    $label .= ' - ' . $invoice->account->formatMoney($payment->amount, $invoice->client);
+                    $label .= ' - ' . $invoice->company->formatMoney($payment->amount, $invoice->client);
                 }
                 $actions[] = ['url' => $payment->present()->url, 'label' => $label];
             }

@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Vendor;
 
 // vendor
@@ -15,7 +15,7 @@ class VendorTransformer extends EntityTransformer
     * @SWG\Property(property="balance", type="float", example=10, readOnly=true)
     * @SWG\Property(property="paid_to_date", type="float", example=10, readOnly=true)
     * @SWG\Property(property="user_id", type="integer", example=1)
-    * @SWG\Property(property="account_key", type="string", example="123456")
+    * @SWG\Property(property="acc_key", type="string", example="123456")
     * @SWG\Property(property="updated_at", type="timestamp", example="")
     * @SWG\Property(property="archived_at", type="timestamp", example="1451160233")
     * @SWG\Property(property="address1", type="string", example="10 Main St.")
@@ -44,19 +44,19 @@ class VendorTransformer extends EntityTransformer
     
     public function includeVendorContacts(Vendor $vendor)
     {
-        $transformer = new VendorContactTransformer($this->account, $this->serializer);
+        $transformer = new VendorContactTransformer($this->company, $this->serializer);
         return $this->includeCollection($vendor->vendor_contacts, $transformer, ENTITY_CONTACT);
     }
 
     public function includeInvoices(Vendor $vendor)
     {
-        $transformer = new InvoiceTransformer($this->account, $this->serializer);
+        $transformer = new InvoiceTransformer($this->company, $this->serializer);
         return $this->includeCollection($vendor->invoices, $transformer, ENTITY_INVOICE);
     }
 
     public function includeExpenses(Vendor $vendor)
     {
-        $transformer = new ExpenseTransformer($this->account, $this->serializer);
+        $transformer = new ExpenseTransformer($this->company, $this->serializer);
         return $this->includeCollection($vendor->expenses, $transformer, ENTITY_EXPENSE);
     }
 

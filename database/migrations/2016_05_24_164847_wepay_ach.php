@@ -26,7 +26,7 @@ class WepayAch extends Migration
             $table->string('ip')->nullable();
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->boolean('auto_bill_on_due_date')->default(false);
         });
     }
@@ -52,7 +52,7 @@ class WepayAch extends Migration
             $table->dropColumn('ip');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('auto_bill_on_due_date');
         });
     }

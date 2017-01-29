@@ -16,7 +16,7 @@ class ClientReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $clients = Client::scope()
                         ->withArchived()
@@ -40,9 +40,9 @@ class ClientReport extends AbstractReport
 
             $this->data[] = [
                 $this->isExport ? $client->getDisplayName() : $client->present()->link,
-                $account->formatMoney($amount, $client),
-                $account->formatMoney($paid, $client),
-                $account->formatMoney($amount - $paid, $client)
+                $company->formatMoney($amount, $client),
+                $company->formatMoney($paid, $client),
+                $company->formatMoney($amount - $paid, $client)
             ];
 
             $this->addToTotals($client->currency_id, 'amount', $amount);

@@ -33,9 +33,9 @@ class Corporation extends Eloquent
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function accounts()
+    public function companies()
     {
-        return $this->hasMany('App\Models\Account');
+        return $this->hasMany('App\Models\Company');
     }
 
     /**

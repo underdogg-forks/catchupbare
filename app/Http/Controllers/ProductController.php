@@ -60,7 +60,7 @@ class ProductController extends BaseController
      */
     public function getDatatable()
     {
-        return $this->productService->getDatatable(Auth::user()->account_id, Input::get('sSearch'));
+        return $this->productService->getDatatable(Auth::user()->company_id, Input::get('sSearch'));
     }
 
     /**
@@ -69,12 +69,12 @@ class ProductController extends BaseController
      */
     public function edit($publicId)
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $product = Product::scope($publicId)->withTrashed()->firstOrFail();
 
         $data = [
-          'account' => $account,
-          'taxRates' => $account->invoice_item_taxes ? TaxRate::scope()->whereIsInclusive(false)->get(['id', 'name', 'rate']) : null,
+          'company' => $company,
+          'taxRates' => $company->invoice_item_taxes ? TaxRate::scope()->whereIsInclusive(false)->get(['id', 'name', 'rate']) : null,
           'product' => $product,
           'entity' => $product,
           'method' => 'PUT',
@@ -82,7 +82,7 @@ class ProductController extends BaseController
           'title' => trans('texts.edit_product'),
         ];
 
-        return View::make('accounts.product', $data);
+        return View::make('companies.product', $data);
     }
 
     /**
@@ -90,18 +90,18 @@ class ProductController extends BaseController
      */
     public function create()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $data = [
-          'account' => $account,
-          'taxRates' => $account->invoice_item_taxes ? TaxRate::scope()->whereIsInclusive(false)->get(['id', 'name', 'rate']) : null,
+          'company' => $company,
+          'taxRates' => $company->invoice_item_taxes ? TaxRate::scope()->whereIsInclusive(false)->get(['id', 'name', 'rate']) : null,
           'product' => null,
           'method' => 'POST',
           'url' => 'products',
           'title' => trans('texts.create_product'),
         ];
 
-        return View::make('accounts.product', $data);
+        return View::make('companies.product', $data);
     }
 
     /**

@@ -57,7 +57,7 @@ class SendRecurringInvoices extends Command
         $this->info(date('Y-m-d').' Running SendRecurringInvoices...');
         $today = new DateTime();
 
-        $invoices = Invoice::with('account.timezone', 'invoice_items', 'client', 'user')
+        $invoices = Invoice::with('company.timezone', 'invoice_items', 'client', 'user')
             ->whereRaw('is_deleted IS FALSE AND deleted_at IS NULL AND is_recurring IS TRUE AND is_public IS TRUE AND frequency_id > 0 AND start_date <= ? AND (end_date IS NULL OR end_date >= ?)', [$today, $today])
             ->orderBy('id', 'asc')
             ->get();
@@ -71,7 +71,7 @@ class SendRecurringInvoices extends Command
                 continue;
             }
 
-            $recurInvoice->account->loadLocalizationSettings($recurInvoice->client);
+            $recurInvoice->company->loadLocalizationSettings($recurInvoice->client);
             $invoice = $this->invoiceRepo->createRecurringInvoice($recurInvoice);
 
             if ($invoice && !$invoice->isPaid()) {
@@ -80,7 +80,7 @@ class SendRecurringInvoices extends Command
             }
         }
 
-        $delayedAutoBillInvoices = Invoice::with('account.timezone', 'recurring_invoice', 'invoice_items', 'client', 'user')
+        $delayedAutoBillInvoices = Invoice::with('company.timezone', 'recurring_invoice', 'invoice_items', 'client', 'user')
             ->whereRaw('is_deleted IS FALSE AND deleted_at IS NULL AND is_recurring IS FALSE AND is_public IS TRUE
             AND balance > 0 AND due_date = ? AND recurring_invoice_id IS NOT NULL',
                 [$today->format('Y-m-d')])

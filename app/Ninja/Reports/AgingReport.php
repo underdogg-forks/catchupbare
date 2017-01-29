@@ -19,7 +19,7 @@ class AgingReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $clients = Client::scope()
                         ->withArchived()
@@ -43,8 +43,8 @@ class AgingReport extends AbstractReport
                     $invoice->present()->invoice_date,
                     $invoice->present()->due_date,
                     $invoice->present()->age,
-                    $account->formatMoney($invoice->amount, $client),
-                    $account->formatMoney($invoice->balance, $client),
+                    $company->formatMoney($invoice->amount, $client),
+                    $company->formatMoney($invoice->balance, $client),
                 ];
 
                 $this->addToTotals($client->currency_id, $invoice->present()->ageGroup, $invoice->balance);

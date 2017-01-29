@@ -13,31 +13,31 @@ use Event;
 use Session;
 use Response;
 use Redirect;
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Industry;
 use App\Ninja\Mailers\Mailer;
-use App\Ninja\Repositories\AccountRepository;
+use App\Ninja\Repositories\CompanyRepository;
 use App\Events\UserSettingsChanged;
 use App\Services\EmailService;
 
 class AppController extends BaseController
 {
-    protected $accountRepo;
+    protected $companyRepo;
     protected $mailer;
     protected $emailService;
 
-    public function __construct(AccountRepository $accountRepo, Mailer $mailer, EmailService $emailService)
+    public function __construct(CompanyRepository $companyRepo, Mailer $mailer, EmailService $emailService)
     {
         //parent::__construct();
 
-        $this->accountRepo = $accountRepo;
+        $this->companyRepo = $companyRepo;
         $this->mailer = $mailer;
         $this->emailService = $emailService;
     }
 
     public function showSetup()
     {
-        if (Utils::isNinjaProd() || (Utils::isDatabaseSetup() && Account::count() > 0)) {
+        if (Utils::isNinjaProd() || (Utils::isDatabaseSetup() && Company::count() > 0)) {
             return Redirect::to('/');
         }
 
@@ -75,7 +75,7 @@ class AppController extends BaseController
             return Redirect::to('/setup')->withInput();
         }
 
-        if (Utils::isDatabaseSetup() && Account::count() > 0) {
+        if (Utils::isDatabaseSetup() && Company::count() > 0) {
             return Redirect::to('/');
         }
 
@@ -129,8 +129,8 @@ class AppController extends BaseController
         $lastName = trim(Input::get('last_name'));
         $email = trim(strtolower(Input::get('email')));
         $password = trim(Input::get('password'));
-        $account = $this->accountRepo->create($firstName, $lastName, $email, $password);
-        $user = $account->users()->first();
+        $company = $this->companyRepo->create($firstName, $lastName, $email, $password);
+        $user = $company->users()->first();
 
         return Redirect::to('/login');
     }
@@ -141,7 +141,7 @@ class AppController extends BaseController
             return Redirect::to('/');
         }
 
-        if (!Auth::check() && Utils::isDatabaseSetup() && Account::count() > 0) {
+        if (!Auth::check() && Utils::isDatabaseSetup() && Company::count() > 0) {
             return Redirect::to('/');
         }
 
@@ -320,10 +320,10 @@ class AppController extends BaseController
         }
 
         if (Utils::getResllerType() == RESELLER_REVENUE_SHARE) {
-            $data = DB::table('accounts')
-                            ->leftJoin('payments', 'payments.account_id', '=', 'accounts.id')
+            $data = DB::table('companies')
+                            ->leftJoin('payments', 'payments.company_id', '=', 'companies.id')
                             ->leftJoin('clients', 'clients.id', '=', 'payments.client_id')
-                            ->where('accounts.account_key', '=', NINJA_ACCOUNT_KEY)
+                            ->where('companies.acc_key', '=', NINJA_COMPANY_KEY)
                             ->where('payments.is_deleted', '=', false)
                             ->get([
                                 'clients.public_id as client_id',

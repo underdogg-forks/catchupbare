@@ -18,7 +18,7 @@ class BankAccount extends EntityModel
      */
     public function getEntityType()
     {
-        return ENTITY_BANK_ACCOUNT;
+        return ENTITY_BANK_COMPANY;
     }
 
     /**
@@ -32,7 +32,7 @@ class BankAccount extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function bank_subaccounts()
+    public function bank_subaccs()
     {
         return $this->hasMany('App\Models\BankSubaccount');
     }

@@ -9,9 +9,9 @@ use View;
 use Crypt;
 use File;
 use Utils;
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\BankAccount;
-use App\Ninja\Repositories\BankAccountRepository;
+use App\Ninja\Repositories\BankCompanyRepository;
 use App\Services\BankAccountService;
 use App\Http\Requests\CreateBankAccountRequest;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class BankAccountController extends BaseController
     protected $bankAccountService;
     protected $bankAccountRepo;
 
-    public function __construct(BankAccountService $bankAccountService, BankAccountRepository $bankAccountRepo)
+    public function __construct(BankAccountService $bankAccountService, BankCompanyRepository $bankAccountRepo)
     {
         //parent::__construct();
 
@@ -31,12 +31,12 @@ class BankAccountController extends BaseController
 
     public function index()
     {
-        return Redirect::to('settings/' . ACCOUNT_BANKS);
+        return Redirect::to('settings/' . COMPANY_BANKS);
     }
 
     public function getDatatable()
     {
-        return $this->bankAccountService->getDatatable(Auth::user()->account_id);
+        return $this->bankAccountService->getDatatable(Auth::user()->company_id);
     }
 
     public function edit($publicId)
@@ -44,12 +44,12 @@ class BankAccountController extends BaseController
         $bankAccount = BankAccount::scope($publicId)->firstOrFail();
 
         $data = [
-            'title' => trans('texts.edit_bank_account'),
+            'title' => trans('texts.edit_bank_acc'),
             'banks' => Cache::get('banks'),
             'bankAccount' => $bankAccount,
         ];
 
-        return View::make('accounts.bank_account', $data);
+        return View::make('companies.bank_acc', $data);
     }
 
     public function update($publicId)
@@ -58,7 +58,7 @@ class BankAccountController extends BaseController
     }
 
     /**
-     * Displays the form for account creation
+     * Displays the form for company creation
      *
      */
     public function create()
@@ -68,7 +68,7 @@ class BankAccountController extends BaseController
             'bankAccount' => null,
         ];
 
-        return View::make('accounts.bank_account', $data);
+        return View::make('companies.bank_acc', $data);
     }
 
     public function bulk()
@@ -77,9 +77,9 @@ class BankAccountController extends BaseController
         $ids = Input::get('bulk_public_id');
         $count = $this->bankAccountService->bulk($ids, $action);
 
-        Session::flash('message', trans('texts.archived_bank_account'));
+        Session::flash('message', trans('texts.archived_bank_acc'));
 
-        return Redirect::to('settings/' . ACCOUNT_BANKS);
+        return Redirect::to('settings/' . COMPANY_BANKS);
     }
 
     public function validateAccount()
@@ -120,7 +120,7 @@ class BankAccountController extends BaseController
 
     public function showImportOFX()
     {
-        return view('accounts.import_ofx');
+        return view('companies.import_ofx');
     }
 
     public function doImportOFX(Request $request)
@@ -132,7 +132,7 @@ class BankAccountController extends BaseController
         } catch (\Exception $e) {
             Session::flash('error', trans('texts.ofx_parse_failed'));
             Utils::logError($e);
-            return view('accounts.import_ofx');
+            return view('companies.import_ofx');
         }
 
         $data = [
@@ -141,6 +141,6 @@ class BankAccountController extends BaseController
             'transactions' => json_encode([$data])
         ];
 
-        return View::make('accounts.bank_account', $data);
+        return View::make('companies.bank_acc', $data);
     }
 }

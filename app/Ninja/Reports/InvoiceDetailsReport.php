@@ -20,7 +20,7 @@ class InvoiceDetailsReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $status = $this->options['invoice_status'];
 
         $clients = Client::scope()
@@ -48,7 +48,7 @@ class InvoiceDetailsReport extends AbstractReport
                         $invoice->present()->invoice_date,
                         $item->product_key,
                         $item->qty,
-                        $account->formatMoney($item->cost, $client),
+                        $company->formatMoney($item->cost, $client),
                     ];
                 }
 

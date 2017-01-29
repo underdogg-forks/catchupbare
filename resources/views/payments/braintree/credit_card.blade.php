@@ -28,8 +28,8 @@
                     },
                     styles: {
                         'input': {
-                            'font-family': {!!  json_encode(Utils::getFromCache($account->getBodyFontId(), 'fonts')['css_stack']) !!},
-                            'font-weight': "{{ Utils::getFromCache($account->getBodyFontId(), 'fonts')['css_weight'] }}",
+                            'font-family': {!!  json_encode(Utils::getFromCache($company->getBodyFontId(), 'fonts')['css_stack']) !!},
+                            'font-weight': "{{ Utils::getFromCache($company->getBodyFontId(), 'fonts')['css_weight'] }}",
                             'font-size': '16px'
                         }
                     }

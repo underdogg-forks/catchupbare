@@ -134,13 +134,13 @@ class InvoiceService extends BaseService
      */
     public function approveQuote($quote, Invitation $invitation = null)
     {
-        $account = $quote->account;
+        $company = $quote->company;
 
-        if ( ! $account->hasFeature(FEATURE_QUOTES) || ! $quote->isType(INVOICE_TYPE_QUOTE) || $quote->quote_invoice_id) {
+        if ( ! $company->hasFeature(FEATURE_QUOTES) || ! $quote->isType(INVOICE_TYPE_QUOTE) || $quote->quote_invoice_id) {
             return null;
         }
 
-        if ($account->auto_convert_quote) {
+        if ($company->auto_convert_quote) {
             $invoice = $this->convertQuote($quote);
 
             foreach ($invoice->invitations as $invoiceInvitation) {
@@ -157,12 +157,12 @@ class InvoiceService extends BaseService
         return $invitation->invitation_key;
     }
 
-    public function getDatatable($accountId, $clientPublicId = null, $entityType, $search)
+    public function getDatatable($companyId, $clientPublicId = null, $entityType, $search)
     {
         $datatable = new InvoiceDatatable(true, $clientPublicId);
         $datatable->entityType = $entityType;
 
-        $query = $this->invoiceRepo->getInvoices($accountId, $clientPublicId, $entityType, $search)
+        $query = $this->invoiceRepo->getInvoices($companyId, $clientPublicId, $entityType, $search)
                     ->where('invoices.invoice_type_id', '=', $entityType == ENTITY_QUOTE ? INVOICE_TYPE_QUOTE : INVOICE_TYPE_STANDARD);
 
         if(!Utils::hasPermission('view_all')){

@@ -125,8 +125,8 @@ class TaskController extends BaseController
             'method' => 'POST',
             'url' => 'tasks',
             'title' => trans('texts.new_task'),
-            'timezone' => Auth::user()->account->timezone ? Auth::user()->account->timezone->name : DEFAULT_TIMEZONE,
-            'datetimeFormat' => Auth::user()->account->getMomentDateTimeFormat(),
+            'timezone' => Auth::user()->company->timezone ? Auth::user()->company->timezone->name : DEFAULT_TIMEZONE,
+            'datetimeFormat' => Auth::user()->company->getMomentDateTimeFormat(),
         ];
 
         $data = array_merge($data, self::getViewModel());
@@ -178,8 +178,8 @@ class TaskController extends BaseController
             'url' => 'tasks/'.$task->public_id,
             'title' => trans('texts.edit_task'),
             'actions' => $actions,
-            'timezone' => Auth::user()->account->timezone ? Auth::user()->account->timezone->name : DEFAULT_TIMEZONE,
-            'datetimeFormat' => Auth::user()->account->getMomentDateTimeFormat(),
+            'timezone' => Auth::user()->company->timezone ? Auth::user()->company->timezone->name : DEFAULT_TIMEZONE,
+            'datetimeFormat' => Auth::user()->company->getMomentDateTimeFormat(),
         ];
 
         $data = array_merge($data, self::getViewModel());
@@ -208,7 +208,7 @@ class TaskController extends BaseController
     {
         return [
             'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
-            'account' => Auth::user()->account,
+            'company' => Auth::user()->company,
             'projects' => Project::scope()->with('client.contacts')->orderBy('name')->get(),
         ];
     }
@@ -276,11 +276,11 @@ class TaskController extends BaseController
                     return Redirect::to('tasks');
                 }
 
-                $account = Auth::user()->account;
+                $company = Auth::user()->company;
                 $showProject = $lastProjectId != $task->project_id;
                 $data[] = [
                     'publicId' => $task->public_id,
-                    'description' => $task->present()->invoiceDescription($account, $showProject),
+                    'description' => $task->present()->invoiceDescription($company, $showProject),
                     'duration' => $task->getHours(),
                 ];
                 $lastProjectId = $task->project_id;
@@ -304,7 +304,7 @@ class TaskController extends BaseController
 
     private function checkTimezone()
     {
-        if (!Auth::user()->account->timezone) {
+        if (!Auth::user()->company->timezone) {
             $link = link_to('/settings/localization?focus=timezone_id', trans('texts.click_here'), ['target' => '_blank']);
             Session::flash('warning', trans('texts.timezone_unset', ['link' => $link]));
         }

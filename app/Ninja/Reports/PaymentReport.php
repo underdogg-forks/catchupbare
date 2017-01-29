@@ -19,7 +19,7 @@ class PaymentReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $payments = Payment::scope()
                         ->withArchived()
@@ -30,7 +30,7 @@ class PaymentReport extends AbstractReport
                         ->whereHas('invoice', function($query) {
                             $query->where('is_deleted', '=', false);
                         })
-                        ->with('client.contacts', 'invoice', 'payment_type', 'account_gateway.gateway')
+                        ->with('client.contacts', 'invoice', 'payment_type', 'acc_gateway.gateway')
                         ->where('payment_date', '>=', $this->startDate)
                         ->where('payment_date', '<=', $this->endDate);
 
@@ -41,9 +41,9 @@ class PaymentReport extends AbstractReport
                 $this->isExport ? $client->getDisplayName() : $client->present()->link,
                 $this->isExport ? $invoice->invoice_number : $invoice->present()->link,
                 $invoice->present()->invoice_date,
-                $account->formatMoney($invoice->amount, $client),
+                $company->formatMoney($invoice->amount, $client),
                 $payment->present()->payment_date,
-                $account->formatMoney($payment->getCompletedAmount(), $client),
+                $company->formatMoney($payment->getCompletedAmount(), $client),
                 $payment->present()->method,
             ];
 

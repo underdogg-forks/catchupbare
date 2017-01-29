@@ -94,35 +94,35 @@
 
         <div class="row">
             <div class="col-md-6 logo">
-                @if ($account->hasLogo())
-                    {!! HTML::image($account->getLogoURL()) !!}
+                @if ($company->hasLogo())
+                    {!! HTML::image($company->getLogoURL()) !!}
                 @else
-                    <h2>{{ $account->name}}</h2>
+                    <h2>{{ $company->name}}</h2>
                 @endif
             </div>
             <div class="col-md-3 address-details">
-                @if ($account->address1)
-                    {{ $account->address1 }}<br/>
+                @if ($company->address1)
+                    {{ $company->address1 }}<br/>
                 @endif
-                @if ($account->address2)
-                    {{ $account->address2 }}<br/>
+                @if ($company->address2)
+                    {{ $company->address2 }}<br/>
                 @endif
-                @if ($account->getCityState())
-                    {{ $account->getCityState() }}<br/>
+                @if ($company->getCityState())
+                    {{ $company->getCityState() }}<br/>
                 @endif
-                @if ($account->country)
-                    {{ $account->country->name }}
+                @if ($company->country)
+                    {{ $company->country->name }}
                 @endif
             </div>
             <div class="col-md-3 address-details">
-                @if ($account->website)
-                    <i class="fa fa-globe" style="width: 20px"></i><a href="{{ Utils::addHttp($account->website) }}" target="_blank">{{ $account->website }}</a><br/>
+                @if ($company->website)
+                    <i class="fa fa-globe" style="width: 20px"></i><a href="{{ Utils::addHttp($company->website) }}" target="_blank">{{ $company->website }}</a><br/>
                 @endif
-                @if ($account->work_phone)
-                    <i class="fa fa-phone" style="width: 20px"></i>{{ $account->work_phone }}<br/>
+                @if ($company->work_phone)
+                    <i class="fa fa-phone" style="width: 20px"></i>{{ $company->work_phone }}<br/>
                 @endif
-                @if ($account->work_email)
-                    <i class="fa fa-envelope" style="width: 20px"></i>{!! HTML::mailto($account->work_email, $account->work_email) !!}<br/>
+                @if ($company->work_email)
+                    <i class="fa fa-envelope" style="width: 20px"></i>{!! HTML::mailto($company->work_email, $company->work_email) !!}<br/>
                 @endif
             </div>
         </div>
@@ -134,7 +134,7 @@
                         {{ trans('texts.total_invoiced') }}
                     </div>
                     <div class="amount">
-                        {{ Utils::formatMoney($client->paid_to_date + $client->balance, $client->currency_id ?: $account->currency_id) }}
+                        {{ Utils::formatMoney($client->paid_to_date + $client->balance, $client->currency_id ?: $company->currency_id) }}
                     </div>
                 </div>
             </div>
@@ -145,7 +145,7 @@
                         {{ trans('texts.paid_to_date') }}
                     </div>
                     <div class="amount">
-                        {{ Utils::formatMoney($client->paid_to_date, $client->currency_id ?: $account->currency_id) }}
+                        {{ Utils::formatMoney($client->paid_to_date, $client->currency_id ?: $company->currency_id) }}
                     </div>
                 </div>
             </div>
@@ -156,13 +156,13 @@
                         {{ trans('texts.open_balance') }}
                     </div>
                     <div class="amount">
-                        {{ Utils::formatMoney($client->balance, $client->currency_id ?: $account->currency_id) }}
+                        {{ Utils::formatMoney($client->balance, $client->currency_id ?: $company->currency_id) }}
                     </div>
                 </div>
             </div>
         </div>
 
-        @if (!empty($account->getTokenGatewayId()))
+        @if (!empty($company->getTokenGatewayId()))
                 <div class="row">
                     <div class="col-xs-12">
                     @include('payments.paymentmethods_list')

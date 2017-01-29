@@ -35,9 +35,9 @@ function ViewModel(data) {
         @endif
     }
 
-    self.invoice_taxes = ko.observable({{ Auth::user()->account->invoice_taxes ? 'true' : 'false' }});
-    self.invoice_item_taxes = ko.observable({{ Auth::user()->account->invoice_item_taxes ? 'true' : 'false' }});
-    self.show_item_taxes = ko.observable({{ Auth::user()->account->show_item_taxes ? 'true' : 'false' }});
+    self.invoice_taxes = ko.observable({{ Auth::user()->company->invoice_taxes ? 'true' : 'false' }});
+    self.invoice_item_taxes = ko.observable({{ Auth::user()->company->invoice_item_taxes ? 'true' : 'false' }});
+    self.show_item_taxes = ko.observable({{ Auth::user()->company->show_item_taxes ? 'true' : 'false' }});
 
     self.mapping = {
         'invoice': {
@@ -155,24 +155,24 @@ function InvoiceModel(data) {
         var clientModel = false;
     } else {
         var clientModel = new ClientModel();
-        clientModel.id_number("{{ $account->getNextNumber() }}");
+        clientModel.id_number("{{ $company->getNextNumber() }}");
     }
 
     var self = this;
     this.client = ko.observable(clientModel);
     this.is_public = ko.observable(0);
-    self.account = {!! $account !!};
+    self.company = {!! $company !!};
     self.id = ko.observable('');
     self.discount = ko.observable('');
     self.is_amount_discount = ko.observable(0);
     self.frequency_id = ko.observable(4); // default to monthly
     self.terms = ko.observable('');
-    self.default_terms = ko.observable(account.{{ $entityType }}_terms);
-    self.terms_placeholder = ko.observable({{ (!$invoice->id || $invoice->is_recurring) && $account->{"{$entityType}_terms"} ? "account.{$entityType}_terms" : false}});
+    self.default_terms = ko.observable(company.{{ $entityType }}_terms);
+    self.terms_placeholder = ko.observable({{ (!$invoice->id || $invoice->is_recurring) && $company->{"{$entityType}_terms"} ? "company.{$entityType}_terms" : false}});
     self.set_default_terms = ko.observable(false);
     self.invoice_footer = ko.observable('');
-    self.default_footer = ko.observable(account.invoice_footer);
-    self.footer_placeholder = ko.observable({{ (!$invoice->id || $invoice->is_recurring) && $account->invoice_footer ? 'account.invoice_footer' : false}});
+    self.default_footer = ko.observable(company.invoice_footer);
+    self.footer_placeholder = ko.observable({{ (!$invoice->id || $invoice->is_recurring) && $company->invoice_footer ? 'company.invoice_footer' : false}});
     self.set_default_footer = ko.observable(false);
     self.public_notes = ko.observable('');
     self.po_number = ko.observable('');
@@ -240,7 +240,7 @@ function InvoiceModel(data) {
             return false;
         }
         var itemModel = new ItemModel();
-        @if ($account->hide_quantity)
+        @if ($company->hide_quantity)
             itemModel.qty(1);
         @endif
         self.invoice_items.push(itemModel);
@@ -306,7 +306,7 @@ function InvoiceModel(data) {
 
     self.formatMoney = function(amount) {
         var client = $.parseJSON(ko.toJSON(self.client()));
-        return formatMoneyAccount(amount, self.account, client);
+        return formatMoneyAccount(amount, self.company, client);
     }
 
     self.totals = ko.observable();
@@ -785,7 +785,7 @@ function ItemModel(data) {
     }
 
     this.isEmpty = function() {
-        return !self.product_key() && !self.notes() && !self.cost() && (!self.qty() || {{ $account->hide_quantity ? 'true' : 'false' }});
+        return !self.product_key() && !self.notes() && !self.cost() && (!self.qty() || {{ $company->hide_quantity ? 'true' : 'false' }});
     }
 
     this.onSelect = function() {}
@@ -895,7 +895,7 @@ ko.bindingHandlers.productTypeahead = {
             //},
             source: searchData(allBindings.items, allBindings.key)
         }).on('typeahead:select', function(element, datum, name) {
-            @if (Auth::user()->account->fill_products)
+            @if (Auth::user()->company->fill_products)
                 var model = ko.dataFor(this);
                 if (model.expense_public_id()) {
                     return;
@@ -909,7 +909,7 @@ ko.bindingHandlers.productTypeahead = {
                 if (!model.qty()) {
                     model.qty(1);
                 }
-                @if ($account->invoice_item_taxes)
+                @if ($company->invoice_item_taxes)
                     if (datum.default_tax_rate) {
                         var $select = $(this).parentsUntil('tbody').find('select').first();
                         $select.val('0 ' + datum.default_tax_rate.rate + ' ' + datum.default_tax_rate.name).trigger('change');

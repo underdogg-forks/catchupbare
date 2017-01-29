@@ -13,7 +13,7 @@ class AddInvoiceNumberSettings extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->string('invoice_number_prefix')->nullable();
             $table->integer('invoice_number_counter')->default(1)->nullable();
 
@@ -23,12 +23,12 @@ class AddInvoiceNumberSettings extends Migration
             $table->boolean('share_counter')->default(true);
         });
 
-        // set initial counter value for accounts with invoices
-        $accounts = DB::table('accounts')->lists('id');
+        // set initial counter value for companies with invoices
+        $companies = DB::table('companies')->lists('id');
 
-        foreach ($accounts as $accountId) {
+        foreach ($companies as $companyId) {
 
-            $invoiceNumbers = DB::table('invoices')->where('account_id', $accountId)->lists('invoice_number');
+            $invoiceNumbers = DB::table('invoices')->where('company_id', $companyId)->lists('invoice_number');
             $max = 0;
 
             foreach ($invoiceNumbers as $invoiceNumber) {
@@ -36,7 +36,7 @@ class AddInvoiceNumberSettings extends Migration
                 $max = max($max, $number);
             }
 
-            DB::table('accounts')->where('id', $accountId)->update(['invoice_number_counter' => ++$max]);
+            DB::table('companies')->where('id', $companyId)->update(['invoice_number_counter' => ++$max]);
         }
     }
 
@@ -47,7 +47,7 @@ class AddInvoiceNumberSettings extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('invoice_number_prefix');
             $table->dropColumn('invoice_number_counter');
 

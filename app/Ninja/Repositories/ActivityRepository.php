@@ -48,12 +48,12 @@ class ActivityRepository
     {
         $activity = new Activity();
 
-        if (Auth::check() && Auth::user()->account_id == $entity->account_id) {
+        if (Auth::check() && Auth::user()->company_id == $entity->company_id) {
             $activity->user_id = Auth::user()->id;
-            $activity->account_id = Auth::user()->account_id;
+            $activity->company_id = Auth::user()->company_id;
         } else {
             $activity->user_id = $entity->user_id;
-            $activity->account_id = $entity->account_id;
+            $activity->company_id = $entity->company_id;
             $activity->is_system = true;
         }
 
@@ -65,7 +65,7 @@ class ActivityRepository
     public function findByClientId($clientId)
     {
         return DB::table('activities')
-                    ->join('accounts', 'accounts.id', '=', 'activities.account_id')
+                    ->join('companies', 'companies.id', '=', 'activities.company_id')
                     ->join('users', 'users.id', '=', 'activities.user_id')
                     ->join('clients', 'clients.id', '=', 'activities.client_id')
                     ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
@@ -78,8 +78,8 @@ class ActivityRepository
                     ->where('contacts.is_primary', '=', 1)
                     ->whereNull('contacts.deleted_at')
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, accounts.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, accounts.country_id) country_id'),
+                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
                         'activities.id',
                         'activities.created_at',
                         'activities.contact_id',
@@ -95,7 +95,7 @@ class ActivityRepository
                         'invoices.public_id as invoice_public_id',
                         'invoices.is_recurring',
                         'clients.name as client_name',
-                        'accounts.name as account_name',
+                        'companies.name as acc_name',
                         'clients.public_id as client_public_id',
                         'contacts.id as contact',
                         'contacts.first_name as first_name',

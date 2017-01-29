@@ -11,7 +11,7 @@ class AddDocuments extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->string('logo')->nullable()->default(null);
             $table->unsignedInteger('logo_width');
             $table->unsignedInteger('logo_height');
@@ -20,12 +20,12 @@ class AddDocuments extends Migration
             $table->boolean('document_email_attachment')->default(0);
         });
 
-        \DB::table('accounts')->update(array('logo' => ''));
+        \DB::table('companies')->update(array('logo' => ''));
         Schema::dropIfExists('documents');
         Schema::create('documents', function ($t) {
             $t->increments('id');
             $t->unsignedInteger('public_id')->nullable();
-            $t->unsignedInteger('account_id');
+            $t->unsignedInteger('company_id');
             $t->unsignedInteger('user_id');
             $t->unsignedInteger('invoice_id')->nullable();
             $t->unsignedInteger('expense_id')->nullable();
@@ -42,11 +42,11 @@ class AddDocuments extends Migration
         });
 
         Schema::table('documents', function ($t) {
-            $t->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $t->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $t->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $t->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
             $t->foreign('expense_id')->references('id')->on('expenses')->onDelete('cascade');
-            $t->unique(array('account_id', 'public_id'));
+            $t->unique(array('company_id', 'public_id'));
         });
     }
 
@@ -57,7 +57,7 @@ class AddDocuments extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('logo');
             $table->dropColumn('logo_width');
             $table->dropColumn('logo_height');

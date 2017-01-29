@@ -29,7 +29,7 @@ class UpdateInvoiceAPIRequest extends InvoiceRequest
 
         $rules = [
             'invoice_items' => 'valid_invoice_items',
-            'invoice_number' => 'unique:invoices,invoice_number,' . $invoiceId . ',id,account_id,' . $this->user()->account_id,
+            'invoice_number' => 'unique:invoices,invoice_number,' . $invoiceId . ',id,company_id,' . $this->user()->company_id,
             'discount' => 'positive',
             //'invoice_date' => 'date',
             //'due_date' => 'date',
@@ -37,9 +37,9 @@ class UpdateInvoiceAPIRequest extends InvoiceRequest
             //'end_date' => 'date',
         ];
 
-        if ($this->user()->account->client_number_counter) {
+        if ($this->user()->company->client_number_counter) {
             $clientId = Client::getPrivateId(request()->input('client')['public_id']);
-            $rules['client.id_number'] = 'unique:clients,id_number,'.$clientId.',id,account_id,' . $this->user()->account_id;
+            $rules['client.id_number'] = 'unique:clients,id_number,'.$clientId.',id,company_id,' . $this->user()->company_id;
         }
 
         return $rules;

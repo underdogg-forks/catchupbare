@@ -39,7 +39,7 @@ class Utils
     public static function isDatabaseSetup()
     {
         try {
-            if (Schema::hasTable('accounts')) {
+            if (Schema::hasTable('companies')) {
                 return true;
             }
         } catch (Exception $e) {
@@ -74,9 +74,9 @@ class Utils
 
     public static function isNinjaProd()
     {
-        if (Utils::isReseller()) {
+        /*if (Utils::isReseller()) {
             return true;
-        }
+        }*/
 
         return env('NINJA_PROD') == 'true';
     }
@@ -102,21 +102,21 @@ class Utils
 
     public static function isWhiteLabel()
     {
-        $account = false;
+        $company = false;
 
         if (Utils::isNinja()) {
             if (Auth::check()) {
-                $account = Auth::user()->account;
+                $company = Auth::user()->company;
             } elseif ($contactKey = session('contact_key')) {
                 if ($contact = \App\Models\Contact::whereContactKey($contactKey)->first()) {
-                    $account = $contact->account;
+                    $company = $contact->company;
                 }
             }
         } else {
-            $account = \App\Models\Account::first();
+            $company = \App\Models\Company::first();
         }
 
-        return $account ? $account->hasFeature(FEATURE_WHITE_LABEL) : false;
+        return $company ? $company->hasFeature(FEATURE_WHITE_LABEL) : false;
     }
 
     public static function getResllerType()
@@ -211,7 +211,7 @@ class Utils
 
     public static function getDemoAccountId()
     {
-        return isset($_ENV[DEMO_ACCOUNT_ID]) ? $_ENV[DEMO_ACCOUNT_ID] : false;
+        return isset($_ENV[DEMO_COMPANY_ID]) ? $_ENV[DEMO_COMPANY_ID] : false;
     }
 
     public static function getNewsFeedResponse($userType = false)
@@ -232,7 +232,7 @@ class Utils
     {
         if (Auth::check()
                 && !Auth::user()->isPro()
-                && $feature == ACCOUNT_ADVANCED_SETTINGS) {
+                && $feature == COMPANY_ADVANCED_SETTINGS) {
             return '&nbsp;<sup class="pro-label">PRO</sup>';
         } else {
             return '';
@@ -347,7 +347,7 @@ class Utils
         $data = [
             'context' => $context,
             'user_id' => Auth::check() ? Auth::user()->id : 0,
-            'account_id' => Auth::check() ? Auth::user()->account_id : 0,
+            'company_id' => Auth::check() ? Auth::user()->company_id : 0,
             'user_name' => Auth::check() ? Auth::user()->getDisplayName() : '',
             'method' => Request::method(),
             'url' => Input::get('url', Request::url()),
@@ -412,7 +412,7 @@ class Utils
         }
 
         if (!$countryId && Auth::check()) {
-            $countryId = Auth::user()->account->country_id;
+            $countryId = Auth::user()->company->country_id;
         }
 
         $currency = self::getFromCache($currencyId, 'currencies');
@@ -1052,7 +1052,7 @@ class Utils
         return $url;
     }
 
-    public static function setupWePay($accountGateway = null)
+    public static function setupWePay($accGateway = null)
     {
         if (WePay::getEnvironment() == 'none') {
             if (WEPAY_ENVIRONMENT == WEPAY_STAGE) {
@@ -1062,8 +1062,8 @@ class Utils
             }
         }
 
-        if ($accountGateway) {
-            return new WePay($accountGateway->getConfig()->accessToken);
+        if ($accGateway) {
+            return new WePay($accGateway->getConfig()->accessToken);
         } else {
             return new WePay(null);
         }
@@ -1138,16 +1138,16 @@ class Utils
         } elseif ($first == 'expense_categories') {
             $page = '/expenses.html#expense-categories';
         } elseif ($first == 'settings') {
-            if ($second == 'bank_accounts') {
+            if ($second == 'bank_accs') {
                 $page = ''; // TODO write docs
-            } elseif (in_array($second, \App\Models\Account::$basicSettings)) {
+            } elseif (in_array($second, \App\Models\Company::$basicSettings)) {
                 if ($second == 'products') {
                     $second = 'product_library';
                 } elseif ($second == 'notifications') {
                     $second = 'email_notifications';
                 }
                 $page = '/settings.html#' . str_replace('_', '-', $second);
-            } elseif (in_array($second, \App\Models\Account::$advancedSettings)) {
+            } elseif (in_array($second, \App\Models\Company::$advancedSettings)) {
                 $page = "/{$second}.html";
             } elseif ($second == 'customize_design') {
                 $page = '/invoice_design.html#customize';

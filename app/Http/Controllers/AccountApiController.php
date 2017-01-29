@@ -7,8 +7,8 @@ use Cache;
 use Socialite;
 use Exception;
 use App\Services\AuthService;
-use App\Models\Account;
-use App\Ninja\Repositories\AccountRepository;
+use App\Models\Company;
+use App\Ninja\Repositories\CompanyRepository;
 use Illuminate\Http\Request;
 use App\Ninja\Transformers\AccountTransformer;
 use App\Ninja\Transformers\UserAccountTransformer;
@@ -18,13 +18,13 @@ use App\Http\Requests\UpdateAccountRequest;
 
 class AccountApiController extends BaseAPIController
 {
-    protected $accountRepo;
+    protected $companyRepo;
 
-    public function __construct(AccountRepository $accountRepo)
+    public function __construct(CompanyRepository $companyRepo)
     {
         parent::__construct();
 
-        $this->accountRepo = $accountRepo;
+        $this->companyRepo = $companyRepo;
     }
 
     public function ping(Request $request)
@@ -40,8 +40,8 @@ class AccountApiController extends BaseAPIController
     public function register(RegisterRequest $request)
     {
 
-        $account = $this->accountRepo->create($request->first_name, $request->last_name, $request->email, $request->password);
-        $user = $account->users()->first();
+        $company = $this->companyRepo->create($request->first_name, $request->last_name, $request->email, $request->password);
+        $user = $company->users()->first();
 
         Auth::login($user, true);
         event(new UserSignedUp());
@@ -63,10 +63,10 @@ class AccountApiController extends BaseAPIController
     {
         // Create a new token only if one does not already exist
         $user = Auth::user();
-        $this->accountRepo->createTokens($user, $request->token_name);
+        $this->companyRepo->createTokens($user, $request->token_name);
 
-        $users = $this->accountRepo->findUsers($user, 'account.account_tokens');
-        $transformer = new UserAccountTransformer($user->account, $request->serializer, $request->token_name);
+        $users = $this->companyRepo->findUsers($user, 'company.acc_tokens');
+        $transformer = new UserAccountTransformer($user->company, $request->serializer, $request->token_name);
         $data = $this->createCollection($users, $transformer, 'user_account');
 
         return $this->response($data);
@@ -74,14 +74,14 @@ class AccountApiController extends BaseAPIController
 
     public function show(Request $request)
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
         $updatedAt = $request->updated_at ? date('Y-m-d H:i:s', $request->updated_at) : false;
 
         $transformer = new AccountTransformer(null, $request->serializer);
-        $account->load(array_merge($transformer->getDefaultIncludes(), ['projects.client']));
-        $account = $this->createItem($account, $transformer, 'account');
+        $company->load(array_merge($transformer->getDefaultIncludes(), ['projects.client']));
+        $company = $this->createItem($company, $transformer, 'company');
 
-        return $this->response($account);
+        return $this->response($company);
     }
 
     public function getStaticData()
@@ -103,30 +103,30 @@ class AccountApiController extends BaseAPIController
 
     public function update(UpdateAccountRequest $request)
     {
-        $account = Auth::user()->account;
-        $this->accountRepo->save($request->input(), $account);
+        $company = Auth::user()->company;
+        $this->companyRepo->save($request->input(), $company);
 
         $transformer = new AccountTransformer(null, $request->serializer);
-        $account = $this->createItem($account, $transformer, 'account');
+        $company = $this->createItem($company, $transformer, 'company');
 
-        return $this->response($account);
+        return $this->response($company);
     }
 
     public function addDeviceToken(Request $request)
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         //scan if this user has a token already registered (tokens can change, so we need to use the users email as key)
-        $devices = json_decode($account->devices,TRUE);
+        $devices = json_decode($company->devices,TRUE);
 
 
             for($x=0; $x<count($devices); $x++)
             {
                 if ($devices[$x]['email'] == Auth::user()->username) {
                     $devices[$x]['token'] = $request->token; //update
-                    $account->devices = json_encode($devices);
-                    $account->save();
-                    $devices[$x]['account_key'] = $account->account_key;
+                    $company->devices = json_encode($devices);
+                    $company->save();
+                    $devices[$x]['acc_key'] = $company->acc_key;
 
                     return $this->response($devices[$x]);
                 }
@@ -138,7 +138,7 @@ class AccountApiController extends BaseAPIController
             'token' => $request->token,
             'email' => $request->email,
             'device' => $request->device,
-            'account_key' => $account->account_key,
+            'acc_key' => $company->acc_key,
             'notify_sent' => TRUE,
             'notify_viewed' => TRUE,
             'notify_approved' => TRUE,
@@ -146,8 +146,8 @@ class AccountApiController extends BaseAPIController
         ];
 
         $devices[] = $newDevice;
-        $account->devices = json_encode($devices);
-        $account->save();
+        $company->devices = json_encode($devices);
+        $company->save();
 
         return $this->response($newDevice);
 
@@ -155,9 +155,9 @@ class AccountApiController extends BaseAPIController
 
     public function updatePushNotifications(Request $request)
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
-        $devices = json_decode($account->devices, TRUE);
+        $devices = json_decode($company->devices, TRUE);
 
         if(count($devices) < 1)
             return $this->errorResponse(['message'=>'No registered devices.'], 400);
@@ -171,7 +171,7 @@ class AccountApiController extends BaseAPIController
                     'token' => $devices[$x]['token'],
                     'email' => $devices[$x]['email'],
                     'device' => $devices[$x]['device'],
-                    'account_key' => $account->account_key,
+                    'acc_key' => $company->acc_key,
                     'notify_sent' => $request->notify_sent,
                     'notify_viewed' => $request->notify_viewed,
                     'notify_approved' => $request->notify_approved,
@@ -179,8 +179,8 @@ class AccountApiController extends BaseAPIController
                 ];
 
                 $devices[$x] = $newDevice;
-                $account->devices = json_encode($devices);
-                $account->save();
+                $company->devices = json_encode($devices);
+                $company->save();
 
                 return $this->response($newDevice);
             }
@@ -202,7 +202,7 @@ class AccountApiController extends BaseAPIController
 
         if ($user) {
             $providerId = AuthService::getProviderId($provider);
-            $user = $this->accountRepo->findUserByOauth($providerId, $user->id);
+            $user = $this->companyRepo->findUserByOauth($providerId, $user->id);
         }
 
         if ($user) {

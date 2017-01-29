@@ -39,7 +39,7 @@
                             bodySpacing: 10,
                             callbacks: {
                                 title: function(item) {
-                                    return moment(item[0].xLabel).format("{{ $account->getMomentDateFormat() }}");
+                                    return moment(item[0].xLabel).format("{{ $company->getMomentDateFormat() }}");
                                 },
                                 label: function(item, data) {
                                     if (item.datasetIndex == 0) {
@@ -50,7 +50,7 @@
                                         var label = " {{ trans('texts.expenses') }}: ";
                                     }
 
-                                    return label + formatMoney(item.yLabel, chartCurrencyId, account.country_id);
+                                    return label + formatMoney(item.yLabel, chartCurrencyId, company.country_id);
                                 }
                             }
                         },
@@ -74,7 +74,7 @@
                                 ticks: {
                                     beginAtZero: true,
                                     callback: function(label, index, labels) {
-                                        return formatMoney(label, chartCurrencyId, account.country_id);
+                                        return formatMoney(label, chartCurrencyId, company.country_id);
                                     }
                                 },
                             }]
@@ -84,18 +84,18 @@
             }
         }
 
-        var account = {!! $account !!};
+        var company = {!! $company !!};
         var chartStartDate = moment().subtract(29, 'days');
         var chartEndDate = moment();
         var chartGropuBy = 'day';
-        var chartCurrencyId = {{ $account->getCurrencyId() }};
+        var chartCurrencyId = {{ $company->getCurrencyId() }};
 
         $(function() {
 
             // Initialize date range selector
 
             function cb(start, end, label) {
-                $('#reportrange span').html(start.format('{{ $account->getMomentDateFormat() }}') + ' - ' + end.format('{{ $account->getMomentDateFormat() }}'));
+                $('#reportrange span').html(start.format('{{ $company->getMomentDateFormat() }}') + ' - ' + end.format('{{ $company->getMomentDateFormat() }}'));
                 chartStartDate = start;
                 chartEndDate = end;
 				$('.range-label-div').text(label);
@@ -104,7 +104,7 @@
 
             $('#reportrange').daterangepicker({
                 locale: {
-                    format: "{{ $account->getMomentDateFormat() }}",
+                    format: "{{ $company->getMomentDateFormat() }}",
 					customRangeLabel: "{{ trans('texts.custom_range') }}",
                 },
 				startDate: chartStartDate,
@@ -141,10 +141,10 @@
                     loadChart(response.data);
 
                     var totals = response.totals;
-                    $('.revenue-div').text(formatMoney(totals.revenue, chartCurrencyId, account.country_id));
-                    $('.outstanding-div').text(formatMoney(totals.balance, chartCurrencyId, account.country_id));
-                    $('.expenses-div').text(formatMoney(totals.expenses, chartCurrencyId, account.country_id));
-                    $('.average-div').text(formatMoney(totals.average, chartCurrencyId, account.country_id));
+                    $('.revenue-div').text(formatMoney(totals.revenue, chartCurrencyId, company.country_id));
+                    $('.outstanding-div').text(formatMoney(totals.balance, chartCurrencyId, company.country_id));
+                    $('.expenses-div').text(formatMoney(totals.expenses, chartCurrencyId, company.country_id));
+                    $('.average-div').text(formatMoney(totals.average, chartCurrencyId, company.country_id));
 
                     $('.currency').hide();
                     $('.currency_' + chartCurrencyId).show();
@@ -198,7 +198,7 @@
     </div>
 </div>
 
-@if ($account->corporation->hasEarnedPromo())
+@if ($company->corporation->hasEarnedPromo())
 	@include('partials/discount_promo')
 @elseif ($showBlueVinePromo)
     @include('partials/bluevine_promo')
@@ -221,12 +221,12 @@
                     <div class="in-bold">
                         @if (count($paidToDate))
                             @foreach ($paidToDate as $item)
-                                <div class="currency currency_{{ $item->currency_id ?: $account->getCurrencyId() }}" style="display:none">
+                                <div class="currency currency_{{ $item->currency_id ?: $company->getCurrencyId() }}" style="display:none">
                                     {{ Utils::formatMoney($item->value, $item->currency_id) }}
                                 </div>
                             @endforeach
                         @else
-                            <div class="currency currency_{{ $account->getCurrencyId() }}" style="display:none">
+                            <div class="currency currency_{{ $company->getCurrencyId() }}" style="display:none">
                                 {{ Utils::formatMoney(0) }}
                             </div>
                         @endif
@@ -250,7 +250,7 @@
                         </div>
                         <div class="in-bold">
                             @foreach ($expenses as $item)
-                                <div class="currency currency_{{ $item->currency_id ?: $account->getCurrencyId() }}" style="display:none">
+                                <div class="currency currency_{{ $item->currency_id ?: $company->getCurrencyId() }}" style="display:none">
                                     {{ Utils::formatMoney($item->value, $item->currency_id) }}<br/>
                                 </div>
                             @endforeach
@@ -264,12 +264,12 @@
                         <div class="in-bold">
                             @if (count($averageInvoice))
                                 @foreach ($averageInvoice as $item)
-                                    <div class="currency currency_{{ $item->currency_id ?: $account->getCurrencyId() }}" style="display:none">
+                                    <div class="currency currency_{{ $item->currency_id ?: $company->getCurrencyId() }}" style="display:none">
                                         {{ Utils::formatMoney($item->invoice_avg, $item->currency_id) }}<br/>
                                     </div>
                                 @endforeach
                             @else
-                                <div class="currency currency_{{ $account->getCurrencyId() }}" style="display:none">
+                                <div class="currency currency_{{ $company->getCurrencyId() }}" style="display:none">
                                     {{ Utils::formatMoney(0) }}
                                 </div>
                             @endif
@@ -294,12 +294,12 @@
                     <div class="in-bold">
                         @if (count($balances))
                             @foreach ($balances as $item)
-                                <div class="currency currency_{{ $item->currency_id ?: $account->getCurrencyId() }}" style="display:none">
+                                <div class="currency currency_{{ $item->currency_id ?: $company->getCurrencyId() }}" style="display:none">
                                     {{ Utils::formatMoney($item->value, $item->currency_id) }}<br/>
                                 </div>
                             @endforeach
                         @else
-                            <div class="currency currency_{{ $account->getCurrencyId() }}" style="display:none">
+                            <div class="currency currency_{{ $company->getCurrencyId() }}" style="display:none">
                                 {{ Utils::formatMoney(0) }}
                             </div>
                         @endif
@@ -357,7 +357,7 @@
                     @if (count($expenses) && count($averageInvoice))
                         <div class="pull-right" style="font-size:14px;padding-top:4px;font-weight:bold">
                             @foreach ($averageInvoice as $item)
-                                <span class="currency currency_{{ $item->currency_id ?: $account->getCurrencyId() }}" style="display:none">
+                                <span class="currency currency_{{ $item->currency_id ?: $company->getCurrencyId() }}" style="display:none">
                                     {{ trans('texts.average_invoice') }}
                                     {{ Utils::formatMoney($item->invoice_avg, $item->currency_id) }} |
                                 </span>
@@ -386,7 +386,7 @@
                                 <td>{{ trim($payment->client_name) ?: (trim($payment->first_name . ' ' . $payment->last_name) ?: $payment->email) }}</td>
                             @endcan
                             <td>{{ Utils::fromSqlDate($payment->payment_date) }}</td>
-                            <td>{{ Utils::formatMoney($payment->amount, $payment->currency_id ?: ($account->currency_id ?: DEFAULT_CURRENCY)) }}</td>
+                            <td>{{ Utils::formatMoney($payment->amount, $payment->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -423,7 +423,7 @@
                                         <td>{{ trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email) }}</td>
                                     @endcan
                                     <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
-                                    <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($account->currency_id ?: DEFAULT_CURRENCY)) }}</td>
+                                    <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -458,7 +458,7 @@
                                         <td>{{ trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email) }}</td>
                                     @endcan
                                     <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
-                                    <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($account->currency_id ?: DEFAULT_CURRENCY)) }}</td>
+                                    <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -493,7 +493,7 @@
                                         <td>{!! \App\Models\Invoice::calcLink($invoice) !!}</td>
                                         <td>{!! link_to('/clients/'.$invoice->client_public_id, trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
                                         <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
-                                        <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($account->currency_id ?: DEFAULT_CURRENCY)) }}</td>
+                                        <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                                     </tr>
                                 @endif
                             @endforeach
@@ -524,7 +524,7 @@
                                         <td>{!! \App\Models\Invoice::calcLink($invoice) !!}</td>
                                         <td>{!! link_to('/clients/'.$invoice->client_public_id, trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
                                         <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
-                                        <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($account->currency_id ?: DEFAULT_CURRENCY)) }}</td>
+                                        <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                                     </tr>
                                 @endif
                             @endforeach

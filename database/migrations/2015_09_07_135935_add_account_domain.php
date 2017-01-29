@@ -11,7 +11,7 @@ class AddAccountDomain extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->string('iframe_url')->nullable();
             $table->boolean('military_time')->default(false);
             $table->unsignedInteger('referral_user_id')->nullable();
@@ -40,7 +40,7 @@ class AddAccountDomain extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('iframe_url');
             $table->dropColumn('military_time');
             $table->dropColumn('referral_user_id');

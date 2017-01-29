@@ -42,15 +42,15 @@ class ExpenseRepository extends BaseRepository
 
     public function find($filter = null)
     {
-        $accountid = \Auth::user()->account_id;
+        $accountid = \Auth::user()->company_id;
         $query = DB::table('expenses')
-                    ->join('accounts', 'accounts.id', '=', 'expenses.account_id')
+                    ->join('companies', 'companies.id', '=', 'expenses.company_id')
                     ->leftjoin('clients', 'clients.id', '=', 'expenses.client_id')
                     ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
                     ->leftjoin('vendors', 'vendors.id', '=', 'expenses.vendor_id')
                     ->leftJoin('invoices', 'invoices.id', '=', 'expenses.invoice_id')
                     ->leftJoin('expense_categories', 'expenses.expense_category_id', '=', 'expense_categories.id')
-                    ->where('expenses.account_id', '=', $accountid)
+                    ->where('expenses.company_id', '=', $accountid)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('vendors.deleted_at', '=', null)
                     ->where('clients.deleted_at', '=', null)
@@ -60,7 +60,7 @@ class ExpenseRepository extends BaseRepository
                     })
                     ->select(
                         DB::raw('COALESCE(expenses.invoice_id, expenses.should_be_invoiced) status'),
-                        'expenses.account_id',
+                        'expenses.company_id',
                         'expenses.amount',
                         'expenses.deleted_at',
                         'expenses.exchange_rate',
@@ -159,10 +159,10 @@ class ExpenseRepository extends BaseRepository
         $expense->should_be_invoiced = isset($input['should_be_invoiced']) && floatval($input['should_be_invoiced']) || $expense->client_id ? true : false;
 
         if ( ! $expense->expense_currency_id) {
-            $expense->expense_currency_id = \Auth::user()->account->getCurrencyId();
+            $expense->expense_currency_id = \Auth::user()->company->getCurrencyId();
         }
         if ( ! $expense->invoice_currency_id) {
-            $expense->invoice_currency_id = \Auth::user()->account->getCurrencyId();
+            $expense->invoice_currency_id = \Auth::user()->company->getCurrencyId();
         }
 
         $rate = isset($input['exchange_rate']) ? Utils::parseFloat($input['exchange_rate']) : 1;

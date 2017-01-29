@@ -88,12 +88,12 @@ class HistoryUtils
 
         $object =  static::convertToObject($entity);
         $history = Session::get(RECENTLY_VIEWED) ?: [];
-        $accountHistory = isset($history[$entity->account_id]) ? $history[$entity->account_id] : [];
+        $companyHistory = isset($history[$entity->company_id]) ? $history[$entity->company_id] : [];
         $data = [];
 
         // Add to the list and make sure to only show each item once
-        for ($i = 0; $i<count($accountHistory); $i++) {
-            $item = $accountHistory[$i];
+        for ($i = 0; $i<count($companyHistory); $i++) {
+            $item = $companyHistory[$i];
 
             if ($object->url == $item->url) {
                 continue;
@@ -110,11 +110,11 @@ class HistoryUtils
 
         array_unshift($data, $object);
 
-        if (isset($counts[$entity->account_id]) && $counts[$entity->account_id] > RECENTLY_VIEWED_LIMIT) {
+        if (isset($counts[$entity->company_id]) && $counts[$entity->company_id] > RECENTLY_VIEWED_LIMIT) {
             array_pop($data);
         }
 
-        $history[$entity->account_id] = $data;
+        $history[$entity->company_id] = $data;
 
         Session::put(RECENTLY_VIEWED, $history);
     }
@@ -122,7 +122,7 @@ class HistoryUtils
     private static function convertToObject($entity)
     {
         $object = new stdClass();
-        $object->accountId = $entity->account_id;
+        $object->companyId = $entity->company_id;
         $object->url = $entity->present()->url;
         $object->entityType = $entity->subEntityType();
         $object->name = $entity->present()->titledName;
@@ -142,14 +142,14 @@ class HistoryUtils
         return $object;
     }
 
-    public static function renderHtml($accountId)
+    public static function renderHtml($companyId)
     {
         $lastClientId = false;
         $clientMap = [];
         $str = '';
 
         $history = Session::get(RECENTLY_VIEWED, []);
-        $history = isset($history[$accountId]) ? $history[$accountId] : [];
+        $history = isset($history[$companyId]) ? $history[$companyId] : [];
 
         foreach ($history as $item)
         {

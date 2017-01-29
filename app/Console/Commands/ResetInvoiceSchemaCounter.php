@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -15,7 +15,7 @@ class ResetInvoiceSchemaCounter extends Command
      * @var string
      */
     protected $signature = 'ninja:reset-invoice-schema-counter
-                            {account? : The ID of the account}
+                            {company? : The ID of the company}
                             {--force : Force setting the counter back to "1", regardless if the year changed}';
 
     /**
@@ -49,27 +49,27 @@ class ResetInvoiceSchemaCounter extends Command
     public function handle()
     {
         $force = $this->option('force');
-        $account = $this->argument('account');
+        $company = $this->argument('company');
 
-        $accounts = null;
+        $companies = null;
 
-        if ($account) {
-            $accounts = Account::find($account)->get();
+        if ($company) {
+            $companies = Company::find($company)->get();
         } else {
-            $accounts = Account::all();
+            $companies = Company::all();
         }
 
         $latestInvoice = $this->invoice->latest()->first();
         $invoiceYear = Carbon::parse($latestInvoice->created_at)->year;
 
         if(Carbon::now()->year > $invoiceYear || $force) {
-            $accounts->transform(function ($a) {
-                /** @var Account $a */
+            $companies->transform(function ($a) {
+                /** @var Company $a */
                 $a->invoice_number_counter = 1;
                 $a->update();
             });
 
-            $this->info('The counter has been resetted successfully for '.$accounts->count().' account(s).');
+            $this->info('The counter has been resetted successfully for '.$companies->count().' company(s).');
         }
     }
 }

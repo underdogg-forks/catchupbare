@@ -19,17 +19,17 @@ class DashboardApiController extends BaseAPIController
         $user = Auth::user();
         $viewAll = $user->hasPermission('view_all');
         $userId = $user->id;
-        $accountId = $user->account->id;
+        $companyId = $user->company->id;
 
         $dashboardRepo = $this->dashboardRepo;
-        $metrics = $dashboardRepo->totals($accountId, $userId, $viewAll);
-        $paidToDate = $dashboardRepo->paidToDate($user->account, $userId, $viewAll);
-        $averageInvoice = $dashboardRepo->averages($user->account, $userId, $viewAll);
-        $balances = $dashboardRepo->balances($accountId, $userId, $viewAll);
-        $activities = $dashboardRepo->activities($accountId, $userId, $viewAll);
-        $pastDue = $dashboardRepo->pastDue($accountId, $userId, $viewAll);
-        $upcoming = $dashboardRepo->upcoming($accountId, $userId, $viewAll);
-        $payments = $dashboardRepo->payments($accountId, $userId, $viewAll);
+        $metrics = $dashboardRepo->totals($companyId, $userId, $viewAll);
+        $paidToDate = $dashboardRepo->paidToDate($user->company, $userId, $viewAll);
+        $averageInvoice = $dashboardRepo->averages($user->company, $userId, $viewAll);
+        $balances = $dashboardRepo->balances($companyId, $userId, $viewAll);
+        $activities = $dashboardRepo->activities($companyId, $userId, $viewAll);
+        $pastDue = $dashboardRepo->pastDue($companyId, $userId, $viewAll);
+        $upcoming = $dashboardRepo->upcoming($companyId, $userId, $viewAll);
+        $payments = $dashboardRepo->payments($companyId, $userId, $viewAll);
 
         $hasQuotes = false;
         foreach ([$upcoming, $pastDue] as $data) {

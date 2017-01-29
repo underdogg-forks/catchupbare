@@ -127,9 +127,9 @@ class Vendor extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     /**
@@ -319,11 +319,11 @@ class Vendor extends EntityModel
             return $this->currency_id;
         }
 
-        if (!$this->account) {
-            $this->load('account');
+        if (!$this->company) {
+            $this->load('company');
         }
 
-        return $this->account->currency_id ?: DEFAULT_CURRENCY;
+        return $this->company->currency_id ?: DEFAULT_CURRENCY;
     }
 
     /**

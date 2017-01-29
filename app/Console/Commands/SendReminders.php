@@ -3,7 +3,7 @@
 use App\Models\Invoice;
 use Illuminate\Console\Command;
 use App\Ninja\Mailers\ContactMailer as Mailer;
-use App\Ninja\Repositories\AccountRepository;
+use App\Ninja\Repositories\CompanyRepository;
 use App\Ninja\Repositories\InvoiceRepository;
 
 /**
@@ -32,44 +32,44 @@ class SendReminders extends Command
     protected $invoiceRepo;
     
     /**
-     * @var accountRepository
+     * @var companyRepository
      */
-    protected $accountRepo;
+    protected $companyRepo;
 
     /**
      * SendReminders constructor.
      * @param Mailer $mailer
      * @param InvoiceRepository $invoiceRepo
-     * @param accountRepository $accountRepo
+     * @param companyRepository $companyRepo
      */
-    public function __construct(Mailer $mailer, InvoiceRepository $invoiceRepo, AccountRepository $accountRepo)
+    public function __construct(Mailer $mailer, InvoiceRepository $invoiceRepo, CompanyRepository $companyRepo)
     {
         parent::__construct();
 
         $this->mailer = $mailer;
         $this->invoiceRepo = $invoiceRepo;
-        $this->accountRepo = $accountRepo;
+        $this->companyRepo = $companyRepo;
     }
 
     public function fire()
     {
         $this->info(date('Y-m-d') . ' Running SendReminders...');
 
-        $accounts = $this->accountRepo->findWithReminders();
-        $this->info(count($accounts) . ' accounts found');
+        $companies = $this->companyRepo->findWithReminders();
+        $this->info(count($companies) . ' companies found');
 
-        /** @var \App\Models\Account $account */
-        foreach ($accounts as $account) {
-            if (!$account->hasFeature(FEATURE_EMAIL_TEMPLATES_REMINDERS)) {
+        /** @var \App\Models\Company $company */
+        foreach ($companies as $company) {
+            if (!$company->hasFeature(FEATURE_EMAIL_TEMPLATES_REMINDERS)) {
                 continue;
             }
 
-            $invoices = $this->invoiceRepo->findNeedingReminding($account);
-            $this->info($account->name . ': ' . count($invoices) . ' invoices found');
+            $invoices = $this->invoiceRepo->findNeedingReminding($company);
+            $this->info($company->name . ': ' . count($invoices) . ' invoices found');
 
             /** @var Invoice $invoice */
             foreach ($invoices as $invoice) {
-                if ($reminder = $account->getInvoiceReminder($invoice)) {
+                if ($reminder = $company->getInvoiceReminder($invoice)) {
                     $this->info('Send to ' . $invoice->id);
                     $this->mailer->sendInvoice($invoice, $reminder);
                 }

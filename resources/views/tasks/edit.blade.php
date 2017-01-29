@@ -71,7 +71,7 @@
                     </label>
                     <div class="col-lg-8 col-sm-8" style="padding-top: 10px">
                         <p>{{ $task->getStartTime() }} -
-                        @if (Auth::user()->account->timezone_id)
+                        @if (Auth::user()->company->timezone_id)
                             {{ $timezone }}
                         @else
                             {!! link_to('/settings/localization?focus=timezone_id', $timezone, ['target' => '_blank']) !!}
@@ -199,8 +199,8 @@
             validateOnBlur: false,
             step: 30,
             format: '{{ $datetimeFormat }}',
-            formatDate: '{{ $account->getMomentDateFormat() }}',
-            formatTime: '{{ $account->military_time ? 'H:mm' : 'h:mm A' }}',
+            formatDate: '{{ $company->getMomentDateFormat() }}',
+            formatTime: '{{ $company->military_time ? 'H:mm' : 'h:mm A' }}',
             onSelectTime: function(current_time, $input){
                 current_time.setSeconds(0);
                 $(element).datetimepicker({

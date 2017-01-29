@@ -12,7 +12,7 @@ class AddBluevineFields extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->enum('bluevine_status', array('ignored', 'signed_up'))->nullable();
         });
     }
@@ -24,7 +24,7 @@ class AddBluevineFields extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('bluevine_status');
         });
     }

@@ -50,9 +50,9 @@ class Invitation extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     // If we're getting the link for PhantomJS to generate the PDF
@@ -64,23 +64,23 @@ class Invitation extends EntityModel
      */
     public function getLink($type = 'view', $forceOnsite = false)
     {
-        if ( ! $this->account) {
-            $this->load('account');
+        if ( ! $this->company) {
+            $this->load('company');
         }
 
-        $account = $this->account;
-        $iframe_url = $account->iframe_url;
+        $company = $this->company;
+        $iframe_url = $company->iframe_url;
         $url = trim(SITE_URL, '/');
 
-        if ($account->hasFeature(FEATURE_CUSTOM_URL)) {
+        if ($company->hasFeature(FEATURE_CUSTOM_URL)) {
             if (Utils::isNinjaProd()) {
-                $url = $account->present()->clientPortalLink();
+                $url = $company->present()->clientPortalLink();
             }
 
             if ($iframe_url && !$forceOnsite) {
                 return "{$iframe_url}?{$this->invitation_key}";
-            } elseif ($this->account->subdomain) {
-                $url = Utils::replaceSubdomain($url, $account->subdomain);
+            } elseif ($this->company->subdomain) {
+                $url = Utils::replaceSubdomain($url, $company->subdomain);
             }
         }
 

@@ -32,7 +32,7 @@ class PaymentTermController extends BaseController
      */
     public function index()
     {
-        return Redirect::to('settings/' . ACCOUNT_PAYMENT_TERMS);
+        return Redirect::to('settings/' . COMPANY_PAYMENT_TERMS);
     }
 
     /**
@@ -56,7 +56,7 @@ class PaymentTermController extends BaseController
           'title' => trans('texts.edit_payment_term'),
         ];
 
-        return View::make('accounts.payment_term', $data);
+        return View::make('companies.payment_term', $data);
     }
 
     /**
@@ -71,7 +71,7 @@ class PaymentTermController extends BaseController
           'title' => trans('texts.create_payment_term'),
         ];
 
-        return View::make('accounts.payment_term', $data);
+        return View::make('companies.payment_term', $data);
     }
 
     /**
@@ -110,7 +110,7 @@ class PaymentTermController extends BaseController
         $message = $publicId ? trans('texts.updated_payment_term') : trans('texts.created_payment_term');
         Session::flash('message', $message);
 
-        return Redirect::to('settings/' . ACCOUNT_PAYMENT_TERMS);
+        return Redirect::to('settings/' . COMPANY_PAYMENT_TERMS);
     }
 
     /**
@@ -124,7 +124,7 @@ class PaymentTermController extends BaseController
 
         Session::flash('message', trans('texts.archived_payment_term'));
 
-        return Redirect::to('settings/' . ACCOUNT_PAYMENT_TERMS);
+        return Redirect::to('settings/' . COMPANY_PAYMENT_TERMS);
     }
 
 }

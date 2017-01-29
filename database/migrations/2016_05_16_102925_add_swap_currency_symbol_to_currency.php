@@ -23,7 +23,7 @@ class AddSwapCurrencySymbolToCurrency extends Migration
             $table->decimal('tax_rate2', 13, 3);
         });
 
-        Schema::table('account_gateways', function (Blueprint $table) {
+        Schema::table('acc_gateways', function (Blueprint $table) {
             $table->boolean('require_cvv')->default(true)->nullable();
         });
     }
@@ -46,7 +46,7 @@ class AddSwapCurrencySymbolToCurrency extends Migration
             $table->dropColumn('tax_rate2');
         });
 
-        Schema::table('account_gateways', function (Blueprint $table) {
+        Schema::table('acc_gateways', function (Blueprint $table) {
             $table->dropColumn('require_cvv');
         });
     }

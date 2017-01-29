@@ -5,13 +5,13 @@
 
 		@include('money_script')
 
-		@foreach ($invoice->client->account->getFontFolders() as $font)
+		@foreach ($invoice->client->company->getFontFolders() as $font)
         	<script src="{{ asset('js/vfs_fonts/'.$font.'.js') }}" type="text/javascript"></script>
     	@endforeach
 
         <script src="{{ asset('pdf.built.js') }}?no_cache={{ NINJA_VERSION }}" type="text/javascript"></script>
 
-		@if ($account->showSignature($invoice))
+		@if ($company->showSignature($invoice))
 			<script src="{{ asset('js/jSignature.min.js') }}"></script>
 		@endif
 
@@ -33,7 +33,7 @@
 		    }
 		</style>
 
-    @if (!empty($transactionToken) && $accountGateway->gateway_id == GATEWAY_BRAINTREE)
+    @if (!empty($transactionToken) && $accGateway->gateway_id == GATEWAY_BRAINTREE)
         <div id="paypal-container"></div>
         <script type="text/javascript" src="https://js.braintreegateway.com/js/braintree-2.23.0.min.js"></script>
         <script type="text/javascript" >
@@ -56,7 +56,7 @@
                         enableShippingAddress: false,
                         enableBillingAddress: false,
                         headless: true,
-                        locale: "{{ $invoice->client->language ? $invoice->client->language->locale : $invoice->account->language->locale }}"
+                        locale: "{{ $invoice->client->language ? $invoice->client->language->locale : $invoice->company->language->locale }}"
                     },
                     dataCollector: {
                         paypal: true
@@ -85,13 +85,13 @@
                     var email = {!! json_encode($contact->email) !!} || prompt('{{ trans('texts.ach_email_prompt') }}');
                     if(!email)return;
 
-                    WePay.bank_account.create({
+                    WePay.bank_acc.create({
                         'client_id': '{{ WEPAY_CLIENT_ID }}',
                         'email':email
                     }, function(data){
                         dataObj = JSON.parse(data);
-                        if(dataObj.bank_account_id) {
-                            window.location.href = achLink.attr('href') + '/' + dataObj.bank_account_id + "?details=" + encodeURIComponent(data);
+                        if(dataObj.bank_acc_id) {
+                            window.location.href = achLink.attr('href') + '/' + dataObj.bank_acc_id + "?details=" + encodeURIComponent(data);
                         } else if(dataObj.error) {
                             $('#wepay-error').remove();
                             achLink.closest('.container').prepend($('<div id="wepay-error" style="margin-top:20px" class="alert alert-danger"></div>').text(dataObj.error_description));
@@ -118,7 +118,7 @@
                 @endif
 			@elseif ( ! $invoice->canBePaid())
 				{!! Button::normal(trans('texts.download_pdf'))->withAttributes(['onclick' => 'onDownloadClick()'])->large() !!}
-    		@elseif ($invoice->client->account->isGatewayConfigured() && floatval($invoice->balance) && !$invoice->is_recurring)
+    		@elseif ($invoice->client->company->isGatewayConfigured() && floatval($invoice->balance) && !$invoice->is_recurring)
                 {!! Button::normal(trans('texts.download_pdf'))->withAttributes(['onclick' => 'onDownloadClick()'])->large() !!}&nbsp;&nbsp;
                 @if (count($paymentTypes) > 1)
                     {!! DropdownButton::success(trans('texts.pay_now'))->withContents($paymentTypes)->large() !!}
@@ -127,7 +127,7 @@
                 @endif
     		@else
     			{!! Button::normal(trans('texts.download_pdf'))->withAttributes(['onclick' => 'onDownloadClick()'])->large() !!}
-                @if ($account->isNinjaAccount())
+                @if ($company->isNinjaAccount())
                     {!! Button::primary(trans('texts.return_to_app'))->asLinkTo(URL::to('/settings/account_management'))->large() !!}
                 @endif
     		@endif
@@ -141,7 +141,7 @@
         </div>
 
 		<div class="clearfix"></div><p>&nbsp;</p>
-        @if ($account->isPro() && $invoice->hasDocuments())
+        @if ($company->isPro() && $invoice->hasDocuments())
             <div class="invoice-documents">
             <h3>{{ trans('texts.documents_header') }}</h3>
             <ul>
@@ -157,7 +157,7 @@
             </div>
         @endif
 
-        @if ($account->hasFeature(FEATURE_DOCUMENTS) && $account->invoice_embed_documents)
+        @if ($company->hasFeature(FEATURE_DOCUMENTS) && $company->invoice_embed_documents)
             @foreach ($invoice->documents as $document)
                 @if($document->isPDFEmbeddable())
                     <script src="{{ $document->getClientVFSJSUrl() }}" type="text/javascript" async></script>
@@ -175,9 +175,9 @@
 
 			window.invoice = {!! $invoice->toJson() !!};
 			invoice.features = {
-                customize_invoice_design:{{ $invoice->client->account->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN) ? 'true' : 'false' }},
-                remove_created_by:{{ $invoice->client->account->hasFeature(FEATURE_REMOVE_CREATED_BY) ? 'true' : 'false' }},
-                invoice_settings:{{ $invoice->client->account->hasFeature(FEATURE_INVOICE_SETTINGS) ? 'true' : 'false' }}
+                customize_invoice_design:{{ $invoice->client->company->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN) ? 'true' : 'false' }},
+                remove_created_by:{{ $invoice->client->company->hasFeature(FEATURE_REMOVE_CREATED_BY) ? 'true' : 'false' }},
+                invoice_settings:{{ $invoice->client->company->hasFeature(FEATURE_INVOICE_SETTINGS) ? 'true' : 'false' }}
             };
 			invoice.is_quote = {{ $invoice->isQuote() ? 'true' : 'false' }};
 			invoice.contact = {!! $contact->toJson() !!};
@@ -205,22 +205,22 @@
                     refreshPDF();
                 @endif
 
-				@if ($account->requiresAuthorization($invoice))
+				@if ($company->requiresAuthorization($invoice))
 					$('#paymentButtons a').on('click', function(e) {
 						e.preventDefault();
 						window.pendingPaymentHref = $(this).attr('href');
-						@if ($account->showSignature($invoice))
+						@if ($company->showSignature($invoice))
 							if (window.pendingPaymentInit) {
 								$("#signature").jSignature('reset');
 							}
 						@endif
-						@if ($account->showAcceptTerms($invoice))
+						@if ($company->showAcceptTerms($invoice))
 							$('#termsCheckbox').attr('checked', false);
 						@endif
 						$('#authenticationModal').modal('show');
 					});
 
-					@if ($account->showSignature($invoice))
+					@if ($company->showSignature($invoice))
 						$('#authenticationModal').on('shown.bs.modal', function () {
 							if ( ! window.pendingPaymentInit) {
 								window.pendingPaymentInit = true;
@@ -244,7 +244,7 @@
             }
 
 			function onModalPayNowClick() {
-				@if ($account->showSignature($invoice))
+				@if ($company->showSignature($invoice))
 					var data = {
 						signature: $('#signature').jSignature('getData', 'svgbase64')[1]
 					};
@@ -269,13 +269,13 @@
 			function setModalPayNowEnabled() {
 				var disabled = false;
 
-				@if ($account->showAcceptTerms($invoice))
+				@if ($company->showAcceptTerms($invoice))
 					if ( ! $('#termsCheckbox').is(':checked')) {
 						disabled = true;
 					}
 				@endif
 
-				@if ($account->showSignature($invoice))
+				@if ($company->showSignature($invoice))
 					if ( ! $('#signature').jSignature('isModified')) {
 						disabled = true;
 					}
@@ -287,7 +287,7 @@
 
 		</script>
 
-		@include('invoices.pdf', ['account' => $invoice->client->account])
+		@include('invoices.pdf', ['company' => $invoice->client->company])
 
 		<p>&nbsp;</p>
 
@@ -315,7 +315,7 @@
         </div>
     @endif
 
-	@if ($account->requiresAuthorization($invoice))
+	@if ($company->requiresAuthorization($invoice))
 		<div class="modal fade" id="authenticationModal" tabindex="-1" role="dialog" aria-labelledby="authenticationModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 			<div class="modal-content">
@@ -330,7 +330,7 @@
 						 {!! nl2br(e($invoice->terms)) !!}
 					 </div>
 				 @endif
-				 @if ($account->showSignature($invoice))
+				 @if ($company->showSignature($invoice))
 				 	<div>
 						{{ trans('texts.sign_here') }}
 					</div>
@@ -339,7 +339,7 @@
 			  </div>
 
 			  <div class="modal-footer">
-				 @if ($account->showAcceptTerms($invoice))
+				 @if ($company->showAcceptTerms($invoice))
  					<div class="pull-left">
  						<label for="termsCheckbox" style="font-weight:normal">
  							<input id="termsCheckbox" type="checkbox" onclick="setModalPayNowEnabled()"/>

@@ -28,13 +28,13 @@ class AddLanguageSupport extends Migration
         //DB::table('languages')->insert(['name' => 'Spanish', 'locale' => 'es']);
         //DB::table('languages')->insert(['name' => 'Norwegian', 'locale' => 'nb_NO']);
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->unsignedInteger('language_id')->default(1);
         });
 
-        DB::table('accounts')->update(['language_id' => 1]);
+        DB::table('companies')->update(['language_id' => 1]);
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->foreign('language_id')->references('id')->on('languages');
         });
     }
@@ -46,8 +46,8 @@ class AddLanguageSupport extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
-            $table->dropForeign('accounts_language_id_foreign');
+        Schema::table('companies', function ($table) {
+            $table->dropForeign('companies_language_id_foreign');
             $table->dropColumn('language_id');
         });
 

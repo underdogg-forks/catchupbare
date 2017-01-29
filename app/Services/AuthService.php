@@ -5,7 +5,7 @@ use Auth;
 use Utils;
 use Input;
 use Socialite;
-use App\Ninja\Repositories\AccountRepository;
+use App\Ninja\Repositories\CompanyRepository;
 use App\Events\UserLoggedIn;
 
 /**
@@ -14,9 +14,9 @@ use App\Events\UserLoggedIn;
 class AuthService
 {
     /**
-     * @var AccountRepository
+     * @var CompanyRepository
      */
-    private $accountRepo;
+    private $companyRepo;
 
     /**
      * @var array
@@ -31,11 +31,11 @@ class AuthService
     /**
      * AuthService constructor.
      *
-     * @param AccountRepository $repo
+     * @param CompanyRepository $repo
      */
-    public function __construct(AccountRepository $repo)
+    public function __construct(CompanyRepository $repo)
     {
-        $this->accountRepo = $repo;
+        $this->companyRepo = $repo;
     }
 
     public static function getProviders()
@@ -63,7 +63,7 @@ class AuthService
             $email = $socialiteUser->email;
             $oauthUserId = $socialiteUser->id;
             $name = Utils::splitName($socialiteUser->name);
-            $result = $this->accountRepo->updateUserFromOauth($user, $name[0], $name[1], $email, $providerId, $oauthUserId);
+            $result = $this->companyRepo->updateUserFromOauth($user, $name[0], $name[1], $email, $providerId, $oauthUserId);
 
             if ($result === true) {
                 if (!$isRegistered) {
@@ -71,13 +71,13 @@ class AuthService
                     Session::flash('onReady', 'handleSignedUp();');
                 } else {
                     Session::flash('message', trans('texts.updated_settings'));
-                    return redirect()->to('/settings/' . ACCOUNT_USER_DETAILS);
+                    return redirect()->to('/settings/' . COMPANY_USER_DETAILS);
                 }
             } else {
                 Session::flash('error', $result);
             }
         } else {
-            if ($user = $this->accountRepo->findUserByOauth($providerId, $socialiteUser->id)) {
+            if ($user = $this->companyRepo->findUserByOauth($providerId, $socialiteUser->id)) {
                 Auth::login($user, true);
                 event(new UserLoggedIn());
             } else {

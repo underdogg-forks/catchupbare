@@ -48,7 +48,7 @@ class ClientService extends BaseService
      */
     public function save($data, $client = null)
     {
-        if (Auth::user()->account->isNinjaAccount() && isset($data['plan'])) {
+        if (Auth::user()->company->isNinjaAccount() && isset($data['plan'])) {
             $this->ninjaRepo->updatePlanDetails($data['public_id'], $data);
         }
 

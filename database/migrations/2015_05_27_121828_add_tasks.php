@@ -15,7 +15,7 @@ class AddTasks extends Migration {
         Schema::create('tasks', function($table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('account_id')->index();
+            $table->unsignedInteger('company_id')->index();
             $table->unsignedInteger('client_id')->nullable();
             $table->unsignedInteger('invoice_id')->nullable();
 
@@ -25,13 +25,13 @@ class AddTasks extends Migration {
             $table->string('description')->nullable();
             $table->boolean('is_deleted')->default(false);
 
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
             
             $table->unsignedInteger('public_id')->index();
-            $table->unique( array('account_id','public_id') );
+            $table->unique( array('company_id','public_id') );
 
             $table->timestamps();
             $table->softDeletes();

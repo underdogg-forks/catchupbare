@@ -29,10 +29,10 @@ class PaymentTermService extends BaseService
     }
 
     /**
-     * @param int $accountId
+     * @param int $companyId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($accountId = 0)
+    public function getDatatable($companyId = 0)
     {
         $query = $this->paymentTermRepo->find();
 

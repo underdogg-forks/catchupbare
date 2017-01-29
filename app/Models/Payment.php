@@ -70,9 +70,9 @@ class Payment extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     /**
@@ -86,7 +86,7 @@ class Payment extends EntityModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account_gateway()
+    public function acc_gateway()
     {
         return $this->belongsTo('App\Models\AccountGateway')->withTrashed();
     }
@@ -336,7 +336,7 @@ class Payment extends EntityModel
 
     public function statusLabel()
     {
-        $amount = $this->account->formatMoney($this->refunded, $this->client);
+        $amount = $this->company->formatMoney($this->refunded, $this->client);
         return static::calcStatusLabel($this->payment_status_id, $this->payment_status->name, $amount);
     }
 

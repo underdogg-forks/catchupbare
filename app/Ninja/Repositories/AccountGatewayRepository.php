@@ -9,13 +9,13 @@ class AccountGatewayRepository extends BaseRepository
         return 'App\Models\AccountGateway';
     }
 
-    public function find($accountId)
+    public function find($companyId)
     {
-        $query = DB::table('account_gateways')
-                    ->join('gateways', 'gateways.id', '=', 'account_gateways.gateway_id')
-                    ->where('account_gateways.account_id', '=', $accountId)
-                    ->whereNull('account_gateways.deleted_at');
+        $query = DB::table('acc_gateways')
+                    ->join('gateways', 'gateways.id', '=', 'acc_gateways.gateway_id')
+                    ->where('acc_gateways.company_id', '=', $companyId)
+                    ->whereNull('acc_gateways.deleted_at');
 
-        return $query->select('account_gateways.id', 'account_gateways.public_id', 'gateways.name', 'account_gateways.deleted_at', 'account_gateways.gateway_id');
+        return $query->select('acc_gateways.id', 'acc_gateways.public_id', 'gateways.name', 'acc_gateways.deleted_at', 'acc_gateways.gateway_id');
     }
 }

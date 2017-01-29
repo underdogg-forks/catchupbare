@@ -15,11 +15,11 @@ class ComposerServiceProvider extends ServiceProvider
     {
         view()->composer(
             [
-                'accounts.details',
+                'companies.details',
                 'clients.edit',
                 'payments.edit',
                 'invoices.edit',
-                'accounts.localization'
+                'companies.localization'
             ],
             'App\Http\ViewComposers\TranslationComposer'
         );

@@ -52,21 +52,21 @@ class ClientPortalController extends BaseController
 
         $invoice = $invitation->invoice;
         $client = $invoice->client;
-        $account = $invoice->account;
+        $company = $invoice->company;
 
-        if (!$account->checkSubdomain(Request::server('HTTP_HOST'))) {
+        if (!$company->checkSubdomain(Request::server('HTTP_HOST'))) {
             return response()->view('error', [
                 'error' => trans('texts.invoice_not_found'),
                 'hideHeader' => true,
-                'clientViewCSS' => $account->clientViewCSS(),
-                'clientFontUrl' => $account->getFontsUrl(),
+                'clientViewCSS' => $company->clientViewCSS(),
+                'clientFontUrl' => $company->getFontsUrl(),
             ]);
         }
 
-        $account->loadLocalizationSettings($client);
+        $company->loadLocalizationSettings($client);
 
         if (!Input::has('phantomjs') && !Input::has('silent') && !Session::has($invitationKey)
-            && (!Auth::check() || Auth::user()->account_id != $invoice->account_id)) {
+            && (!Auth::check() || Auth::user()->company_id != $invoice->company_id)) {
             if ($invoice->isType(INVOICE_TYPE_QUOTE)) {
                 event(new QuoteInvitationWasViewed($invoice, $invitation));
             } else {
@@ -80,14 +80,14 @@ class ClientPortalController extends BaseController
         $invoice->invoice_date = Utils::fromSqlDate($invoice->invoice_date);
         $invoice->due_date = Utils::fromSqlDate($invoice->due_date);
         $invoice->features = [
-            'customize_invoice_design' => $account->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN),
-            'remove_created_by' => $account->hasFeature(FEATURE_REMOVE_CREATED_BY),
-            'invoice_settings' => $account->hasFeature(FEATURE_INVOICE_SETTINGS),
+            'customize_invoice_design' => $company->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN),
+            'remove_created_by' => $company->hasFeature(FEATURE_REMOVE_CREATED_BY),
+            'invoice_settings' => $company->hasFeature(FEATURE_INVOICE_SETTINGS),
         ];
-        $invoice->invoice_fonts = $account->getFontsData();
+        $invoice->invoice_fonts = $company->getFontsData();
 
         if ($invoice->invoice_design_id == CUSTOM_DESIGN) {
-            $invoice->invoice_design->javascript = $account->custom_design;
+            $invoice->invoice_design->javascript = $company->custom_design;
         } else {
             $invoice->invoice_design->javascript = $invoice->invoice_design->pdfmake;
         }
@@ -105,18 +105,18 @@ class ClientPortalController extends BaseController
         }
 
         $data = [];
-        $paymentTypes = $this->getPaymentTypes($account, $client, $invitation);
+        $paymentTypes = $this->getPaymentTypes($company, $client, $invitation);
         $paymentURL = '';
         if (count($paymentTypes) == 1) {
             $paymentURL = $paymentTypes[0]['url'];
             if ($paymentTypes[0]['gatewayTypeId'] == GATEWAY_TYPE_CUSTOM) {
                 // do nothing
-            } elseif (!$account->isGatewayConfigured(GATEWAY_PAYPAL_EXPRESS)) {
+            } elseif (!$company->isGatewayConfigured(GATEWAY_PAYPAL_EXPRESS)) {
                 $paymentURL = URL::to($paymentURL);
             }
         }
 
-        if ($wepayGateway = $account->getGatewayConfig(GATEWAY_WEPAY)){
+        if ($wepayGateway = $company->getGatewayConfig(GATEWAY_WEPAY)){
             $data['enableWePayACH'] = $wepayGateway->getAchEnabled();
         }
 
@@ -129,35 +129,35 @@ class ClientPortalController extends BaseController
         }
 
         $data += [
-            'account' => $account,
+            'company' => $company,
             'showApprove' => $showApprove,
             'showBreadcrumbs' => false,
-            'clientFontUrl' => $account->getFontsUrl(),
+            'clientFontUrl' => $company->getFontsUrl(),
             'invoice' => $invoice->hidePrivateFields(),
             'invitation' => $invitation,
-            'invoiceLabels' => $account->getInvoiceLabels(),
+            'invoiceLabels' => $company->getInvoiceLabels(),
             'contact' => $contact,
             'paymentTypes' => $paymentTypes,
             'paymentURL' => $paymentURL,
             'phantomjs' => Input::has('phantomjs'),
         ];
 
-        if ($paymentDriver = $account->paymentDriver($invitation, GATEWAY_TYPE_CREDIT_CARD)) {
+        if ($paymentDriver = $company->paymentDriver($invitation, GATEWAY_TYPE_CREDIT_CARD)) {
             $data += [
                 'transactionToken' => $paymentDriver->createTransactionToken(),
                 'partialView' => $paymentDriver->partialView(),
-                'accountGateway' => $paymentDriver->accountGateway,
+                'accGateway' => $paymentDriver->accGateway,
             ];
         }
 
-        if ($accountGateway = $account->getGatewayByType(GATEWAY_TYPE_CUSTOM)) {
+        if ($accGateway = $company->getGatewayByType(GATEWAY_TYPE_CUSTOM)) {
             $data += [
-                'customGatewayName' => $accountGateway->getConfigField('name'),
-                'customGatewayText' => $accountGateway->getConfigField('text'),
+                'customGatewayName' => $accGateway->getConfigField('name'),
+                'customGatewayText' => $accGateway->getConfigField('text'),
             ];
         }
 
-        if($account->hasFeature(FEATURE_DOCUMENTS) && $this->canCreateZip()){
+        if($company->hasFeature(FEATURE_DOCUMENTS) && $this->canCreateZip()){
             $zipDocs = $this->getInvoiceZipDocuments($invoice, $size);
 
             if(count($zipDocs) > 1){
@@ -169,12 +169,12 @@ class ClientPortalController extends BaseController
         return View::make('invoices.view', $data);
     }
 
-    private function getPaymentTypes($account, $client, $invitation)
+    private function getPaymentTypes($company, $client, $invitation)
     {
         $links = [];
 
-        foreach ($account->account_gateways as $accountGateway) {
-            $paymentDriver = $accountGateway->paymentDriver($invitation);
+        foreach ($company->acc_gateways as $accGateway) {
+            $paymentDriver = $accGateway->paymentDriver($invitation);
             $links = array_merge($links, $paymentDriver->tokenLinks());
             $links = array_merge($links, $paymentDriver->paymentLinks());
         }
@@ -232,29 +232,29 @@ class ClientPortalController extends BaseController
         }
 
         $client = $contact->client;
-        $account = $client->account;
-        $account->loadLocalizationSettings($client);
+        $company = $client->company;
+        $company->loadLocalizationSettings($client);
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
         $customer = false;
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
-        } elseif (!$account->enable_client_portal_dashboard) {
+        } elseif (!$company->enable_client_portal_dashboard) {
             return redirect()->to('/client/invoices/');
         }
 
-        if ($paymentDriver = $account->paymentDriver(false, GATEWAY_TYPE_TOKEN)) {
+        if ($paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN)) {
             $customer = $paymentDriver->customer($client->id);
         }
 
         $data = [
             'color' => $color,
             'contact' => $contact,
-            'account' => $account,
+            'company' => $company,
             'client' => $client,
-            'clientFontUrl' => $account->getFontsUrl(),
-            'gateway' => $account->getTokenGateway(),
+            'clientFontUrl' => $company->getFontsUrl(),
+            'gateway' => $company->getTokenGateway(),
             'paymentMethods' => $customer ? $customer->payment_methods : false,
             'transactionToken' => $paymentDriver ? $paymentDriver->createTransactionToken() : false,
         ];
@@ -278,7 +278,7 @@ class ClientPortalController extends BaseController
             ->addColumn('activity_type_id', function ($model) {
                 $data = [
                     'client' => Utils::getClientDisplayName($model),
-                    'user' => $model->is_system ? ('<i>' . trans('texts.system') . '</i>') : ($model->account_name),
+                    'user' => $model->is_system ? ('<i>' . trans('texts.system') . '</i>') : ($model->acc_name),
                     'invoice' => $model->invoice,
                     'contact' => Utils::getClientDisplayName($model),
                     'payment' => $model->payment ? ' ' . $model->payment : '',
@@ -300,20 +300,20 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $account = $contact->account;
-        $account->loadLocalizationSettings($contact->client);
+        $company = $contact->company;
+        $company->loadLocalizationSettings($contact->client);
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
         }
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
 
         $data = [
             'color' => $color,
-            'account' => $account,
+            'company' => $company,
             'client' => $contact->client,
-            'clientFontUrl' => $account->getFontsUrl(),
+            'clientFontUrl' => $company->getFontsUrl(),
             'title' => trans('texts.recurring_invoices'),
             'entityType' => ENTITY_RECURRING_INVOICE,
             'columns' => Utils::trans(['frequency', 'start_date', 'end_date', 'invoice_total', 'auto_bill']),
@@ -328,20 +328,20 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $account = $contact->account;
-        $account->loadLocalizationSettings($contact->client);
+        $company = $contact->company;
+        $company->loadLocalizationSettings($contact->client);
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
         }
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
 
         $data = [
             'color' => $color,
-            'account' => $account,
+            'company' => $company,
             'client' => $contact->client,
-            'clientFontUrl' => $account->getFontsUrl(),
+            'clientFontUrl' => $company->getFontsUrl(),
             'title' => trans('texts.invoices'),
             'entityType' => ENTITY_INVOICE,
             'columns' => Utils::trans(['invoice_number', 'invoice_date', 'invoice_total', 'balance_due', 'due_date']),
@@ -375,19 +375,19 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $account = $contact->account;
-        $account->loadLocalizationSettings($contact->client);
+        $company = $contact->company;
+        $company->loadLocalizationSettings($contact->client);
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
         }
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
 
         $data = [
             'color' => $color,
-            'account' => $account,
-            'clientFontUrl' => $account->getFontsUrl(),
+            'company' => $company,
+            'clientFontUrl' => $company->getFontsUrl(),
             'entityType' => ENTITY_PAYMENT,
             'title' => trans('texts.payments'),
             'columns' => Utils::trans(['invoice', 'transaction_reference', 'method', 'payment_amount', 'payment_date', 'status'])
@@ -406,7 +406,7 @@ class ClientPortalController extends BaseController
         return Datatable::query($payments)
                 ->addColumn('invoice_number', function ($model) { return $model->invitation_key ? link_to('/view/'.$model->invitation_key, $model->invoice_number)->toHtml() : $model->invoice_number; })
                 ->addColumn('transaction_reference', function ($model) { return $model->transaction_reference ? $model->transaction_reference : '<i>'.trans('texts.manual_entry').'</i>'; })
-                ->addColumn('payment_type', function ($model) { return ($model->payment_type && !$model->last4) ? $model->payment_type : ($model->account_gateway_id ? '<i>Online payment</i>' : ''); })
+                ->addColumn('payment_type', function ($model) { return ($model->payment_type && !$model->last4) ? $model->payment_type : ($model->acc_gateway_id ? '<i>Online payment</i>' : ''); })
                 ->addColumn('amount', function ($model) { return Utils::formatMoney($model->amount, $model->currency_id, $model->country_id); })
                 ->addColumn('payment_date', function ($model) { return Utils::dateToString($model->payment_date); })
                 ->addColumn('status', function ($model) { return $this->getPaymentStatusLabel($model); })
@@ -447,19 +447,19 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $account = $contact->account;
-        $account->loadLocalizationSettings($contact->client);
+        $company = $contact->company;
+        $company->loadLocalizationSettings($contact->client);
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
         }
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
 
         $data = [
           'color' => $color,
-          'account' => $account,
-          'clientFontUrl' => $account->getFontsUrl(),
+          'company' => $company,
+          'clientFontUrl' => $company->getFontsUrl(),
           'title' => trans('texts.quotes'),
           'entityType' => ENTITY_QUOTE,
           'columns' => Utils::trans(['quote_number', 'quote_date', 'quote_total', 'due_date']),
@@ -484,19 +484,19 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $account = $contact->account;
-        $account->loadLocalizationSettings($contact->client);
+        $company = $contact->company;
+        $company->loadLocalizationSettings($contact->client);
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
         }
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
 
         $data = [
           'color' => $color,
-          'account' => $account,
-          'clientFontUrl' => $account->getFontsUrl(),
+          'company' => $company,
+          'clientFontUrl' => $company->getFontsUrl(),
           'title' => trans('texts.credits'),
           'entityType' => ENTITY_CREDIT,
           'columns' => Utils::trans(['credit_date', 'credit_amount', 'credit_balance']),
@@ -520,19 +520,19 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $account = $contact->account;
-        $account->loadLocalizationSettings($contact->client);
+        $company = $contact->company;
+        $company->loadLocalizationSettings($contact->client);
 
-        if (!$account->enable_client_portal) {
+        if (!$company->enable_client_portal) {
             return $this->returnError();
         }
 
-        $color = $account->primary_color ? $account->primary_color : '#0b4d78';
+        $color = $company->primary_color ? $company->primary_color : '#0b4d78';
 
         $data = [
           'color' => $color,
-          'account' => $account,
-          'clientFontUrl' => $account->getFontsUrl(),
+          'company' => $company,
+          'clientFontUrl' => $company->getFontsUrl(),
           'title' => trans('texts.documents'),
           'entityType' => ENTITY_DOCUMENT,
           'columns' => Utils::trans(['invoice_number', 'name', 'document_date', 'document_size']),
@@ -556,7 +556,7 @@ class ClientPortalController extends BaseController
         return response()->view('error', [
             'error' => $error ?: trans('texts.invoice_not_found'),
             'hideHeader' => true,
-            'account' => $this->getContact()->account,
+            'company' => $this->getContact()->company,
         ]);
     }
 
@@ -581,7 +581,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $document = Document::scope($publicId, $contact->account_id)->first();
+        $document = Document::scope($publicId, $contact->company_id)->first();
 
 
         if(!$document->isPDFEmbeddable()){
@@ -676,7 +676,7 @@ class ClientPortalController extends BaseController
             return Response::view('error', ['error'=>'No documents small enough'], 404);
         }
 
-        $zip = new ZipArchive($invitation->account->name.' Invoice '.$invoice->invoice_number.'.zip');
+        $zip = new ZipArchive($invitation->company->name.' Invoice '.$invoice->invoice_number.'.zip');
         return Response::stream(function() use ($toZip, $zip) {
             foreach($toZip as $name=>$document){
                 $fileStream = $document->getStream();
@@ -702,7 +702,7 @@ class ClientPortalController extends BaseController
         Session::put('contact_key', $invitation->contact->contact_key);// track current contact
 
         $clientId = $invitation->invoice->client_id;
-        $document = Document::scope($publicId, $invitation->account_id)->firstOrFail();
+        $document = Document::scope($publicId, $invitation->company_id)->firstOrFail();
 
         $authorized = false;
         if($document->expense && $document->expense->client_id == $invitation->invoice->client_id){
@@ -725,20 +725,20 @@ class ClientPortalController extends BaseController
         }
 
         $client = $contact->client;
-        $account = $client->account;
+        $company = $client->company;
 
-        $paymentDriver = $account->paymentDriver(false, GATEWAY_TYPE_TOKEN);
+        $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
         $customer = $paymentDriver->customer($client->id);
 
         $data = [
-            'account' => $account,
+            'company' => $company,
             'contact' => $contact,
-            'color' => $account->primary_color ? $account->primary_color : '#0b4d78',
+            'color' => $company->primary_color ? $company->primary_color : '#0b4d78',
             'client' => $client,
-            'clientViewCSS' => $account->clientViewCSS(),
-            'clientFontUrl' => $account->getFontsUrl(),
+            'clientViewCSS' => $company->clientViewCSS(),
+            'clientFontUrl' => $company->getFontsUrl(),
             'paymentMethods' => $customer ? $customer->payment_methods : false,
-            'gateway' => $account->getTokenGateway(),
+            'gateway' => $company->getTokenGateway(),
             'title' => trans('texts.payment_methods'),
             'transactionToken' => $paymentDriver->createTransactionToken(),
         ];
@@ -757,9 +757,9 @@ class ClientPortalController extends BaseController
         }
 
         $client = $contact->client;
-        $account = $client->account;
+        $company = $client->company;
 
-        $paymentDriver = $account->paymentDriver(null, GATEWAY_TYPE_BANK_TRANSFER);
+        $paymentDriver = $company->paymentDriver(null, GATEWAY_TYPE_BANK_TRANSFER);
         $result = $paymentDriver->verifyBankAccount($client, $publicId, $amount1, $amount2);
 
         if (is_string($result)) {
@@ -768,7 +768,7 @@ class ClientPortalController extends BaseController
             Session::flash('message', trans('texts.payment_method_verified'));
         }
 
-        return redirect()->to($account->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+        return redirect()->to($company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
     }
 
     public function removePaymentMethod($publicId)
@@ -778,9 +778,9 @@ class ClientPortalController extends BaseController
         }
 
         $client = $contact->client;
-        $account = $contact->account;
+        $company = $contact->company;
 
-        $paymentDriver = $account->paymentDriver(false, GATEWAY_TYPE_TOKEN);
+        $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
         $paymentMethod = PaymentMethod::clientId($client->id)
             ->wherePublicId($publicId)
             ->firstOrFail();
@@ -792,7 +792,7 @@ class ClientPortalController extends BaseController
             Session::flash('error', $exception->getMessage());
         }
 
-        return redirect()->to($client->account->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+        return redirect()->to($client->company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
     }
 
     public function setDefaultPaymentMethod(){
@@ -801,14 +801,14 @@ class ClientPortalController extends BaseController
         }
 
         $client = $contact->client;
-        $account = $client->account;
+        $company = $client->company;
 
         $validator = Validator::make(Input::all(), ['source' => 'required']);
         if ($validator->fails()) {
-            return Redirect::to($client->account->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+            return Redirect::to($client->company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
         }
 
-        $paymentDriver = $account->paymentDriver(false, GATEWAY_TYPE_TOKEN);
+        $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
         $paymentMethod = PaymentMethod::clientId($client->id)
             ->wherePublicId(Input::get('source'))
             ->firstOrFail();
@@ -819,14 +819,14 @@ class ClientPortalController extends BaseController
 
         Session::flash('message', trans('texts.payment_method_set_as_default'));
 
-        return redirect()->to($client->account->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+        return redirect()->to($client->company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
     }
 
-    private function paymentMethodError($type, $error, $accountGateway = false, $exception = false)
+    private function paymentMethodError($type, $error, $accGateway = false, $exception = false)
     {
         $message = '';
-        if ($accountGateway && $accountGateway->gateway) {
-            $message = $accountGateway->gateway->name . ': ';
+        if ($accGateway && $accGateway->gateway) {
+            $message = $accGateway->gateway->name . ': ';
         }
         $message .= $error ?: trans('texts.payment_method_error');
 

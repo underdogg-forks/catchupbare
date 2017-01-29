@@ -20,7 +20,7 @@ class BlueVineController extends BaseController {
 			'business_annual_revenue'               => intval( Input::get( 'annual_revenue' ) ),
 			'business_monthly_average_bank_balance' => intval( Input::get( 'average_bank_balance' ) ),
 			'business_inception_date'               => date( 'Y-m-d', strtotime( Input::get( 'business_inception' ) ) ),
-			'partner_internal_business_id'          => 'ninja_account_' . $user->account_id,
+			'partner_internal_business_id'          => 'ninja_account_' . $user->company_id,
 		);
 
 		if ( ! empty( Input::get( 'quote_type_factoring' ) ) ) {
@@ -61,7 +61,7 @@ class BlueVineController extends BaseController {
 			}
 		}
 
-		$corporation = $user->account->corporation;
+		$corporation = $user->company->corporation;
 		$corporation->bluevine_status = 'signed_up';
 		$corporation->save();
 
@@ -74,7 +74,7 @@ class BlueVineController extends BaseController {
 		$user = Auth::user();
 
 		if ( $user ) {
-			$corporation = $user->account->corporation;
+			$corporation = $user->company->corporation;
 			$corporation->bluevine_status = 'ignored';
 			$corporation->save();
 		}

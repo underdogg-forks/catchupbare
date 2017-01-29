@@ -73,8 +73,8 @@ class ExportController extends BaseController
         $manager->setSerializer(new ArraySerializer());
 
         // eager load data, include archived but exclude deleted
-        $account = Auth::user()->account;
-        $account->load(['clients' => function($query) {
+        $company = Auth::user()->company;
+        $company->load(['clients' => function($query) {
             $query->withArchived()
                   ->with(['contacts', 'invoices' => function($query) {
                       $query->withArchived()
@@ -84,7 +84,7 @@ class ExportController extends BaseController
                   }]);
         }]);
 
-        $resource = new Item($account, new AccountTransformer);
+        $resource = new Item($company, new AccountTransformer);
         $data = $manager->parseIncludes('clients.invoices.payments')
                     ->createData($resource)
                     ->toArray();
@@ -130,10 +130,10 @@ class ExportController extends BaseController
                   ->setKeywords('')
                   ->setCategory('')
                   ->setManager('')
-                  ->setCorporation($user->account->getDisplayName());
+                  ->setCorporation($user->company->getDisplayName());
 
             foreach ($data as $key => $val) {
-                if ($key === 'account' || $key === 'title' || $key === 'multiUser') {
+                if ($key === 'company' || $key === 'title' || $key === 'multiUser') {
                     continue;
                 }
                 if ($key === 'recurringInvoices') {
@@ -159,12 +159,12 @@ class ExportController extends BaseController
      */
     private function getData($request)
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $data = [
-            'account' => $account,
-            'title' => 'Invoice Ninja v' . NINJA_VERSION . ' - ' . $account->formatDateTime($account->getDateTime()),
-            'multiUser' => $account->users->count() > 1
+            'company' => $company,
+            'title' => 'Invoice Ninja v' . NINJA_VERSION . ' - ' . $company->formatDateTime($company->getDateTime()),
+            'multiUser' => $company->users->count() > 1
         ];
 
         if ($request->input('include') === 'all' || $request->input('clients')) {
@@ -224,7 +224,7 @@ class ExportController extends BaseController
         if ($request->input('include') === 'all' || $request->input('payments')) {
             $data['payments'] = Payment::scope()
                 ->withArchived()
-                ->with('user', 'client.contacts', 'payment_type', 'invoice', 'account_gateway.gateway')
+                ->with('user', 'client.contacts', 'payment_type', 'invoice', 'acc_gateway.gateway')
                 ->get();
         }
 

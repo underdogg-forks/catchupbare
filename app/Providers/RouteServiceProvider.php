@@ -22,12 +22,14 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Define your route model bindings, pattern filters, etc.
      *
+     * Router $router
      * @param  \Illuminate\Routing\Router $router
      * @return void
      */
-    public function boot(Router $router)
+    public function boot()
     {
-        parent::boot($router);
+        //$router
+        parent::boot();
     }
 
     /**

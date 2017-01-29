@@ -1,4 +1,4 @@
-@if ($accountGateway->getConfigField('testMode'))
+@if ($accGateway->getConfigField('testMode'))
     <script src="https://sandbox.checkout.com/js/v1/checkout.js"></script>
 @else
     <script src="https://cdn.checkout.com/js/checkout.js"></script>
@@ -7,8 +7,8 @@
 <form method="POST" class="payment-form">
     <script>
         Checkout.render({
-            debugMode: {{ $accountGateway->getConfigField('testMode') ? 'true' : 'false' }},
-            publicKey: '{{ $accountGateway->getConfigField('publicApiKey') }}',
+            debugMode: {{ $accGateway->getConfigField('testMode') ? 'true' : 'false' }},
+            publicKey: '{{ $accGateway->getConfigField('publicApiKey') }}',
             paymentToken: '{{ $transactionToken }}',
             customerEmail: '{{ $contact->email }}',
             customerName: '{{ $contact->getFullName() }}',

@@ -1,6 +1,10 @@
 <?php namespace App\Http\Requests;
 
 use App\Models\Invoice;
+use Input;
+use Utils;
+use App\Libraries\HistoryUtils;
+
 
 class InvoiceRequest extends EntityRequest {
 
@@ -8,7 +12,9 @@ class InvoiceRequest extends EntityRequest {
 
     public function entity()
     {
-        $invoice = parent::entity();
+        //$invoice = parent::entity();
+        $the_invoice_id = Input::get('id');
+        $invoice = Invoice::scope($the_invoice_id)->withTrashed()->firstOrFail();
 
         // support loading an invoice by its invoice number
         if ($this->invoice_number && ! $invoice) {

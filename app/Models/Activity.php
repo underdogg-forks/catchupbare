@@ -19,15 +19,15 @@ class Activity extends Eloquent
      */
     public function scopeScope($query)
     {
-        return $query->whereAccountId(Auth::user()->account_id);
+        return $query->whereCompanyId(Auth::user()->company_id);
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function account()
+    public function company()
     {
-        return $this->belongsTo('App\Models\Account');
+        return $this->belongsTo('App\Models\Company');
     }
 
     /**
@@ -99,7 +99,7 @@ class Activity extends Eloquent
     public function getMessage()
     {
         $activityTypeId = $this->activity_type_id;
-        $account = $this->account;
+        $company = $this->company;
         $client = $this->client;
         $user = $this->user;
         $invoice = $this->invoice;
@@ -117,9 +117,9 @@ class Activity extends Eloquent
             'quote' => $invoice ? link_to($invoice->getRoute(), $invoice->getDisplayName()) : null,
             'contact' => $contactId ? $client->getDisplayName() : $user->getDisplayName(),
             'payment' => $payment ? $payment->transaction_reference : null,
-            'payment_amount' => $payment ? $account->formatMoney($payment->amount, $payment) : null,
-            'adjustment' => $this->adjustment ? $account->formatMoney($this->adjustment, $this) : null,
-            'credit' => $credit ? $account->formatMoney($credit->amount, $client) : null,
+            'payment_amount' => $payment ? $company->formatMoney($payment->amount, $payment) : null,
+            'adjustment' => $this->adjustment ? $company->formatMoney($this->adjustment, $this) : null,
+            'credit' => $credit ? $company->formatMoney($credit->amount, $client) : null,
             'task' => $task ? link_to($task->getRoute(), substr($task->description, 0, 30).'...') : null,
             'expense' => $expense ? link_to($expense->getRoute(), substr($expense->public_notes, 0, 30).'...') : null,
         ];

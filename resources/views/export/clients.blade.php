@@ -15,11 +15,11 @@
     <td>{{ trans('texts.vat_number') }}</td>
     <td>{{ trans('texts.website') }}</td>
     <td>{{ trans('texts.phone') }}</td>
-    @if ($account->custom_client_label1)
-        <td>{{ $account->custom_client_label1 }}</td>
+    @if ($company->custom_client_label1)
+        <td>{{ $company->custom_client_label1 }}</td>
     @endif
-    @if ($account->custom_client_label2)
-        <td>{{ $account->custom_client_label2 }}</td>
+    @if ($company->custom_client_label2)
+        <td>{{ $company->custom_client_label2 }}</td>
     @endif
 </tr>
 
@@ -29,8 +29,8 @@
         @if ($multiUser)
             <td>{{ $client->user->getDisplayName() }}</td>
         @endif
-        <td>{{ $account->formatMoney($client->balance, $client) }}</td>
-        <td>{{ $account->formatMoney($client->paid_to_date, $client) }}</td>
+        <td>{{ $company->formatMoney($client->balance, $client) }}</td>
+        <td>{{ $company->formatMoney($client->paid_to_date, $client) }}</td>
         <td>{{ $client->address1 }}</td>
         <td>{{ $client->address2 }}</td>
         <td>{{ $client->city }}</td>
@@ -41,10 +41,10 @@
         <td>{{ $client->vat_number }}</td>
         <td>{{ $client->website }}</td>
         <td>{{ $client->work_phone }}</td>
-        @if ($account->custom_client_label1)
+        @if ($company->custom_client_label1)
             <td>{{ $client->custom_value1 }}</td>
         @endif
-        @if ($account->custom_client_label2)
+        @if ($company->custom_client_label2)
             <td>{{ $client->custom_value2 }}</td>
         @endif
     </tr>

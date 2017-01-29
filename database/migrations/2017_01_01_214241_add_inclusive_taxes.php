@@ -21,10 +21,10 @@ class AddInclusiveTaxes extends Migration
         });
 
         DB::statement('UPDATE corporations
-            LEFT JOIN accounts ON accounts.corporation_id = corporations.id AND accounts.bluevine_status IS NOT NULL
-            SET corporations.bluevine_status = accounts.bluevine_status');
+            LEFT JOIN companies ON companies.corporation_id = corporations.id AND companies.bluevine_status IS NOT NULL
+            SET corporations.bluevine_status = companies.bluevine_status');
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('bluevine_status');
             $table->text('bcc_email')->nullable();
             $table->text('client_number_prefix')->nullable();
@@ -58,7 +58,7 @@ class AddInclusiveTaxes extends Migration
             $table->dropColumn('bluevine_status');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->enum('bluevine_status', ['ignored', 'signed_up'])->nullable();
             $table->dropColumn('bcc_email');
             $table->dropColumn('client_number_prefix');

@@ -24,8 +24,8 @@
 	@if ($client)
 		{!! Former::populate($client) !!}
         {!! Former::hidden('public_id') !!}
-	@elseif ($account->client_number_counter)
-		{!! Former::populateField('id_number', $account->getNextNumber()) !!}
+	@elseif ($company->client_number_counter)
+		{!! Former::populateField('id_number', $company->getNextNumber()) !!}
 	@endif
 
 	<div class="row">
@@ -39,7 +39,7 @@
             <div class="panel-body">
 
 			{!! Former::text('name')->data_bind("attr { placeholder: placeholderName }") !!}
-			{!! Former::text('id_number')->placeholder($account->clientNumbersEnabled() ? $account->getNextNumber() : ' ') !!}
+			{!! Former::text('id_number')->placeholder($company->clientNumbersEnabled() ? $company->getNextNumber() : ' ') !!}
             {!! Former::text('vat_number') !!}
             {!! Former::text('website') !!}
 			{!! Former::text('work_phone') !!}
@@ -94,7 +94,7 @@
                         attr: {name: 'contacts[' + \$index() + '][email]', id:'email'+\$index()}") !!}
 				{!! Former::text('phone')->data_bind("value: phone, valueUpdate: 'afterkeydown',
                         attr: {name: 'contacts[' + \$index() + '][phone]'}") !!}
-				@if ($account->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $account->enable_portal_password)
+				@if ($company->hasFeature(FEATURE_CLIENT_PORTAL_PASSWORD) && $company->enable_portal_password)
 					{!! Former::password('password')->data_bind("value: password()?'-%unchanged%-':'', valueUpdate: 'afterkeydown',
 						attr: {name: 'contacts[' + \$index() + '][password]'}") !!}
 			    @endif
@@ -120,14 +120,14 @@
             <div class="panel-body">
 
             {!! Former::select('currency_id')->addOption('','')
-                ->placeholder($account->currency ? $account->currency->name : '')
+                ->placeholder($company->currency ? $company->currency->name : '')
                 ->fromQuery($currencies, 'name', 'id') !!}
             {!! Former::select('language_id')->addOption('','')
-                ->placeholder($account->language ? trans('texts.lang_'.$account->language->name) : '')
+                ->placeholder($company->language ? trans('texts.lang_'.$company->language->name) : '')
                 ->fromQuery($languages, 'name', 'id') !!}
 			{!! Former::select('payment_terms')->addOption('','')
 				->fromQuery($paymentTerms, 'name', 'num_days')
-				->placeholder($account->present()->paymentTerms)
+				->placeholder($company->present()->paymentTerms)
                 ->help(trans('texts.payment_terms_help')) !!}
 			{!! Former::select('size_id')->addOption('','')
 				->fromQuery($sizes, 'name', 'id') !!}
@@ -136,7 +136,7 @@
 			{!! Former::textarea('private_notes') !!}
 
 
-            @if (Auth::user()->account->isNinjaAccount())
+            @if (Auth::user()->company->isNinjaAccount())
 				@if (isset($planDetails))
 					{!! Former::populateField('plan', $planDetails['plan']) !!}
 					{!! Former::populateField('plan_term', $planDetails['term']) !!}

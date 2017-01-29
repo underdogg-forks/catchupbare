@@ -13,7 +13,7 @@ class AddHeaderFooterOption extends Migration
      */
     public function up()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->boolean('all_pages_footer');
             $table->boolean('all_pages_header');
             $table->boolean('show_currency_code');
@@ -47,7 +47,7 @@ class AddHeaderFooterOption extends Migration
      */
     public function down()
     {
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('all_pages_footer');
             $table->dropColumn('all_pages_header');
             $table->dropColumn('show_currency_code');

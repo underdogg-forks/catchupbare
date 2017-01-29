@@ -10,7 +10,7 @@ use Crawler;
 use Exception;
 use Validator;
 use App\Models\Invitation;
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\Client;
 use App\Models\Payment;
 use App\Models\Product;
@@ -75,14 +75,14 @@ class OnlinePaymentController extends BaseController
             return redirect()->to('view/' . $invitation->invitation_key);
         }
 
-        $invitation = $invitation->load('invoice.client.account.account_gateways.gateway');
-        $account = $invitation->account;
+        $invitation = $invitation->load('invoice.client.company.acc_gateways.gateway');
+        $company = $invitation->company;
 
-        if ($account->requiresAuthorization($invitation->invoice) && ! session('authorized:' . $invitation->invitation_key)) {
+        if ($company->requiresAuthorization($invitation->invoice) && ! session('authorized:' . $invitation->invitation_key)) {
             return redirect()->to('view/' . $invitation->invitation_key);
         }
 
-        $account->loadLocalizationSettings($invitation->invoice->client);
+        $company->loadLocalizationSettings($invitation->invoice->client);
 
         if ( ! $gatewayTypeAlias) {
             $gatewayTypeId = Session::get($invitation->id . 'gateway_type');
@@ -92,7 +92,7 @@ class OnlinePaymentController extends BaseController
             $gatewayTypeId = $gatewayTypeAlias;
         }
 
-        $paymentDriver = $account->paymentDriver($invitation, $gatewayTypeId);
+        $paymentDriver = $company->paymentDriver($invitation, $gatewayTypeId);
 
         try {
             return $paymentDriver->startPurchase(Input::all(), $sourceId);
@@ -109,7 +109,7 @@ class OnlinePaymentController extends BaseController
     {
         $invitation = $request->invitation;
         $gatewayTypeId = Session::get($invitation->id . 'gateway_type');
-        $paymentDriver = $invitation->account->paymentDriver($invitation, $gatewayTypeId);
+        $paymentDriver = $invitation->company->paymentDriver($invitation, $gatewayTypeId);
 
         if ( ! $invitation->invoice->canBePaid()) {
             return redirect()->to('view/' . $invitation->invitation_key);
@@ -119,7 +119,7 @@ class OnlinePaymentController extends BaseController
             $paymentDriver->completeOnsitePurchase($request->all());
 
             if ($paymentDriver->isTwoStep()) {
-                Session::flash('warning', trans('texts.bank_account_verification_next_steps'));
+                Session::flash('warning', trans('texts.bank_acc_verification_next_steps'));
             } else {
                 Session::flash('message', trans('texts.applied_payment'));
             }
@@ -138,7 +138,7 @@ class OnlinePaymentController extends BaseController
     public function offsitePayment($invitationKey = false, $gatewayTypeAlias = false)
     {
         $invitationKey = $invitationKey ?: Session::get('invitation_key');
-        $invitation = Invitation::with('invoice.invoice_items', 'invoice.client.currency', 'invoice.client.account.account_gateways.gateway')
+        $invitation = Invitation::with('invoice.invoice_items', 'invoice.client.currency', 'invoice.client.company.acc_gateways.gateway')
                         ->where('invitation_key', '=', $invitationKey)->firstOrFail();
 
         if ( ! $gatewayTypeAlias) {
@@ -149,7 +149,7 @@ class OnlinePaymentController extends BaseController
             $gatewayTypeId = $gatewayTypeAlias;
         }
 
-        $paymentDriver = $invitation->account->paymentDriver($invitation, $gatewayTypeId);
+        $paymentDriver = $invitation->company->paymentDriver($invitation, $gatewayTypeId);
 
         if ($error = Input::get('error_description') ?: Input::get('error')) {
             return $this->error($paymentDriver, $error);
@@ -233,31 +233,31 @@ class OnlinePaymentController extends BaseController
     }
 
     /**
-     * @param $accountKey
+     * @param $accKey
      * @param $gatewayId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function handlePaymentWebhook($accountKey, $gatewayId)
+    public function handlePaymentWebhook($accKey, $gatewayId)
     {
         $gatewayId = intval($gatewayId);
 
-        $account = Account::where('accounts.account_key', '=', $accountKey)->first();
+        $company = Company::where('companies.acc_key', '=', $accKey)->first();
 
-        if (!$account) {
+        if (!$company) {
             return response()->json([
-                'message' => 'Unknown account',
+                'message' => 'Unknown company',
             ], 404);
         }
 
-        $accountGateway = $account->getGatewayConfig(intval($gatewayId));
+        $accGateway = $company->getGatewayConfig(intval($gatewayId));
 
-        if (!$accountGateway) {
+        if (!$accGateway) {
             return response()->json([
                 'message' => 'Unknown gateway',
             ], 404);
         }
 
-        $paymentDriver = $accountGateway->paymentDriver();
+        $paymentDriver = $accGateway->paymentDriver();
 
         try {
             $result = $paymentDriver->handleWebHook(Input::all());
@@ -274,15 +274,15 @@ class OnlinePaymentController extends BaseController
             return redirect()->to(NINJA_WEB_URL, 301);
         }
 
-        $account = Account::whereAccountKey(Input::get('account_key'))->first();
+        $company = Company::whereAccountKey(Input::get('acc_key'))->first();
         $redirectUrl = Input::get('redirect_url');
         $failureUrl = URL::previous();
 
-        if ( ! $account || ! $account->enable_buy_now_buttons || ! $account->hasFeature(FEATURE_BUY_NOW_BUTTONS)) {
-            return redirect()->to("{$failureUrl}/?error=invalid account");
+        if ( ! $company || ! $company->enable_buy_now_buttons || ! $company->hasFeature(FEATURE_BUY_NOW_BUTTONS)) {
+            return redirect()->to("{$failureUrl}/?error=invalid company");
         }
 
-        Auth::onceUsingId($account->users[0]->id);
+        Auth::onceUsingId($company->users[0]->id);
         $product = Product::scope(Input::get('product_id'))->first();
 
         if ( ! $product) {
@@ -309,7 +309,7 @@ class OnlinePaymentController extends BaseController
             }
 
             $data = [
-                'currency_id' => $account->currency_id,
+                'currency_id' => $company->currency_id,
                 'contact' => Input::all()
             ];
             $client = $clientRepo->save($data);
@@ -317,8 +317,8 @@ class OnlinePaymentController extends BaseController
 
         $data = [
             'client_id' => $client->id,
-            'tax_rate1' => $account->default_tax_rate ? $account->default_tax_rate->rate : 0,
-            'tax_name1' => $account->default_tax_rate ? $account->default_tax_rate->name : '',
+            'tax_rate1' => $company->default_tax_rate ? $company->default_tax_rate->rate : 0,
+            'tax_name1' => $company->default_tax_rate ? $company->default_tax_rate->name : '',
             'invoice_items' => [[
                 'product_key' => $product->product_key,
                 'notes' => $product->notes,

@@ -16,7 +16,7 @@ class AddExpenseToActivities extends Migration
             $table->unsignedInteger('expense_id')->nullable();
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->date('financial_year_start')->nullable();
             $table->smallInteger('enabled_modules')->default(63);
             $table->smallInteger('enabled_dashboard_sections')->default(7);
@@ -42,7 +42,7 @@ class AddExpenseToActivities extends Migration
             $table->dropColumn('expense_id');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('financial_year_start');
             $table->dropColumn('enabled_modules');
             $table->dropColumn('enabled_dashboard_sections');

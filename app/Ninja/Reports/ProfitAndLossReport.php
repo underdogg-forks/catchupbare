@@ -18,7 +18,7 @@ class ProfitAndLossReport extends AbstractReport
 
     public function run()
     {
-        $account = Auth::user()->account;
+        $company = Auth::user()->company;
 
         $payments = Payment::scope()
                         ->with('client.contacts')
@@ -30,7 +30,7 @@ class ProfitAndLossReport extends AbstractReport
             $this->data[] = [
                 trans('texts.payment'),
                 $client ? ($this->isExport ? $client->getDisplayName() : $client->present()->link) : '',
-                $account->formatMoney($payment->getCompletedAmount(), $client),
+                $company->formatMoney($payment->getCompletedAmount(), $client),
                 $payment->present()->payment_date,
                 $payment->present()->method,
             ];

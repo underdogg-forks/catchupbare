@@ -14,7 +14,7 @@ class AddSupportForBots extends Migration
     {
         Schema::create('security_codes', function ($table) {
             $table->increments('id');
-            $table->unsignedInteger('account_id')->index();
+            $table->unsignedInteger('company_id')->index();
             $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('contact_id')->nullable();
             $table->smallInteger('attempts');
@@ -26,7 +26,7 @@ class AddSupportForBots extends Migration
         Schema::table('security_codes', function ($table) {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('contact_id')->references('id')->on('contacts')->onDelete('cascade');
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
 
         Schema::table('users', function ($table) {
@@ -37,7 +37,7 @@ class AddSupportForBots extends Migration
             $table->string('bot_user_id')->nullable();
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->boolean('include_item_taxes_inline')->default(false);
         });
 
@@ -60,7 +60,7 @@ class AddSupportForBots extends Migration
             $table->dropColumn('bot_user_id');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('include_item_taxes_inline');
         });
     }

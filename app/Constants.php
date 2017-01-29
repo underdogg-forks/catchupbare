@@ -23,7 +23,7 @@ if (!defined('APP_NAME'))
     define('ENTITY_CREDIT', 'credit');
     define('ENTITY_QUOTE', 'quote');
     define('ENTITY_TASK', 'task');
-    define('ENTITY_ACCOUNT_GATEWAY', 'account_gateway');
+    define('ENTITY_ACCOUNT_GATEWAY', 'acc_gateway');
     define('ENTITY_USER', 'user');
     define('ENTITY_TOKEN', 'token');
     define('ENTITY_TAX_RATE', 'tax_rate');
@@ -34,8 +34,8 @@ if (!defined('APP_NAME'))
     define('ENTITY_EXPENSE', 'expense');
     define('ENTITY_PAYMENT_TERM', 'payment_term');
     define('ENTITY_EXPENSE_ACTIVITY', 'expense_activity');
-    define('ENTITY_BANK_ACCOUNT', 'bank_account');
-    define('ENTITY_BANK_SUBACCOUNT', 'bank_subaccount');
+    define('ENTITY_BANK_COMPANY', 'bank_acc');
+    define('ENTITY_BANK_SUBACCOUNT', 'bank_subacc');
     define('ENTITY_EXPENSE_CATEGORY', 'expense_category');
     define('ENTITY_PROJECT', 'project');
 
@@ -49,32 +49,32 @@ if (!defined('APP_NAME'))
     define('BASIC_SETTINGS', 'basic_settings');
     define('ADVANCED_SETTINGS', 'advanced_settings');
 
-    define('ACCOUNT_COMPANY_DETAILS', 'corporation_details');
-    define('ACCOUNT_USER_DETAILS', 'user_details');
-    define('ACCOUNT_LOCALIZATION', 'localization');
-    define('ACCOUNT_NOTIFICATIONS', 'notifications');
-    define('ACCOUNT_IMPORT_EXPORT', 'import_export');
-    define('ACCOUNT_MANAGEMENT', 'account_management');
-    define('ACCOUNT_PAYMENTS', 'online_payments');
-    define('ACCOUNT_BANKS', 'bank_accounts');
-    define('ACCOUNT_IMPORT_EXPENSES', 'import_expenses');
-    define('ACCOUNT_MAP', 'import_map');
-    define('ACCOUNT_EXPORT', 'export');
-    define('ACCOUNT_TAX_RATES', 'tax_rates');
-    define('ACCOUNT_PRODUCTS', 'products');
-    define('ACCOUNT_ADVANCED_SETTINGS', 'advanced_settings');
-    define('ACCOUNT_INVOICE_SETTINGS', 'invoice_settings');
-    define('ACCOUNT_INVOICE_DESIGN', 'invoice_design');
-    define('ACCOUNT_CLIENT_PORTAL', 'client_portal');
-    define('ACCOUNT_EMAIL_SETTINGS', 'email_settings');
-    define('ACCOUNT_REPORTS', 'reports');
-    define('ACCOUNT_USER_MANAGEMENT', 'user_management');
-    define('ACCOUNT_DATA_VISUALIZATIONS', 'data_visualizations');
-    define('ACCOUNT_TEMPLATES_AND_REMINDERS', 'templates_and_reminders');
-    define('ACCOUNT_API_TOKENS', 'api_tokens');
-    define('ACCOUNT_CUSTOMIZE_DESIGN', 'customize_design');
-    define('ACCOUNT_SYSTEM_SETTINGS', 'system_settings');
-    define('ACCOUNT_PAYMENT_TERMS','payment_terms');
+    define('COMPANY_COMPANY_DETAILS', 'company_details');
+    define('COMPANY_USER_DETAILS', 'user_details');
+    define('COMPANY_LOCALIZATION', 'localization');
+    define('COMPANY_NOTIFICATIONS', 'notifications');
+    define('COMPANY_IMPORT_EXPORT', 'import_export');
+    define('COMPANY_MANAGEMENT', 'account_management');
+    define('COMPANY_PAYMENTS', 'online_payments');
+    define('COMPANY_BANKS', 'bank_accs');
+    define('COMPANY_IMPORT_EXPENSES', 'import_expenses');
+    define('COMPANY_MAP', 'import_map');
+    define('COMPANY_EXPORT', 'export');
+    define('COMPANY_TAX_RATES', 'tax_rates');
+    define('COMPANY_PRODUCTS', 'products');
+    define('COMPANY_ADVANCED_SETTINGS', 'advanced_settings');
+    define('COMPANY_INVOICE_SETTINGS', 'invoice_settings');
+    define('COMPANY_INVOICE_DESIGN', 'invoice_design');
+    define('COMPANY_CLIENT_PORTAL', 'client_portal');
+    define('COMPANY_EMAIL_SETTINGS', 'email_settings');
+    define('COMPANY_REPORTS', 'reports');
+    define('COMPANY_USER_MANAGEMENT', 'user_management');
+    define('COMPANY_DATA_VISUALIZATIONS', 'data_visualizations');
+    define('COMPANY_TEMPLATES_AND_REMINDERS', 'templates_and_reminders');
+    define('COMPANY_API_TOKENS', 'api_tokens');
+    define('COMPANY_CUSTOMIZE_DESIGN', 'customize_design');
+    define('COMPANY_SYSTEM_SETTINGS', 'system_settings');
+    define('COMPANY_PAYMENT_TERMS','payment_terms');
 
     define('ACTION_RESTORE', 'restore');
     define('ACTION_ARCHIVE', 'archive');
@@ -217,7 +217,7 @@ if (!defined('APP_NAME'))
     define('SESSION_DATETIME_FORMAT', 'datetimeFormat');
     define('SESSION_COUNTER', 'sessionCounter');
     define('SESSION_LOCALE', 'sessionLocale');
-    define('SESSION_USER_ACCOUNTS', 'userAccounts');
+    define('SESSION_USERACCS', 'userAccounts');
     define('SESSION_REFERRAL_CODE', 'referralCode');
     define('SESSION_LEFT_SIDEBAR', 'showLeftSidebar');
     define('SESSION_RIGHT_SIDEBAR', 'showRightSidebar');
@@ -283,9 +283,9 @@ if (!defined('APP_NAME'))
     define('EVENT_DELETE_INVOICE', 9);
 
     define('REQUESTED_PRO_PLAN', 'REQUESTED_PRO_PLAN');
-    define('DEMO_ACCOUNT_ID', 'DEMO_ACCOUNT_ID');
+    define('DEMO_COMPANY_ID', 'DEMO_COMPANY_ID');
     define('PREV_USER_ID', 'PREV_USER_ID');
-    define('NINJA_ACCOUNT_KEY', 'zg4ylmzDkdkPOT8yoKQw9LTWaoZJx79h');
+    define('NINJA_COMPANY_KEY', 'zg4ylmzDkdkPOT8yoKQw9LTWaoZJx79h');
     define('NINJA_GATEWAY_ID', GATEWAY_STRIPE);
     define('NINJA_GATEWAY_CONFIG', 'NINJA_GATEWAY_CONFIG');
     define('NINJA_WEB_URL', env('NINJA_WEB_URL', 'https://www.invoiceninja.com'));
@@ -508,7 +508,7 @@ if (!defined('APP_NAME'))
 
     define('INVOICE_FIELDS_CLIENT', 'client_fields');
     define('INVOICE_FIELDS_INVOICE', 'invoice_fields');
-    define('INVOICE_FIELDS_ACCOUNT', 'account_fields');
+    define('INVOICE_FIELDS_COMPANY', 'account_fields');
 
     $creditCards = [
                 1 => ['card' => 'images/credit_cards/Test-Visa-Icon.png', 'text' => 'Visa'],

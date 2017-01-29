@@ -15,7 +15,7 @@ class AddSwapPostalCode extends Migration
             $table->boolean('swap_postal_code')->default(0);
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->boolean('show_item_taxes')->default(0);
         });
     }
@@ -31,7 +31,7 @@ class AddSwapPostalCode extends Migration
             $table->dropColumn('swap_postal_code');
         });
 
-        Schema::table('accounts', function ($table) {
+        Schema::table('companies', function ($table) {
             $table->dropColumn('show_item_taxes');
         });
     }

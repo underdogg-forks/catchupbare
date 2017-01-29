@@ -66,7 +66,7 @@ class ApiCheck {
             $error['error'] = ['message'=>'API requires pro plan'];
             return Response::json($error, 403, $headers);
         } else {
-            $key = Auth::check() ? Auth::user()->account->id : $request->getClientIp();
+            $key = Auth::check() ? Auth::user()->company->id : $request->getClientIp();
 
             // http://stackoverflow.com/questions/1375501/how-do-i-throttle-my-sites-api-users
             $hour = 60 * 60;

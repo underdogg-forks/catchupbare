@@ -17,11 +17,11 @@
 
     var NINJA = NINJA || {};
     @if (Auth::check())
-    NINJA.primaryColor = "{{ Auth::user()->account->primary_color }}";
-    NINJA.secondaryColor = "{{ Auth::user()->account->secondary_color }}";
-    NINJA.fontSize = {{ Auth::user()->account->font_size ?: DEFAULT_FONT_SIZE }};
-    NINJA.headerFont = {!! json_encode(Auth::user()->account->getHeaderFontName()) !!};
-    NINJA.bodyFont = {!! json_encode(Auth::user()->account->getBodyFontName()) !!};
+    NINJA.primaryColor = "{{ Auth::user()->company->primary_color }}";
+    NINJA.secondaryColor = "{{ Auth::user()->company->secondary_color }}";
+    NINJA.fontSize = {{ Auth::user()->company->font_size ?: DEFAULT_FONT_SIZE }};
+    NINJA.headerFont = {!! json_encode(Auth::user()->company->getHeaderFontName()) !!};
+    NINJA.bodyFont = {!! json_encode(Auth::user()->company->getBodyFontName()) !!};
     @else
     NINJA.fontSize = {{ DEFAULT_FONT_SIZE }};
     @endif
@@ -34,30 +34,30 @@
     }
 
     function formatMoneyInvoice(value, invoice, decorator) {
-        var account = invoice.account;
+        var company = invoice.company;
         var client = invoice.client;
 
-        return formatMoneyAccount(value, account, client, decorator);
+        return formatMoneyAccount(value, company, client, decorator);
     }
 
-    function formatMoneyAccount(value, account, client, decorator) {
+    function formatMoneyAccount(value, company, client, decorator) {
         var currencyId = false;
         var countryId = false;
 
         if (client && client.currency_id) {
             currencyId = client.currency_id;
-        } else if (account && account.currency_id) {
-            currencyId = account.currency_id;
+        } else if (company && company.currency_id) {
+            currencyId = company.currency_id;
         }
 
         if (client && client.country_id) {
             countryId = client.country_id;
-        } else if (account && account.country_id) {
-            countryId = account.country_id;
+        } else if (company && company.country_id) {
+            countryId = company.country_id;
         }
 
-        if (account && ! decorator) {
-            decorator = parseInt(account.show_currency_code) ? 'code' : 'symbol';
+        if (company && ! decorator) {
+            decorator = parseInt(company.show_currency_code) ? 'code' : 'symbol';
         }
 
         return formatMoney(value, currencyId, countryId, decorator)

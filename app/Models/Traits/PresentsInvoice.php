@@ -37,19 +37,19 @@ trait PresentsInvoice
                 'client.email',
             ],
             'account_fields1' => [
-                'account.corporation_name',
-                'account.id_number',
-                'account.vat_number',
-                'account.website',
-                'account.email',
-                'account.phone',
+                'company.corporation_name',
+                'company.id_number',
+                'company.vat_number',
+                'company.website',
+                'company.email',
+                'company.phone',
 
             ],
             'account_fields2' => [
-                'account.address1',
-                'account.address2',
-                'account.city_state_postal',
-                'account.country',
+                'company.address1',
+                'company.address2',
+                'company.city_state_postal',
+                'company.country',
             ],
         ];
 
@@ -66,10 +66,10 @@ trait PresentsInvoice
             $fields[INVOICE_FIELDS_CLIENT][] = 'client.custom_value2';
         }
         if ($this->custom_label1) {
-            $fields['account_fields2'][] = 'account.custom_value1';
+            $fields['account_fields2'][] = 'company.custom_value1';
         }
         if ($this->custom_label2) {
-            $fields['account_fields2'][] = 'account.custom_value2';
+            $fields['account_fields2'][] = 'company.custom_value2';
         }
 
         return $this->applyLabels($fields);
@@ -105,20 +105,20 @@ trait PresentsInvoice
                 'client.custom_value2',
                 '.blank',
             ],
-            INVOICE_FIELDS_ACCOUNT => [
-                'account.corporation_name',
-                'account.id_number',
-                'account.vat_number',
-                'account.website',
-                'account.email',
-                'account.phone',
-                'account.address1',
-                'account.address2',
-                'account.city_state_postal',
-                'account.postal_city_state',
-                'account.country',
-                'account.custom_value1',
-                'account.custom_value2',
+            INVOICE_FIELDS_COMPANY => [
+                'company.corporation_name',
+                'company.id_number',
+                'company.vat_number',
+                'company.website',
+                'company.email',
+                'company.phone',
+                'company.address1',
+                'company.address2',
+                'company.city_state_postal',
+                'company.postal_city_state',
+                'company.country',
+                'company.custom_value1',
+                'company.custom_value2',
                 '.blank',
             ]
         ];
@@ -230,8 +230,8 @@ trait PresentsInvoice
             'invoice.custom_text_value2' => 'custom_invoice_text_label2',
             'client.custom_value1' => 'custom_client_label1',
             'client.custom_value2' => 'custom_client_label2',
-            'account.custom_value1' => 'custom_label1',
-            'account.custom_value2' => 'custom_label2'
+            'company.custom_value1' => 'custom_label1',
+            'company.custom_value2' => 'custom_label2'
         ] as $field => $property) {
             $data[$field] = $this->$property ?: trans('texts.custom_field');
         }

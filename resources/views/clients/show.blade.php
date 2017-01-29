@@ -111,11 +111,11 @@
                 {{ $client->country->name }}<br/>
             @endif
 
-            @if ($client->account->custom_client_label1 && $client->custom_value1)
-                {{ $client->account->custom_client_label1 . ': ' . $client->custom_value1 }}<br/>
+            @if ($client->company->custom_client_label1 && $client->custom_value1)
+                {{ $client->company->custom_client_label1 . ': ' . $client->custom_value1 }}<br/>
             @endif
-            @if ($client->account->custom_client_label2 && $client->custom_value2)
-                {{ $client->account->custom_client_label2 . ': ' . $client->custom_value2 }}<br/>
+            @if ($client->company->custom_client_label2 && $client->custom_value2)
+                {{ $client->company->custom_client_label2 . ': ' . $client->custom_value2 }}<br/>
             @endif
 
             @if ($client->work_phone)
@@ -156,7 +156,7 @@
                 @if ($contact->phone)
                     <i class="fa fa-phone" style="width: 20px"></i>{{ $contact->phone }}<br/>
                 @endif
-                @if (Auth::user()->confirmed && $client->account->enable_client_portal)
+                @if (Auth::user()->confirmed && $client->company->enable_client_portal)
                     <i class="fa fa-dashboard" style="width: 20px"></i><a href="{{ $contact->link }}" target="_blank">{{ trans('texts.view_client_portal') }}</a><br/>
                 @endif
 		  	@endforeach

@@ -4,7 +4,7 @@
 
 
 <center>
-    @if (!session(SESSION_USER_ACCOUNTS) || count(session(SESSION_USER_ACCOUNTS)) < 5)
+    @if (!session(SESSION_USERACCS) || count(session(SESSION_USERACCS)) < 5)
         {!! Button::success(trans('texts.add_corporation'))->asLinkTo(url('/invoice_now?new_corporation=true&sign_up=true')) !!}
     @endif
 </center>
@@ -21,23 +21,23 @@
         <div class="panel panel-default">
             <div class="panel-body">
             <table class="table table-striped">
-            @foreach (Session::get(SESSION_USER_ACCOUNTS) as $account)
+            @foreach (Session::get(SESSION_USERACCS) as $company)
                 <tr>
                     <td>
-                    @if (isset($account->logo_url))
-                        {!! HTML::image($account->logo_url.'?no_cache='.time(), 'Logo', ['width' => 100]) !!}
+                    @if (isset($company->logo_url))
+                        {!! HTML::image($company->logo_url.'?no_cache='.time(), 'Logo', ['width' => 100]) !!}
                     @endif
                     </td>
                     <td>
-                        <h3>{{ $account->account_name }}<br/>
-                        <small>{{ $account->user_name }}
+                        <h3>{{ $company->acc_name }}<br/>
+                        <small>{{ $company->user_name }}
                         </small></h3>
                     </td>
                     <td>
-                        @if ($account->user_id == Auth::user()->id)
+                        @if ($company->user_id == Auth::user()->id)
                             <b>{{ trans('texts.logged_in')}}</b>
                         @else
-                            {!! Button::primary(trans('texts.unlink'))->withAttributes(['onclick'=>"return showUnlink({$account->id}, {$account->user_id})"]) !!}
+                            {!! Button::primary(trans('texts.unlink'))->withAttributes(['onclick'=>"return showUnlink({$company->id}, {$company->user_id})"]) !!}
                         @endif
                     </td>
                 </tr>

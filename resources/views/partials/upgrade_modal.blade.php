@@ -139,8 +139,8 @@
     <label for="plan_term_year" class="radio-inline">
       <input value="year" id="plan_term_year" type="radio" name="plan_term">Annually</label>
   </h4>
-  @if (Auth::user()->account->corporation->hasActivePromo())
-    <h4>{{ Auth::user()->account->corporation->present()->promoMessage }}</h4><br/>
+  @if (Auth::user()->company->corporation->hasActivePromo())
+    <h4>{{ Auth::user()->company->corporation->present()->promoMessage }}</h4><br/>
   @endif
 </div>
 <div class="col-md-4 col-md-offset-2 text-center">
@@ -226,9 +226,9 @@
       }
       var label = "{{ trans('texts.freq_annually') }}";
     }
-    @if (Auth::user()->account->corporation->hasActivePromo())
-        proPrice = proPrice - (proPrice * {{ Auth::user()->account->corporation->discount }});
-        enterprisePrice = enterprisePrice - (enterprisePrice * {{ Auth::user()->account->corporation->discount }});
+    @if (Auth::user()->company->corporation->hasActivePromo())
+        proPrice = proPrice - (proPrice * {{ Auth::user()->company->corporation->discount }});
+        enterprisePrice = enterprisePrice - (enterprisePrice * {{ Auth::user()->company->corporation->discount }});
     @endif
     $('#upgrade_pro_price').text(proPrice);
     $('#upgrade_enterprise_price').text(enterprisePrice);
@@ -242,7 +242,7 @@
 
   $(function() {
 
-    @if (Auth::user()->account->corporation->hasActivePromo())
+    @if (Auth::user()->company->corporation->hasActivePromo())
         updateUpgradePrices();
     @endif
 

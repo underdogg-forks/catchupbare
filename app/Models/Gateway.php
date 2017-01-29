@@ -124,26 +124,26 @@ class Gateway extends Eloquent
 
     /**
      * @param $query
-     * @param $accountGatewaysIds
+     * @param $accGatewaysIds
      */
-    public function scopePrimary($query, $accountGatewaysIds)
+    public function scopePrimary($query, $accGatewaysIds)
     {
         $query->where('payment_library_id', '=', 1)
             ->where('id', '!=', GATEWAY_WEPAY)
             ->whereIn('id', static::$preferred)
-            ->whereIn('id', $accountGatewaysIds);
+            ->whereIn('id', $accGatewaysIds);
     }
 
     /**
      * @param $query
-     * @param $accountGatewaysIds
+     * @param $accGatewaysIds
      */
-    public function scopeSecondary($query, $accountGatewaysIds)
+    public function scopeSecondary($query, $accGatewaysIds)
     {
         $query->where('payment_library_id', '=', 1)
             ->where('id', '!=', GATEWAY_WEPAY)
             ->whereNotIn('id', static::$preferred)
-            ->whereIn('id', $accountGatewaysIds);
+            ->whereIn('id', $accGatewaysIds);
     }
 
     /**

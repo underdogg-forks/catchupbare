@@ -79,7 +79,7 @@ class Bank
 
 class Login
 {
-    public $accounts;
+    public $companies;
     public $bank;
     public $id;
     public $pass;
@@ -131,15 +131,15 @@ class Login
         $o->go();
         $x = $o->xml();
         foreach ($x->xpath('/OFX/SIGNUPMSGSRSV1/ACCTINFOTRNRS/ACCTINFORS/ACCTINFO/BANKACCTINFO/BANKACCTFROM') as $a) {
-            $this->accounts[] = new Account($this, (string) $a->ACCTID, 'BANK', (string) $a->ACCTTYPE, (string) $a->BANKID);
+            $this->companies[] = new Company($this, (string) $a->ACCTID, 'BANK', (string) $a->ACCTTYPE, (string) $a->BANKID);
         }
         foreach ($x->xpath('/OFX/SIGNUPMSGSRSV1/ACCTINFOTRNRS/ACCTINFORS/ACCTINFO/CCACCTINFO/CCACCTFROM') as $a) {
-            $this->accounts[] = new Account($this, (string) $a->ACCTID, 'CC');
+            $this->companies[] = new Company($this, (string) $a->ACCTID, 'CC');
         }
     }
 }
 
-class Account
+class Company
 {
     public $login;
     public $id;

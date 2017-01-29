@@ -5,4 +5,4 @@
 {!! $license !!}
 
 {!! trans('texts.email_signature') !!}
-{!! $account !!}
+{!! $company !!}

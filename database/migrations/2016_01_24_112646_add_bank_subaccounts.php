@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddBankSubaccounts extends Migration
+class AddBankSubcompanies extends Migration
 {
 
     /**
@@ -13,21 +13,21 @@ class AddBankSubaccounts extends Migration
      */
     public function up()
     {
-        Schema::create('bank_subaccounts', function ($table) {
+        Schema::create('bank_subaccs', function ($table) {
             $table->increments('id');
-            $table->unsignedInteger('account_id');
+            $table->unsignedInteger('company_id');
             $table->unsignedInteger('user_id');
-            $table->unsignedInteger('bank_account_id');
+            $table->unsignedInteger('bank_acc_id');
 
-            $table->string('account_name');
-            $table->string('account_number');
+            $table->string('acc_name');
+            $table->string('acc_number');
 
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('bank_account_id')->references('id')->on('bank_accounts')->onDelete('cascade');
+            $table->foreign('bank_acc_id')->references('id')->on('bank_accs')->onDelete('cascade');
 
             $table->unsignedInteger('public_id')->index();
-            $table->unique(['account_id', 'public_id']);
+            $table->unique(['company_id', 'public_id']);
 
             $table->timestamps();
             $table->softDeletes();
@@ -51,7 +51,7 @@ class AddBankSubaccounts extends Migration
      */
     public function down()
     {
-        Schema::drop('bank_subaccounts');
+        Schema::drop('bank_subaccs');
 
         Schema::table('expenses', function ($table) {
             $table->dropColumn('transaction_id');
