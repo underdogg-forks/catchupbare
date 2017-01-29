@@ -1,5 +1,4 @@
 @extends('header')
-@extends('header')
 
 @section('head')
     @parent
@@ -97,7 +96,7 @@
                                     <a id="editRelationLink" class="pointer"
                                        data-bind="click: $root.showRelationForm">{{ trans('texts.edit_relation') }}</a> |
                                     @endcan
-                                    {!! link_to('/relations/'.$invoice->relation->public_id, trans('texts.view_relation'), ['target' => '_blank']) !!}
+                                    {!! link_to('/relations/'.$invoice->relation->id, trans('texts.view_relation'), ['target' => '_blank']) !!}
                                     @endcan
                                 </div>
                             </div>
@@ -242,7 +241,7 @@
                             <div class="form-group" style="margin-bottom: 8px">
                                 <div class="col-lg-8 col-sm-8 col-sm-offset-4 smaller" style="padding-top: 10px">
                                     @if ($invoice->recurring_invoice)
-                                        {!! trans('texts.created_by_invoice', ['invoice' => link_to('/invoices/'.$invoice->recurring_invoice->public_id, trans('texts.recurring_invoice'))]) !!}
+                                        {!! trans('texts.created_by_invoice', ['invoice' => link_to('/invoices/'.$invoice->recurring_invoice->id, trans('texts.recurring_invoice'))]) !!}
                                     @elseif ($invoice->id)
                                         @if (isset($lastSent) && $lastSent)
                                             {!! trans('texts.last_sent_on', ['date' => link_to('/invoices/'.$lastSent->public_id, $invoice->last_sent_date, ['id' => 'lastSent'])]) !!}
@@ -1579,15 +1578,15 @@
         function onPaymentClick() {
             @if (!empty($autoBillChangeWarning))
                 sweetConfirm(function () {
-                window.location = '{{ URL::to('payments/create/' . $invoice->relation->public_id . '/' . $invoice->public_id ) }}';
+                window.location = '{{ URL::to('payments/create/' . $invoice->relation->id . '/' . $invoice->id ) }}';
             }, "{!! trans('texts.warn_change_auto_bill') !!}");
             @else
-                    window.location = '{{ URL::to('payments/create/' . $invoice->relation->public_id . '/' . $invoice->public_id ) }}';
+                    window.location = '{{ URL::to('payments/create/' . $invoice->relation->id . '/' . $invoice->id ) }}';
             @endif
         }
 
         function onCreditClick() {
-            window.location = '{{ URL::to('credits/create/' . $invoice->relation->public_id . '/' . $invoice->public_id ) }}';
+            window.location = '{{ URL::to('credits/create/' . $invoice->relation->id . '/' . $invoice->id ) }}';
         }
         @endif
 
