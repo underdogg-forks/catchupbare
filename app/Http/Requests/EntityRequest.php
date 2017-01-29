@@ -14,8 +14,6 @@ class EntityRequest extends Request {
 
     public function entity()
     {
-        dd(Input::get("client_id"));
-
         if ($this->entity) {
 
             echo "this->entity:";

@@ -100,11 +100,11 @@ class TaskController extends BaseController
      * @param $publicId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function show($publicId)
+    public function show($taskid)
     {
         Session::reflash();
 
-        return Redirect::to("tasks/{$publicId}/edit");
+        return Redirect::to("tasks/{$taskid}/edit");
     }
 
     /**
@@ -141,11 +141,11 @@ class TaskController extends BaseController
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function edit(TaskRequest $request)
+    public function edit(TaskRequest $request, $taskid)
     {
         $this->checkTimezone();
 
-        $task = $request->entity();
+        $task = Task::scope($taskid)->withTrashed()->firstOrFail();
 
         $actions = [];
         if ($task->invoice) {
