@@ -356,9 +356,10 @@
       </button>
       <a href="#" id="left-menu-toggle" class="menu-toggle" title="{{ trans('texts.toggle_navigation') }}">
           <div class="navbar-brand">
-                <i class="fa fa-bars hide-phone" style="width:32px;padding-top:2px;float:left"></i>
-                {{-- Per our license, please do not remove or modify this link. --}}
-                <img src="{{ asset('images/invoiceninja-logo.png') }}" width="193" height="25" style="float:left"/>
+              <img src="{{ asset('images/invoiceninja-logo.png') }}" width="193" height="25" style="float:left"/>
+              {{-- Per our license, please do not remove or modify this link. --}}
+              <i class="fa fa-bars hide-phone" style="width:32px;padding-left:10px;padding-top:2px;float:left"></i>
+
           </div>
       </a>
     </div>
@@ -441,12 +442,12 @@
 
       </div>
 
-      <form id="search-form" class="navbar-form navbar-right" role="search">
+      {{--<form id="search-form" class="navbar-form navbar-right" role="search">
         <div class="form-group">
           <input type="text" id="search" style="width: 240px;padding-top:0px;padding-bottom:0px"
             class="form-control" placeholder="{{ trans('texts.search') . ': ' . trans('texts.search_hotkey')}}">
         </div>
-      </form>
+      </form>--}}
 
       @if (false && Utils::isAdmin())
       <ul class="nav navbar-nav navbar-right">

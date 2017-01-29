@@ -15,19 +15,19 @@ class ClientDatatable extends EntityDatatable
             [
                 'name',
                 function ($model) {
-                    return link_to("clients/{$model->public_id}", $model->name ?: '')->toHtml();
+                    return link_to("clients/{$model->id}", $model->name ?: '')->toHtml();
                 }
             ],
             [
                 'contact',
                 function ($model) {
-                    return link_to("clients/{$model->public_id}", $model->contact ?: '')->toHtml();
+                    return link_to("clients/{$model->id}", $model->contact ?: '')->toHtml();
                 }
             ],
             [
                 'email',
                 function ($model) {
-                    return link_to("clients/{$model->public_id}", $model->email ?: '')->toHtml();
+                    return link_to("clients/{$model->id}", $model->email ?: '')->toHtml();
                 }
             ],
             [
@@ -57,7 +57,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.edit_client'),
                 function ($model) {
-                    return URL::to("clients/{$model->public_id}/edit");
+                    return URL::to("clients/{$model->id}/edit");
                 },
                 function ($model) {
                     return Auth::user()->can('editByOwner', [ENTITY_CLIENT, $model->user_id]);
@@ -73,7 +73,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.new_task'),
                 function ($model) {
-                    return URL::to("tasks/create/{$model->public_id}");
+                    return URL::to("tasks/create/{$model->id}");
                 },
                 function ($model) {
                     return Auth::user()->can('create', ENTITY_TASK);
@@ -82,7 +82,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.new_invoice'),
                 function ($model) {
-                    return URL::to("invoices/create/{$model->public_id}");
+                    return URL::to("invoices/create/{$model->id}");
                 },
                 function ($model) {
                     return Auth::user()->can('create', ENTITY_INVOICE);
@@ -91,7 +91,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.new_quote'),
                 function ($model) {
-                    return URL::to("quotes/create/{$model->public_id}");
+                    return URL::to("quotes/create/{$model->id}");
                 },
                 function ($model) {
                     return Auth::user()->hasFeature(FEATURE_QUOTES) && Auth::user()->can('create', ENTITY_QUOTE);
@@ -107,7 +107,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.enter_payment'),
                 function ($model) {
-                    return URL::to("payments/create/{$model->public_id}");
+                    return URL::to("payments/create/{$model->id}");
                 },
                 function ($model) {
                     return Auth::user()->can('create', ENTITY_PAYMENT);
@@ -116,7 +116,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.enter_credit'),
                 function ($model) {
-                    return URL::to("credits/create/{$model->public_id}");
+                    return URL::to("credits/create/{$model->id}");
                 },
                 function ($model) {
                     return Auth::user()->can('create', ENTITY_CREDIT);
@@ -125,7 +125,7 @@ class ClientDatatable extends EntityDatatable
             [
                 trans('texts.enter_expense'),
                 function ($model) {
-                    return URL::to("expenses/create/0/{$model->public_id}");
+                    return URL::to("expenses/create/0/{$model->id}");
                 },
                 function ($model) {
                     return Auth::user()->can('create', ENTITY_EXPENSE);

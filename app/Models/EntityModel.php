@@ -138,7 +138,7 @@ class EntityModel extends Eloquent
      * @param bool $companyId
      * @return mixed
      */
-    public function scopeScope($query, $publicId = false, $companyId = false)
+    public function scopeScope($query, $id = false, $companyId = false)
     {
         if (!$companyId) {
             $companyId = Auth::user()->company_id;
@@ -146,11 +146,11 @@ class EntityModel extends Eloquent
 
         $query->where($this->getTable() .'.company_id', '=', $companyId);
 
-        if ($publicId) {
-            if (is_array($publicId)) {
-                $query->whereIn('public_id', $publicId);
+        if ($id) {
+            if (is_array($id)) {
+                $query->whereIn('id', $id);
             } else {
-                $query->wherePublicId($publicId);
+                $query->whereId($id);
             }
         }
 
