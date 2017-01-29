@@ -41,13 +41,13 @@ class TaxRateReport extends AbstractReport
                             }
                         }]);
 
-        foreach ($relations->get() as $client) {
-            $currencyId = $client->currency_id ?: Auth::user()->company->getCurrencyId();
+        foreach ($relations->get() as $relation) {
+            $currencyId = $relation->currency_id ?: Auth::user()->company->getCurrencyId();
             $amount = 0;
             $paid = 0;
             $taxTotals = [];
 
-            foreach ($client->invoices as $invoice) {
+            foreach ($relation->invoices as $invoice) {
                 foreach ($invoice->getTaxes(true) as $key => $tax) {
                     if ( ! isset($taxTotals[$currencyId])) {
                         $taxTotals[$currencyId] = [];
@@ -69,13 +69,13 @@ class TaxRateReport extends AbstractReport
                     $this->data[] = [
                         $tax['name'],
                         $tax['rate'] . '%',
-                        $company->formatMoney($tax['amount'], $client),
-                        $company->formatMoney($tax['paid'], $client)
+                        $company->formatMoney($tax['amount'], $relation),
+                        $company->formatMoney($tax['paid'], $relation)
                     ];
                 }
 
-                $this->addToTotals($client->currency_id, 'amount', $tax['amount']);
-                $this->addToTotals($client->currency_id, 'paid', $tax['paid']);
+                $this->addToTotals($relation->currency_id, 'amount', $tax['amount']);
+                $this->addToTotals($relation->currency_id, 'paid', $tax['paid']);
             }
         }
     }

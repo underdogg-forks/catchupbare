@@ -503,7 +503,7 @@
         var projectMap = {};
         var projectsForClientMap = {};
         var projectsForAllClients = [];
-        var $clientSelect = $('select#relation');
+        var $relationSelect = $('select#relation');
 
         for (var i=0; i<projects.length; i++) {
           var project = projects[i];
@@ -525,22 +525,22 @@
           clientMap[relation.public_id] = relation;
         }
 
-        $clientSelect.append(new Option('', ''));
+        $relationSelect.append(new Option('', ''));
         for (var i=0; i<relations.length; i++) {
           var relation = relations[i];
-          var clientName = getClientDisplayName(relation);
-          if (!clientName) {
+          var relationName = getRelationDisplayName(relation);
+          if (!relationName) {
               continue;
           }
-          $clientSelect.append(new Option(clientName, relation.public_id));
+          $relationSelect.append(new Option(relationName, relation.public_id));
         }
 
         if (clientId) {
-          $clientSelect.val(clientId);
+          $relationSelect.val(clientId);
         }
 
-        $clientSelect.combobox();
-        $clientSelect.on('change', function(e) {
+        $relationSelect.combobox();
+        $relationSelect.on('change', function(e) {
           var clientId = $('input[name=relation]').val();
           var projectId = $('input[name=project_id]').val();
           var project = projectMap[projectId];
@@ -561,7 +561,7 @@
         });
 
         var $projectSelect = $('select#project_id').on('change', function(e) {
-          $clientCombobox = $('select#relation');
+          $relationCombobox = $('select#relation');
           var projectId = $('input[name=project_id]').val();
           if (projectId) {
             var project = projectMap[projectId];
@@ -569,11 +569,11 @@
                 var relation = clientMap[project.relation.public_id];
                 if (relation) {
                     project.relation = relation;
-                    setComboboxValue($('.relation-select'), relation.public_id, getClientDisplayName(relation));
+                    setComboboxValue($('.relation-select'), relation.public_id, getRelationDisplayName(relation));
                 }
             }
           } else {
-            $clientSelect.trigger('change');
+            $relationSelect.trigger('change');
           }
         });
 
@@ -584,7 +584,7 @@
            setComboboxValue($('.project-select'), project.public_id, project.name);
            $projectSelect.trigger('change');
         } else {
-           $clientSelect.trigger('change');
+           $relationSelect.trigger('change');
         }
     });
 

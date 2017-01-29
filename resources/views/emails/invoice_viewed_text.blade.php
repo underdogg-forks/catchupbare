@@ -1,6 +1,6 @@
 {!! trans('texts.email_salutation', ['name' => $userName]) !!}
 
-{!! trans("texts.notification_{$entityType}_viewed", ['amount' => $invoiceAmount, 'relation' => $clientName, 'invoice' => $invoiceNumber]) !!}
+{!! trans("texts.notification_{$entityType}_viewed", ['amount' => $invoiceAmount, 'relation' => $relationName, 'invoice' => $invoiceNumber]) !!}
 
 {!! trans('texts.email_signature') !!}
 {!! trans('texts.email_from') !!}

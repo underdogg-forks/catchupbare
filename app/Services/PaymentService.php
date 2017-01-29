@@ -45,11 +45,11 @@ class PaymentService extends BaseService
      */
     public function autoBillInvoice(Invoice $invoice)
     {
-        /** @var \App\Models\Relation $client */
-        $client = $invoice->relation;
+        /** @var \App\Models\Relation $relation */
+        $relation = $invoice->relation;
 
         /** @var \App\Models\Company $company */
-        $company = $client->company;
+        $company = $relation->company;
 
         /** @var \App\Models\Invitation $invitation */
         $invitation = $invoice->invitations->first();
@@ -60,13 +60,13 @@ class PaymentService extends BaseService
 
         $invoice->markSentIfUnsent();
 
-        if ($credits = $client->credits->sum('balance')) {
+        if ($credits = $relation->credits->sum('balance')) {
             $balance = $invoice->balance;
             $amount = min($credits, $balance);
             $data = [
                 'payment_type_id' => PAYMENT_TYPE_CREDIT,
                 'invoice_id' => $invoice->id,
-                'relation_id' => $client->id,
+                'relation_id' => $relation->id,
                 'amount' => $amount,
             ];
             $payment = $this->paymentRepo->save($data);

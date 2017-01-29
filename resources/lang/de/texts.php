@@ -54,7 +54,7 @@ $LANG = array(
     'enable' => 'Aktivieren',
     'learn_more' => 'Mehr erfahren',
     'manage_rates' => 'Steuersätze verwalten',
-    'note_to_client' => 'Notiz an den Kunden',
+    'note_to_relation' => 'Notiz an den Kunden',
     'invoice_terms' => 'Rechnungsbedingungen',
     'save_as_default_terms' => 'Als Standardbedingungen speichern',
     'download_pdf' => 'PDF herunterladen',
@@ -656,7 +656,7 @@ $LANG = array(
     'primary_user' => 'Primärer Benutzer',
     'help' => 'Hilfe',
     'customize_help' => '<p>Wir nutzen <a href="http://pdfmake.org/" target="_blank">pdfmake</a> um Rechnungs-Designs zu erstellen. Der pdfmake <a href="http://pdfmake.org/playground.html" target="_blank">"Spielplatz"</a> bietet eine gute Möglichkeit diese Programmbibliothek im Einsatz zu sehen.</p>
-<p>Sie können per Punktnotation auf ein Kind-Attribut zugreifen. Beispielsweise können Sie <code>$client.name</code> nutzen, um den Kundennamen anzuzeigen.</p>
+<p>Sie können per Punktnotation auf ein Kind-Attribut zugreifen. Beispielsweise können Sie <code>$relation.name</code> nutzen, um den Kundennamen anzuzeigen.</p>
 <p>Sollten Sie Verständnisprobleme haben, hinterlassen Sie doch bitte einen Forenbeitrag in unserem <a href="https://www.invoiceninja.com/forums/forum/support/" target="_blank">Support Forum</a> mit dem Design, welches Sie verwenden.</p>',
     'invoice_due_date' => 'Fälligkeitsdatum',
     'quote_due_date' => 'Gültig bis',

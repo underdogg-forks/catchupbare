@@ -24,7 +24,7 @@ trait GeneratesNumbers
         $counterOffset = 0;
         $check = false;
 
-        if ($entityType == ENTITY_RELATION && ! $this->clientNumbersEnabled()) {
+        if ($entityType == ENTITY_RELATION && ! $this->relationNumbersEnabled()) {
             return '';
         }
 
@@ -48,7 +48,7 @@ trait GeneratesNumbers
         // update the counter to be caught up
         if ($counterOffset > 1) {
             if ($entity->isEntityType(ENTITY_RELATION)) {
-                if ($this->clientNumbersEnabled()) {
+                if ($this->relationNumbersEnabled()) {
                     $this->client_number_counter += $counterOffset - 1;
                     $this->save();
                 }
@@ -111,7 +111,7 @@ trait GeneratesNumbers
      * @param $entityType
      * @return string
      */
-    public function hasClientNumberPattern($invoice)
+    public function hasRelationNumberPattern($invoice)
     {
         $pattern = $invoice->invoice_type_id == INVOICE_TYPE_QUOTE ? $this->quote_number_pattern : $this->invoice_number_pattern;
 
@@ -231,7 +231,7 @@ trait GeneratesNumbers
         $this->save();
     }
 
-    public function clientNumbersEnabled()
+    public function relationNumbersEnabled()
     {
         return $this->hasFeature(FEATURE_INVOICE_SETTINGS) && $this->client_number_counter;
     }

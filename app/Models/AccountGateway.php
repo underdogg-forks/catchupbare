@@ -12,6 +12,8 @@ class AccountGateway extends EntityModel
     use SoftDeletes;
     use PresentableTrait;
 
+    protected $table = 'acc_gateways';
+
     /**
      * @var string
      */

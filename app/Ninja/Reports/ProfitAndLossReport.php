@@ -26,18 +26,18 @@ class ProfitAndLossReport extends AbstractReport
                         ->excludeFailed();
 
         foreach ($payments->get() as $payment) {
-            $client = $payment->relation;
+            $relation = $payment->relation;
             $this->data[] = [
                 trans('texts.payment'),
-                $client ? ($this->isExport ? $client->getDisplayName() : $client->present()->link) : '',
-                $company->formatMoney($payment->getCompletedAmount(), $client),
+                $relation ? ($this->isExport ? $relation->getDisplayName() : $relation->present()->link) : '',
+                $company->formatMoney($payment->getCompletedAmount(), $relation),
                 $payment->present()->payment_date,
                 $payment->present()->method,
             ];
 
-            $this->addToTotals($client->currency_id, 'revenue', $payment->getCompletedAmount(), $payment->present()->month);
-            $this->addToTotals($client->currency_id, 'expenses', 0, $payment->present()->month);
-            $this->addToTotals($client->currency_id, 'profit', $payment->getCompletedAmount(), $payment->present()->month);
+            $this->addToTotals($relation->currency_id, 'revenue', $payment->getCompletedAmount(), $payment->present()->month);
+            $this->addToTotals($relation->currency_id, 'expenses', 0, $payment->present()->month);
+            $this->addToTotals($relation->currency_id, 'profit', $payment->getCompletedAmount(), $payment->present()->month);
         }
 
 
@@ -46,23 +46,23 @@ class ProfitAndLossReport extends AbstractReport
                         ->withArchived();
 
         foreach ($expenses->get() as $expense) {
-            $client = $expense->relation;
+            $relation = $expense->relation;
             $this->data[] = [
                 trans('texts.expense'),
-                $client ? ($this->isExport ? $client->getDisplayName() : $client->present()->link) : '',
+                $relation ? ($this->isExport ? $relation->getDisplayName() : $relation->present()->link) : '',
                 $expense->present()->amount,
                 $expense->present()->expense_date,
                 $expense->present()->category,
             ];
 
-            $this->addToTotals($client->currency_id, 'revenue', 0, $expense->present()->month);
-            $this->addToTotals($client->currency_id, 'expenses', $expense->amount, $expense->present()->month);
-            $this->addToTotals($client->currency_id, 'profit', $expense->amount * -1, $expense->present()->month);
+            $this->addToTotals($relation->currency_id, 'revenue', 0, $expense->present()->month);
+            $this->addToTotals($relation->currency_id, 'expenses', $expense->amount, $expense->present()->month);
+            $this->addToTotals($relation->currency_id, 'profit', $expense->amount * -1, $expense->present()->month);
         }
 
 
-        //$this->addToTotals($client->currency_id, 'paid', $payment ? $payment->getCompletedAmount() : 0);
-        //$this->addToTotals($client->currency_id, 'amount', $invoice->amount);
-        //$this->addToTotals($client->currency_id, 'balance', $invoice->balance);
+        //$this->addToTotals($relation->currency_id, 'paid', $payment ? $payment->getCompletedAmount() : 0);
+        //$this->addToTotals($relation->currency_id, 'amount', $invoice->amount);
+        //$this->addToTotals($relation->currency_id, 'balance', $invoice->balance);
     }
 }

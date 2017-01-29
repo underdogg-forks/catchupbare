@@ -1,4 +1,5 @@
 @extends('header')
+@extends('header')
 
 @section('head')
     @parent
@@ -93,32 +94,32 @@
 
                                     @can('view', $invoice->relation)
                                     @can('edit', $invoice->relation)
-                                    <a id="editClientLink" class="pointer"
+                                    <a id="editRelationLink" class="pointer"
                                        data-bind="click: $root.showRelationForm">{{ trans('texts.edit_relation') }}</a> |
                                     @endcan
-                                    {!! link_to('/relations/'.$invoice->relation->id, trans('texts.view_relation'), ['target' => '_blank']) !!}
+                                    {!! link_to('/relations/'.$invoice->relation->public_id, trans('texts.view_relation'), ['target' => '_blank']) !!}
                                     @endcan
                                 </div>
                             </div>
                             <div style="display:none">
-                        @endif
+                                @endif
 
                                 {!! Former::select('relation')->addOption('', '')->data_bind("dropdown: relation")->addClass('relation-input')->addGroupClass('relation_select closer-row') !!}
 
                                 <div class="form-group" style="margin-bottom: 8px">
                                     <div class="col-lg-8 col-sm-8 col-lg-offset-4 col-sm-offset-4">
-                                        <a id="createClientLink" class="pointer"
+                                        <a id="createRelationLink" class="pointer"
                                            data-bind="click: $root.showRelationForm, html: $root.relationLinkText"></a>
-                    <span data-bind="visible: $root.invoice().relation().id() > 0" style="display:none">|
-                        <a data-bind="attr: {href: '{{ url('/relations') }}/' + $root.invoice().relation().id()}"
+                    <span data-bind="visible: $root.invoice().relation().public_id() > 0" style="display:none">|
+                        <a data-bind="attr: {href: '{{ url('/relations') }}/' + $root.invoice().relation().public_id()}"
                            target="_blank">{{ trans('texts.view_relation') }}</a>
                     </span>
                                     </div>
                                 </div>
 
                                 @if ($invoice->id || $data)
-                                </div>
-                                @endif
+                            </div>
+                        @endif
 
                         <div data-bind="with: relation" class="invoice-contact">
                             <div style="display:none" class="form-group"
@@ -193,10 +194,10 @@
             </span>
                         @if($company->getTokenGatewayId())
                             <span data-bind="visible: is_recurring()" style="display: none">
-                <div data-bind="visible: !(auto_bill() == {{AUTO_BILL_OPT_IN}} &amp;&amp; client_enable_auto_bill()) &amp;&amp; !(auto_bill() == {{AUTO_BILL_OPT_OUT}} &amp;&amp; !client_enable_auto_bill())"
+                <div data-bind="visible: !(auto_bill() == {{AUTO_BILL_OPT_IN}} &amp;&amp; relation_enable_auto_bill()) &amp;&amp; !(auto_bill() == {{AUTO_BILL_OPT_OUT}} &amp;&amp; !relation_enable_auto_bill())"
                      style="display: none">
                     {!! Former::select('auto_bill')
-                            ->data_bind("value: auto_bill, valueUpdate: 'afterkeydown', event:{change:function(){if(auto_bill()==".AUTO_BILL_OPT_IN.")client_enable_auto_bill(0);if(auto_bill()==".AUTO_BILL_OPT_OUT.")client_enable_auto_bill(1)}}")
+                            ->data_bind("value: auto_bill, valueUpdate: 'afterkeydown', event:{change:function(){if(auto_bill()==".AUTO_BILL_OPT_IN.")relation_enable_auto_bill(0);if(auto_bill()==".AUTO_BILL_OPT_OUT.")relation_enable_auto_bill(1)}}")
                             ->options([
                                 AUTO_BILL_OFF => trans('texts.off'),
                                 AUTO_BILL_OPT_IN => trans('texts.opt_in'),
@@ -204,23 +205,23 @@
                                 AUTO_BILL_ALWAYS => trans('texts.always'),
                             ]) !!}
                 </div>
-                <input type="hidden" name="client_enable_auto_bill"
-                       data-bind="attr: { value: client_enable_auto_bill() }"/>
+                <input type="hidden" name="relation_enable_auto_bill"
+                       data-bind="attr: { value: relation_enable_auto_bill() }"/>
                 <div class="form-group"
-                     data-bind="visible: auto_bill() == {{AUTO_BILL_OPT_IN}} &amp;&amp; client_enable_auto_bill()">
+                     data-bind="visible: auto_bill() == {{AUTO_BILL_OPT_IN}} &amp;&amp; relation_enable_auto_bill()">
                     <div class="col-sm-4 control-label">{{trans('texts.auto_bill')}}</div>
                     <div class="col-sm-8" style="padding-top:10px;padding-bottom:9px">
                         {{trans('texts.opted_in')}} - <a href="#"
-                                                         data-bind="click:function(){client_enable_auto_bill(false)}">({{trans('texts.disable')}}
+                                                         data-bind="click:function(){relation_enable_auto_bill(false)}">({{trans('texts.disable')}}
                             )</a>
                     </div>
                 </div>
                 <div class="form-group"
-                     data-bind="visible: auto_bill() == {{AUTO_BILL_OPT_OUT}} &amp;&amp; !client_enable_auto_bill()">
+                     data-bind="visible: auto_bill() == {{AUTO_BILL_OPT_OUT}} &amp;&amp; !relation_enable_auto_bill()">
                     <div class="col-sm-4 control-label">{{trans('texts.auto_bill')}}</div>
                     <div class="col-sm-8" style="padding-top:10px;padding-bottom:9px">
                         {{trans('texts.opted_out')}} - <a href="#"
-                                                          data-bind="click:function(){client_enable_auto_bill(true)}">({{trans('texts.enable')}}
+                                                          data-bind="click:function(){relation_enable_auto_bill(true)}">({{trans('texts.enable')}}
                             )</a>
                     </div>
                 </div>
@@ -383,7 +384,7 @@
                                     <ul class="nav nav-tabs" role="tablist" style="border: none">
                                         <li role="presentation" class="active"><a href="#notes" aria-controls="notes"
                                                                                   role="tab"
-                                                                                  data-toggle="tab">{{ trans('texts.note_to_client') }}</a>
+                                                                                  data-toggle="tab">{{ trans('texts.note_to_relation') }}</a>
                                         </li>
                                         <li role="presentation"><a href="#terms" aria-controls="terms" role="tab"
                                                                    data-toggle="tab">{{ trans("texts.terms") }}</a></li>
@@ -661,6 +662,12 @@
 
         @include('invoices.pdf', ['company' => Auth::user()->company, 'hide_pdf' => ! Auth::user()->company->live_preview])
 
+        @if (!Auth::user()->company->isPro())
+            <div style="font-size:larger">
+                {!! trans('texts.pro_plan_remove_logo', ['link'=>'<a href="javascript:showUpgradeModal()">' . trans('texts.pro_plan_remove_logo_link') . '</a>']) !!}
+            </div>
+        @endif
+
         <div class="modal fade" id="relationModal" tabindex="-1" role="dialog" aria-labelledby="relationModalLabel"
              aria-hidden="true">
             <div class="modal-dialog" data-bind="css: {'large-dialog': $root.showMore}">
@@ -678,24 +685,25 @@
                                     <div style="margin-left:0px;margin-right:0px"
                                          data-bind="css: {'col-md-6': $root.showMore}">
 
-                                        {!! Former::hidden('relation_public_id')->data_bind("value: id, valueUpdate: 'afterkeydown',
-                                                    attr: {name: 'relation[id]'}") !!}
+                                        {!! Former::hidden('relation_public_id')->data_bind("value: public_id, valueUpdate: 'afterkeydown',
+                                                    attr: {name: 'relation[public_id]'}") !!}
                                         {!! Former::text('relation[name]')
                                             ->data_bind("value: name, valueUpdate: 'afterkeydown', attr { placeholder: name.placeholder }")
                                             ->label('relation_name') !!}
 
-                                        @if ( ! $company->client_number_counter)
+                                        @if ( ! $company->relation_number_counter)
                                             <span data-bind="visible: $root.showMore">
-                                        @endif
+				@endif
 
                                                 {!! Former::text('relation[id_number]')
                                                             ->label('id_number')
-                                                            ->placeholder($company->clientNumbersEnabled() ? $company->getNextNumber() : ' ')
+                                                            ->placeholder($company->relationNumbersEnabled() ? $company->getNextNumber() : ' ')
                                                             ->data_bind("value: id_number, valueUpdate: 'afterkeydown'") !!}
 
-                                                @if ( ! $company->client_number_counter)
-                                                </span>
-                                                @endif
+                                                @if ( ! $company->relation_number_counter)
+				</span>
+                                        @endif
+
                                         <span data-bind="visible: $root.showMore">
                     {!! Former::text('relation[vat_number]')
                             ->label('vat_number')
@@ -708,17 +716,17 @@
                                                     ->label('work_phone')
                                                     ->data_bind("value: work_phone, valueUpdate: 'afterkeydown'") !!}
 
-                                        </span>
+                </span>
 
                                         @if (Auth::user()->hasFeature(FEATURE_INVOICE_SETTINGS))
-                                            @if ($company->custom_client_label1)
+                                            @if ($company->custom_relation_label1)
                                                 {!! Former::text('relation[custom_value1]')
-                                                    ->label($company->custom_client_label1)
+                                                    ->label($company->custom_relation_label1)
                                                     ->data_bind("value: custom_value1, valueUpdate: 'afterkeydown'") !!}
                                             @endif
-                                            @if ($company->custom_client_label2)
+                                            @if ($company->custom_relation_label2)
                                                 {!! Former::text('relation[custom_value2]')
-                                                    ->label($company->custom_client_label2)
+                                                    ->label($company->custom_relation_label2)
                                                     ->data_bind("value: custom_value2, valueUpdate: 'afterkeydown'") !!}
                                             @endif
                                         @endif
@@ -809,7 +817,7 @@
                                             {!! Former::select('relation[industry_id]')->addOption('','')->data_bind('value: industry_id')
                                                     ->label(trans('texts.industry_id'))
                                                     ->fromQuery($industries, 'name', 'id') !!}
-                                            {!! Former::textarea('client_private_notes')
+                                            {!! Former::textarea('relation_private_notes')
                                                     ->label(trans('texts.private_notes'))
                                                     ->data_bind("value: private_notes, attr:{ name: 'relation[private_notes]'}") !!}
                 </span>
@@ -826,8 +834,8 @@
                                 data-dismiss="modal">{{ trans('texts.cancel') }}</button>
                         <button type="button" class="btn btn-default"
                                 data-bind="click: $root.showMoreFields, text: $root.showMore() ? '{{ trans('texts.less_fields') }}' : '{{ trans('texts.more_fields') }}'"></button>
-                        <button id="clientDoneButton" type="button" class="btn btn-primary"
-                                data-bind="click: $root.clientFormComplete">{{ trans('texts.done') }}</button>
+                        <button id="relationDoneButton" type="button" class="btn btn-primary"
+                                data-bind="click: $root.relationFormComplete">{{ trans('texts.done') }}</button>
                     </div>
 
                 </div>
@@ -902,8 +910,8 @@
         var company = {!! Auth::user()->company !!};
         var dropzone;
 
-        var clientMap = {};
-        var $clientSelect = $('select#relation');
+        var relationMap = {};
+        var $relationSelect = $('select#relation');
         var invoiceDesigns = {!! $invoiceDesigns !!};
         var invoiceFonts = {!! $invoiceFonts !!};
 
@@ -911,8 +919,8 @@
             // create relation dictionary
             for (var i = 0; i < relations.length; i++) {
                 var relation = relations[i];
-                var clientName = getClientDisplayName(relation);
-                if (!clientName) {
+                var relationName = getRelationDisplayName(relation);
+                if (!relationName) {
                     continue;
                 }
                 for (var j = 0; j < relation.contacts.length; j++) {
@@ -921,12 +929,12 @@
                     if (contact.is_primary === '1') {
                         contact.send_invoice = true;
                     }
-                    if (clientName != contactName) {
-                        $clientSelect.append(new Option(contactName, relation.public_id));
+                    if (relationName != contactName) {
+                        $relationSelect.append(new Option(contactName, relation.public_id));
                     }
                 }
-                clientMap[relation.public_id] = relation;
-                $clientSelect.append(new Option(clientName, relation.public_id));
+                relationMap[relation.public_id] = relation;
+                $relationSelect.append(new Option(relationName, relation.public_id));
             }
 
             @if ($data)
@@ -943,7 +951,7 @@
 
                     @if ($invoice->id)
             var invitationContactIds = {!! json_encode($invitationContactIds) !!};
-            var relation = clientMap[invoice.relation.public_id];
+            var relation = relationMap[invoice.relation.public_id];
             if (relation) { // in case it's deleted
                 for (var i = 0; i < relation.contacts.length; i++) {
                     var contact = relation.contacts[i];
@@ -1032,23 +1040,23 @@
             $('#invoice_date, #due_date, #start_date, #end_date, #last_sent_date').datepicker();
 
             @if ($invoice->relation && !$invoice->id)
-                $('input[name=relation]').val({{ $invoice->relation->id }});
+                $('input[name=relation]').val({{ $invoice->relation->public_id }});
                     @endif
 
             var $input = $('select#relation');
             $input.combobox().on('change', function (e) {
                 var oldId = model.invoice().relation().public_id();
-                var clientId = parseInt($('input[name=relation]').val(), 10) || 0;
-                if (clientId > 0) {
-                    var selected = clientMap[clientId];
-                    model.loadClient(selected);
+                var relationId = parseInt($('input[name=relation]').val(), 10) || 0;
+                if (relationId > 0) {
+                    var selected = relationMap[relationId];
+                    model.loadRelation(selected);
                     // we enable searching by contact but the selection must be the relation
-                    $('.relation-input').val(getClientDisplayName(selected));
+                    $('.relation-input').val(getRelationDisplayName(selected));
                     // if there's an invoice number pattern we'll apply it now
                     setInvoiceNumber(selected);
                     refreshPDF(true);
                 } else if (oldId) {
-                    model.loadClient($.parseJSON(ko.toJSON(new ClientModel())));
+                    model.loadRelation($.parseJSON(ko.toJSON(new RelationModel())));
                     model.invoice().relation().country = false;
                     refreshPDF(true);
                 }
@@ -1095,8 +1103,8 @@
             $('#relationModal').on('shown.bs.modal', function () {
                 $('#relation\\[name\\]').focus();
             }).on('hidden.bs.modal', function () {
-                if (model.clientBackup) {
-                    model.loadClient(model.clientBackup);
+                if (model.relationBackup) {
+                    model.loadRelation(model.relationBackup);
                     refreshPDF(true);
                 }
             })
@@ -1348,8 +1356,8 @@
                 return;
             }
 
-            var clientId = parseInt($('input[name=relation]').val(), 10) || 0;
-            if (clientId == 0) {
+            var relationId = parseInt($('input[name=relation]').val(), 10) || 0;
+            if (relationId == 0) {
                 swal("{!! trans('texts.no_relation_selected') !!}");
                 return;
             }
@@ -1367,14 +1375,14 @@
             sweetConfirm(function () {
                 model.invoice().is_public(true);
                 var accountLanguageId = parseInt({{ $company->language_id ?: '0' }});
-                var clientLanguageId = parseInt(model.invoice().relation().language_id()) || 0;
+                var relationLanguageId = parseInt(model.invoice().relation().language_id()) || 0;
                 var attachPDF = {{ $company->attachPDF() ? 'true' : 'false' }};
 
                 // if they aren't attaching the pdf no need to generate it
                 if (!attachPDF) {
                     submitAction('email');
                     // if the relation's language is different then we can't use the browser version of the PDF
-                } else if (clientLanguageId && clientLanguageId != accountLanguageId) {
+                } else if (relationLanguageId && relationLanguageId != accountLanguageId) {
                     submitAction('email');
                 } else {
                     preparePdfData('email');
@@ -1484,8 +1492,8 @@
 
             // check currency matches for expenses
             var expenseCurrencyId = model.expense_currency_id();
-            var clientCurrencyId = model.invoice().relation().currency_id() || {{ $company->getCurrencyId() }};
-            if (expenseCurrencyId && expenseCurrencyId != clientCurrencyId) {
+            var relationCurrencyId = model.invoice().relation().currency_id() || {{ $company->getCurrencyId() }};
+            if (expenseCurrencyId && expenseCurrencyId != relationCurrencyId) {
                 swal("{!! trans('texts.expense_error_mismatch_currencies') !!}");
                 return false;
             }
@@ -1571,15 +1579,15 @@
         function onPaymentClick() {
             @if (!empty($autoBillChangeWarning))
                 sweetConfirm(function () {
-                window.location = '{{ URL::to('payments/create/' . $invoice->relation->id . '/' . $invoice->public_id ) }}';
+                window.location = '{{ URL::to('payments/create/' . $invoice->relation->public_id . '/' . $invoice->public_id ) }}';
             }, "{!! trans('texts.warn_change_auto_bill') !!}");
             @else
-                    window.location = '{{ URL::to('payments/create/' . $invoice->relation->id . '/' . $invoice->public_id ) }}';
+                    window.location = '{{ URL::to('payments/create/' . $invoice->relation->public_id . '/' . $invoice->public_id ) }}';
             @endif
         }
 
         function onCreditClick() {
-            window.location = '{{ URL::to('credits/create/' . $invoice->relation->id . '/' . $invoice->public_id ) }}';
+            window.location = '{{ URL::to('credits/create/' . $invoice->relation->public_id . '/' . $invoice->public_id ) }}';
         }
         @endif
 
@@ -1611,7 +1619,7 @@
         function relationModalEnterClick(event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
-                model.clientFormComplete();
+                model.relationFormComplete();
                 return false;
             }
         }
@@ -1674,7 +1682,7 @@
         }
 
         function setInvoiceNumber(relation) {
-            @if ($invoice->id || !$company->hasClientNumberPattern($invoice))
+            @if ($invoice->id || !$company->hasRelationNumberPattern($invoice))
                     return;
                     @endif
             var number = '{{ $company->applyNumberPattern($invoice) }}';

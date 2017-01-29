@@ -58,7 +58,7 @@
                 var plaidHandler = Plaid.create({
                     selectAccount: true,
                     env: '{{ $accGateway->getPlaidEnvironment() }}',
-                    clientName: {!! json_encode($company->getDisplayName()) !!},
+                    relationName: {!! json_encode($company->getDisplayName()) !!},
                     key: '{{ $accGateway->getPlaidPublicKey() }}',
                     product: 'auth',
                     onSuccess: plaidSuccessHandler,

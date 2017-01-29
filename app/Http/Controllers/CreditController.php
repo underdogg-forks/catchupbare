@@ -51,7 +51,7 @@ class CreditController extends BaseController
     public function create(CreditRequest $request)
     {
         $data = [
-            'clientPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
+            'relationPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
             'credit' => null,
             'method' => 'POST',
             'url' => 'credits',
@@ -72,7 +72,7 @@ class CreditController extends BaseController
 
         $data = array(
             'relation' => $credit->relation,
-            'clientPublicId' => $credit->relation->id,
+            'relationPublicId' => $credit->relation->id,
             'credit' => $credit,
             'method' => 'PUT',
             'url' => 'credits/'.$publicId,

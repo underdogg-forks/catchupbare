@@ -33,22 +33,22 @@ class ProductReport extends AbstractReport
                                   ->withTrashed();
                         }]);
 
-        foreach ($relations->get() as $client) {
-            foreach ($client->invoices as $invoice) {
+        foreach ($relations->get() as $relation) {
+            foreach ($relation->invoices as $invoice) {
 
                 foreach ($invoice->invoice_items as $invoiceItem) {
                     $this->data[] = [
-                        $this->isExport ? $client->getDisplayName() : $client->present()->link,
+                        $this->isExport ? $relation->getDisplayName() : $relation->present()->link,
                         $this->isExport ? $invoice->invoice_number : $invoice->present()->link,
                         $invoice->present()->invoice_date,
                         round($invoiceItem->qty, 2),
                         $invoiceItem->product_key,
                     ];
-                    //$reportTotals = $this->addToTotals($reportTotals, $client->currency_id, 'paid', $payment ? $payment->amount : 0);
+                    //$reportTotals = $this->addToTotals($reportTotals, $relation->currency_id, 'paid', $payment ? $payment->amount : 0);
                 }
 
-                //$reportTotals = $this->addToTotals($reportTotals, $client->currency_id, 'amount', $invoice->amount);
-                //$reportTotals = $this->addToTotals($reportTotals, $client->currency_id, 'balance', $invoice->balance);
+                //$reportTotals = $this->addToTotals($reportTotals, $relation->currency_id, 'amount', $invoice->amount);
+                //$reportTotals = $this->addToTotals($reportTotals, $relation->currency_id, 'balance', $invoice->balance);
             }
         }
     }

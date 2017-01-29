@@ -136,13 +136,13 @@ class Invitation extends EntityModel
     public function markViewed()
     {
         $invoice = $this->invoice;
-        $client = $invoice->relation;
+        $relation = $invoice->relation;
 
         $this->viewed_date = Carbon::now()->toDateTimeString();
         $this->save();
 
         $invoice->markViewed();
-        $client->markLoggedIn();
+        $relation->markLoggedIn();
     }
 
     public function signatureDiv()

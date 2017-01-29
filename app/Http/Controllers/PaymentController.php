@@ -90,7 +90,7 @@ class PaymentController extends BaseController
                     ->orderBy('invoice_number')->get();
 
         $data = [
-            'clientPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
+            'relationPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
             'invoicePublicId' => Input::old('invoice') ? Input::old('invoice') : ($request->invoice_id ?: 0),
             'invoice' => null,
             'invoices' => $invoices,

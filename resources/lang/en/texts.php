@@ -54,7 +54,7 @@ $LANG = array(
     'enable' => 'Enable',
     'learn_more' => 'Learn more',
     'manage_rates' => 'Manage rates',
-    'note_to_client' => 'Note to Relation',
+    'note_to_relation' => 'Note to Relation',
     'invoice_terms' => 'Invoice Terms',
     'save_as_default_terms' => 'Save as default terms',
     'download_pdf' => 'Download PDF',
@@ -656,7 +656,7 @@ $LANG = array(
     'primary_user' => 'Primary User',
     'help' => 'Help',
     'customize_help' => '<p>We use <a href="http://pdfmake.org/" target="_blank">pdfmake</a> to define the invoice designs declaratively. The pdfmake <a href="http://pdfmake.org/playground.html" target="_blank">playground</a> provide\'s a great way to see the library in action.</p>
-                        <p>You can access a child property using dot notation. For example to show the relation name you could use <code>$client.name</code>.</p>
+                        <p>You can access a child property using dot notation. For example to show the relation name you could use <code>$relation.name</code>.</p>
                         <p>If you need help figuring something out post a question to our <a href="https://www.invoiceninja.com/forums/forum/support/" target="_blank">support forum</a> with the design you\'re using.</p>',
     'invoice_due_date' => 'Due Date',
     'quote_due_date' => 'Valid Until',

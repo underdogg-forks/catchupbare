@@ -268,7 +268,7 @@ class OnlinePaymentController extends BaseController
         }
     }
 
-    public function handleBuyNow(RelationRepository $clientRepo, InvoiceService $invoiceService, $gatewayTypeAlias = false)
+    public function handleBuyNow(RelationRepository $relationRepo, InvoiceService $invoiceService, $gatewayTypeAlias = false)
     {
         if (Crawler::isCrawler()) {
             return redirect()->to(NINJA_WEB_URL, 301);
@@ -290,13 +290,13 @@ class OnlinePaymentController extends BaseController
         }
 
         // check for existing relation using contact_key
-        $client = false;
+        $relation = false;
         if ($contactKey = Input::get('contact_key')) {
-            $client = Relation::scope()->whereHas('contacts', function ($query) use ($contactKey) {
+            $relation = Relation::scope()->whereHas('contacts', function ($query) use ($contactKey) {
                 $query->where('contact_key', $contactKey);
             })->first();
         }
-        if ( ! $client) {
+        if ( ! $relation) {
             $rules = [
                 'first_name' => 'string|max:100',
                 'last_name' => 'string|max:100',
@@ -312,11 +312,11 @@ class OnlinePaymentController extends BaseController
                 'currency_id' => $company->currency_id,
                 'contact' => Input::all()
             ];
-            $client = $clientRepo->save($data);
+            $relation = $relationRepo->save($data);
         }
 
         $data = [
-            'relation_id' => $client->id,
+            'relation_id' => $relation->id,
             'tax_rate1' => $company->default_tax_rate ? $company->default_tax_rate->rate : 0,
             'tax_name1' => $company->default_tax_rate ? $company->default_tax_rate->name : '',
             'invoice_items' => [[

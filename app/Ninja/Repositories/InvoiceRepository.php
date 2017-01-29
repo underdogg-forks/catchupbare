@@ -812,9 +812,9 @@ class InvoiceRepository extends BaseRepository
         }
 
         $invoice->load('user', 'invoice_items', 'documents', 'invoice_design', 'company.country', 'relation.contacts', 'relation.country');
-        $client = $invoice->relation;
+        $relation = $invoice->relation;
 
-        if (!$client || $client->is_deleted) {
+        if (!$relation || $relation->is_deleted) {
             return false;
         }
 

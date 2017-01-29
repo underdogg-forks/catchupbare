@@ -341,14 +341,14 @@ class BasePaymentDriver
         }
 
         // update the address info
-        $client = $this->relation();
-        $client->address1 = trim($this->input['address1']);
-        $client->address2 = trim($this->input['address2']);
-        $client->city = trim($this->input['city']);
-        $client->state = trim($this->input['state']);
-        $client->postal_code = trim($this->input['postal_code']);
-        $client->country_id = trim($this->input['country_id']);
-        $client->save();
+        $relation = $this->relation();
+        $relation->address1 = trim($this->input['address1']);
+        $relation->address2 = trim($this->input['address2']);
+        $relation->city = trim($this->input['city']);
+        $relation->state = trim($this->input['state']);
+        $relation->postal_code = trim($this->input['postal_code']);
+        $relation->country_id = trim($this->input['country_id']);
+        $relation->save();
     }
 
     protected function paymentDetails($paymentMethod = false)
@@ -385,10 +385,10 @@ class BasePaymentDriver
     private function paymentDetailsFromInput($input)
     {
         $invoice = $this->invoice();
-        $client = $this->relation();
+        $relation = $this->relation();
 
         $data = [
-            'corporation' => $client->getDisplayName(),
+            'corporation' => $relation->getDisplayName(),
             'firstName' => isset($input['first_name']) ? $input['first_name'] : null,
             'lastName' => isset($input['last_name']) ? $input['last_name'] : null,
             'email' => isset($input['email']) ? $input['email'] : null,
@@ -428,27 +428,27 @@ class BasePaymentDriver
     public function paymentDetailsFromClient()
     {
         $invoice = $this->invoice();
-        $client = $this->relation();
-        $contact = $this->invitation->contact ?: $client->contacts()->first();
+        $relation = $this->relation();
+        $contact = $this->invitation->contact ?: $relation->contacts()->first();
 
         return [
             'email' => $contact->email,
-            'corporation' => $client->getDisplayName(),
+            'corporation' => $relation->getDisplayName(),
             'firstName' => $contact->first_name,
             'lastName' => $contact->last_name,
-            'billingAddress1' => $client->address1,
-            'billingAddress2' => $client->address2,
-            'billingCity' => $client->city,
-            'billingPostcode' => $client->postal_code,
-            'billingState' => $client->state,
-            'billingCountry' => $client->country ? $client->country->iso_3166_2 : '',
+            'billingAddress1' => $relation->address1,
+            'billingAddress2' => $relation->address2,
+            'billingCity' => $relation->city,
+            'billingPostcode' => $relation->postal_code,
+            'billingState' => $relation->state,
+            'billingCountry' => $relation->country ? $relation->country->iso_3166_2 : '',
             'billingPhone' => $contact->phone,
-            'shippingAddress1' => $client->address1,
-            'shippingAddress2' => $client->address2,
-            'shippingCity' => $client->city,
-            'shippingPostcode' => $client->postal_code,
-            'shippingState' => $client->state,
-            'shippingCountry' => $client->country ? $client->country->iso_3166_2 : '',
+            'shippingAddress1' => $relation->address1,
+            'shippingAddress2' => $relation->address2,
+            'shippingCity' => $relation->city,
+            'shippingPostcode' => $relation->postal_code,
+            'shippingState' => $relation->state,
+            'shippingCountry' => $relation->country ? $relation->country->iso_3166_2 : '',
             'shippingPhone' => $contact->phone,
         ];
     }
@@ -493,7 +493,7 @@ class BasePaymentDriver
             $relationId = $this->relation()->id;
         }
 
-        $this->customer = AccountGatewayToken::clientAndGateway($relationId, $this->accGateway->id)
+        $this->customer = AccountGatewayToken::relationAndGateway($relationId, $this->accGateway->id)
                             ->with('payment_methods')
                             ->first();
 
@@ -509,7 +509,7 @@ class BasePaymentDriver
         return true;
     }
 
-    public function verifyBankAccount($client, $publicId, $amount1, $amount2)
+    public function verifyBankAccount($relation, $publicId, $amount1, $amount2)
     {
         throw new Exception('verifyBankAccount not implemented');
     }

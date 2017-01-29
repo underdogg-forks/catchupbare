@@ -78,8 +78,8 @@ class SendRenewalInvoices extends Command
                 continue;
             }
 
-            $client = $this->companyRepo->getNinjaClient($company);
-            $invitation = $this->companyRepo->createNinjaInvoice($client, $company, $plan, 0, false);
+            $relation = $this->companyRepo->getNinjaClient($company);
+            $invitation = $this->companyRepo->createNinjaInvoice($relation, $company, $plan, 0, false);
 
             // set the due date to 10 days from now
             $invoice = $invitation->invoice;
@@ -91,9 +91,9 @@ class SendRenewalInvoices extends Command
 
             if ($term == PLAN_TERM_YEARLY) {
                 $this->mailer->sendInvoice($invoice);
-                $this->info("Sent {$term}ly {$plan} invoice to {$client->getDisplayName()}");
+                $this->info("Sent {$term}ly {$plan} invoice to {$relation->getDisplayName()}");
             } else {
-                $this->info("Created {$term}ly {$plan} invoice for {$client->getDisplayName()}");
+                $this->info("Created {$term}ly {$plan} invoice for {$relation->getDisplayName()}");
             }
         }
 

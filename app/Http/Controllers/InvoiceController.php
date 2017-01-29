@@ -33,19 +33,19 @@ use App\Http\Requests\UpdateInvoiceRequest;
 class InvoiceController extends BaseController
 {
     protected $invoiceRepo;
-    protected $clientRepo;
+    protected $relationRepo;
     protected $documentRepo;
     protected $invoiceService;
     protected $paymentService;
     protected $recurringInvoiceService;
     protected $entityType = ENTITY_INVOICE;
 
-    public function __construct(InvoiceRepository $invoiceRepo, RelationRepository $clientRepo, InvoiceService $invoiceService, DocumentRepository $documentRepo, RecurringInvoiceService $recurringInvoiceService, PaymentService $paymentService)
+    public function __construct(InvoiceRepository $invoiceRepo, RelationRepository $relationRepo, InvoiceService $invoiceService, DocumentRepository $documentRepo, RecurringInvoiceService $recurringInvoiceService, PaymentService $paymentService)
     {
         // parent::__construct();
 
         $this->invoiceRepo = $invoiceRepo;
-        $this->clientRepo = $clientRepo;
+        $this->clientRepo = $relationRepo;
         $this->invoiceService = $invoiceService;
         $this->recurringInvoiceService = $recurringInvoiceService;
         $this->paymentService = $paymentService;
@@ -153,13 +153,13 @@ class InvoiceController extends BaseController
         // Set the invitation data on the relation's contacts
         if ( ! $clone) {
             $relations = $data['relations'];
-            foreach ($relations as $client) {
-                if ($client->id != $invoice->relation->id) {
+            foreach ($relations as $relation) {
+                if ($relation->id != $invoice->relation->id) {
                     continue;
                 }
 
                 foreach ($invoice->invitations as $invitation) {
-                    foreach ($client->contacts as $contact) {
+                    foreach ($relation->contacts as $contact) {
                         if ($invitation->contact_id == $contact->id) {
                             $contact->email_error = $invitation->email_error;
                             $contact->invitation_link = $invitation->getLink();

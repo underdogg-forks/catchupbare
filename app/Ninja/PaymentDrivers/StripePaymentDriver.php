@@ -111,10 +111,10 @@ class StripePaymentDriver extends BasePaymentDriver
     public function createToken()
     {
         $invoice = $this->invitation->invoice;
-        $client = $invoice->relation;
+        $relation = $invoice->relation;
 
         $data = $this->paymentDetails();
-        $data['description'] = $client->getDisplayName();
+        $data['description'] = $relation->getDisplayName();
 
         if ( ! empty($data['plaidPublicToken'])) {
             $plaidResult = $this->getPlaidToken($data['plaidPublicToken'], $data['plaidAccountId']);
@@ -266,10 +266,10 @@ class StripePaymentDriver extends BasePaymentDriver
         }
     }
 
-    public function verifyBankAccount($client, $publicId, $amount1, $amount2)
+    public function verifyBankAccount($relation, $publicId, $amount1, $amount2)
     {
-        $customer = $this->customer($client->id);
-        $paymentMethod = PaymentMethod::clientId($client->id)
+        $customer = $this->customer($relation->id);
+        $paymentMethod = PaymentMethod::clientId($relation->id)
             ->wherePublicId($publicId)
             ->firstOrFail();
 

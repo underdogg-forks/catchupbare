@@ -39,22 +39,22 @@ class InvoiceDetailsReport extends AbstractReport
                                   ->with(['invoice_items']);
                         }]);
 
-        foreach ($relations->get() as $client) {
-            foreach ($client->invoices as $invoice) {
+        foreach ($relations->get() as $relation) {
+            foreach ($relation->invoices as $invoice) {
                 foreach ($invoice->invoice_items as $item) {
                     $this->data[] = [
-                        $this->isExport ? $client->getDisplayName() : $client->present()->link,
+                        $this->isExport ? $relation->getDisplayName() : $relation->present()->link,
                         $this->isExport ? $invoice->invoice_number : $invoice->present()->link,
                         $invoice->present()->invoice_date,
                         $item->product_key,
                         $item->qty,
-                        $company->formatMoney($item->cost, $client),
+                        $company->formatMoney($item->cost, $relation),
                     ];
                 }
 
-                //$this->addToTotals($client->currency_id, 'paid', $payment ? $payment->getCompletedAmount() : 0);
-                //$this->addToTotals($client->currency_id, 'amount', $invoice->amount);
-                //$this->addToTotals($client->currency_id, 'balance', $invoice->balance);
+                //$this->addToTotals($relation->currency_id, 'paid', $payment ? $payment->getCompletedAmount() : 0);
+                //$this->addToTotals($relation->currency_id, 'amount', $invoice->amount);
+                //$this->addToTotals($relation->currency_id, 'balance', $invoice->balance);
             }
         }
     }

@@ -14,7 +14,7 @@ class RelationRequest extends EntityRequest {
 
     public function entity()
     {
-        /*if(is_null($client))
+        /*if(is_null($relation))
         {
             die("hello world");
         }*/
@@ -22,13 +22,13 @@ class RelationRequest extends EntityRequest {
 
         $the_client_id = Input::get('relation_id');
         dd($the_client_id);
-        //$client = Relation::scope($the_client_id)->withTrashed()->firstOrFail();
+        //$relation = Relation::scope($the_client_id)->withTrashed()->firstOrFail();
         
         // eager load the contacts
-        if ($client && ! $client->relationLoaded('contacts')) {
-            $client->load('contacts');
+        if ($relation && ! $relation->relationLoaded('contacts')) {
+            $relation->load('contacts');
         }
          
-        return $client;
+        return $relation;
     }
 }

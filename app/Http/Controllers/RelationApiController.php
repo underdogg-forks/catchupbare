@@ -10,15 +10,15 @@ use App\Http\Requests\UpdateRelationRequest;
 
 class ClientApiController extends BaseAPIController
 {
-    protected $clientRepo;
+    protected $relationRepo;
 
     protected $entityType = ENTITY_RELATION;
 
-    public function __construct(RelationRepository $clientRepo)
+    public function __construct(RelationRepository $relationRepo)
     {
         parent::__construct();
 
-        $this->clientRepo = $clientRepo;
+        $this->clientRepo = $relationRepo;
     }
 
     /**
@@ -101,9 +101,9 @@ class ClientApiController extends BaseAPIController
      */
     public function store(CreateRelationRequest $request)
     {
-        $client = $this->clientRepo->save($request->input());
+        $relation = $this->clientRepo->save($request->input());
 
-        return $this->itemResponse($client);
+        return $this->itemResponse($relation);
     }
 
     /**
@@ -136,11 +136,11 @@ class ClientApiController extends BaseAPIController
 
         $data = $request->input();
         $data['public_id'] = $publicId;
-        $client = $this->clientRepo->save($data, $request->entity());
+        $relation = $this->clientRepo->save($data, $request->entity());
 
-        $client->load(['contacts']);
+        $relation->load(['contacts']);
 
-        return $this->itemResponse($client);
+        return $this->itemResponse($relation);
     }
 
 
@@ -168,11 +168,11 @@ class ClientApiController extends BaseAPIController
 
     public function destroy(UpdateRelationRequest $request)
     {
-        $client = $request->entity();
+        $relation = $request->entity();
 
-        $this->clientRepo->delete($client);
+        $this->clientRepo->delete($relation);
 
-        return $this->itemResponse($client);
+        return $this->itemResponse($relation);
     }
 
 }

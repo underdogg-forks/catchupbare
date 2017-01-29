@@ -1,7 +1,7 @@
 <?php namespace App\Ninja\Presenters;
 
 
-class ClientPresenter extends EntityPresenter {
+class RelationPresenter extends EntityPresenter {
 
     public function country()
     {
@@ -10,10 +10,10 @@ class ClientPresenter extends EntityPresenter {
 
     public function balance()
     {
-        $client = $this->entity;
-        $company = $client->company;
+        $relation = $this->entity;
+        $company = $relation->company;
 
-        return $company->formatMoney($client->balance, $client);
+        return $company->formatMoney($relation->balance, $relation);
     }
 
     public function paid_to_date()

@@ -183,13 +183,13 @@ class Document extends EntityModel
         $fullPath = $adapter->applyPathPrefix($path);
 
         if($adapter instanceof \League\Flysystem\AwsS3v3\AwsS3Adapter) {
-            $client = $adapter->getClient();
-            $command = $client->getCommand('GetObject', [
+            $relation = $adapter->getClient();
+            $command = $relation->getCommand('GetObject', [
                 'Bucket' => $adapter->getBucket(),
                 'Key'    => $fullPath
             ]);
 
-            return (string) $client->createPresignedRequest($command, '+10 minutes')->getUri();
+            return (string) $relation->createPresignedRequest($command, '+10 minutes')->getUri();
         } else if (!$prioritizeSpeed // Rackspace temp URLs are slow, so we don't use them for previews
                    && $adapter instanceof \League\Flysystem\Rackspace\RackspaceAdapter) {
             $secret = env('RACKSPACE_TEMP_URL_SECRET');

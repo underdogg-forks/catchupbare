@@ -491,22 +491,22 @@ class Company extends Eloquent
 
     /**
      * @param $amount
-     * @param null $client
+     * @param null $relation
      * @param bool $hideSymbol
      * @return string
      */
-    public function formatMoney($amount, $client = null, $decorator = false)
+    public function formatMoney($amount, $relation = null, $decorator = false)
     {
-        if ($client && $client->currency_id) {
-            $currencyId = $client->currency_id;
+        if ($relation && $relation->currency_id) {
+            $currencyId = $relation->currency_id;
         } elseif ($this->currency_id) {
             $currencyId = $this->currency_id;
         } else {
             $currencyId = DEFAULT_CURRENCY;
         }
 
-        if ($client && $client->country_id) {
-            $countryId = $client->country_id;
+        if ($relation && $relation->country_id) {
+            $countryId = $relation->country_id;
         } elseif ($this->country_id) {
             $countryId = $this->country_id;
         } else {
@@ -882,7 +882,7 @@ class Company extends Eloquent
                 $invoice->invoice_type_id = INVOICE_TYPE_QUOTE;
             }
 
-            if ($this->hasClientNumberPattern($invoice) && !$relationId) {
+            if ($this->hasRelationNumberPattern($invoice) && !$relationId) {
                 // do nothing, we don't yet know the value
             } elseif ( ! $invoice->invoice_number) {
                 $invoice->invoice_number = $this->getNextNumber($invoice);
@@ -898,9 +898,9 @@ class Company extends Eloquent
     }
 
     /**
-     * @param bool $client
+     * @param bool $relation
      */
-    public function loadLocalizationSettings($client = false)
+    public function loadLocalizationSettings($relation = false)
     {
         $this->load('timezone', 'date_format', 'datetime_format', 'language');
 
@@ -910,8 +910,8 @@ class Company extends Eloquent
         Session::put(SESSION_DATE_FORMAT, $this->date_format ? $this->date_format->format : DEFAULT_DATE_FORMAT);
         Session::put(SESSION_DATE_PICKER_FORMAT, $this->date_format ? $this->date_format->picker_format : DEFAULT_DATE_PICKER_FORMAT);
 
-        $currencyId = ($client && $client->currency_id) ? $client->currency_id : $this->currency_id ?: DEFAULT_CURRENCY;
-        $locale = ($client && $client->language_id) ? $client->language->locale : ($this->language_id ? $this->Language->locale : DEFAULT_LOCALE);
+        $currencyId = ($relation && $relation->currency_id) ? $relation->currency_id : $this->currency_id ?: DEFAULT_CURRENCY;
+        $locale = ($relation && $relation->language_id) ? $relation->language->locale : ($this->language_id ? $this->Language->locale : DEFAULT_LOCALE);
 
         Session::put(SESSION_CURRENCY, $currencyId);
         Session::put(SESSION_CURRENCY_DECORATOR, $this->show_currency_code ? CURRENCY_DECORATOR_CODE : CURRENCY_DECORATOR_SYMBOL);
@@ -1251,8 +1251,8 @@ class Company extends Eloquent
      */
     public function hideFieldsForViz()
     {
-        foreach ($this->relations as $client) {
-            $client->setVisible([
+        foreach ($this->relations as $relation) {
+            $relation->setVisible([
                 'public_id',
                 'name',
                 'balance',
@@ -1261,7 +1261,7 @@ class Company extends Eloquent
                 'contacts',
             ]);
 
-            foreach ($client->invoices as $invoice) {
+            foreach ($relation->invoices as $invoice) {
                 $invoice->setVisible([
                     'public_id',
                     'invoice_number',
@@ -1283,7 +1283,7 @@ class Company extends Eloquent
                 }
             }
 
-            foreach ($client->contacts as $contact) {
+            foreach ($relation->contacts as $contact) {
                 $contact->setVisible([
                     'public_id',
                     'first_name',
@@ -1337,7 +1337,7 @@ class Company extends Eloquent
             $entityType = ENTITY_INVOICE;
         }
 
-        $template = '<div>$client,</div><br>';
+        $template = '<div>$relation,</div><br>';
 
         if ($this->hasFeature(FEATURE_CUSTOM_EMAILS) && $this->email_design_id != EMAIL_DESIGN_PLAIN) {
             $template .= '<div>' . trans("texts.{$entityType}_message_button", ['amount' => '$amount']) . '</div><br>' .

@@ -124,16 +124,16 @@ class BaseIntent
 
     protected function requestClient()
     {
-        $clientRepo = app('App\Ninja\Repositories\RelationRepository');
-        $client = false;
+        $relationRepo = app('App\Ninja\Repositories\RelationRepository');
+        $relation = false;
 
         foreach ($this->data->entities as $param) {
             if ($param->type == 'Name') {
-                $client = $clientRepo->findPhonetically($param->entity);
+                $relation = $relationRepo->findPhonetically($param->entity);
             }
         }
 
-        return $client;
+        return $relation;
     }
 
     protected function requestFields()

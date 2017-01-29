@@ -285,10 +285,10 @@ function enableHoverClick($combobox, $entityId, url) {
   }).on('focusout mouseleave', function(e) {
     setAsLink($combobox, false);
   }).on('click', function() {
-    var clientId = $entityId.val();
+    var relationId = $entityId.val();
     if ($(combobox).closest('.combobox-container').hasClass('combobox-selected')) {
-      if (parseInt(clientId) > 0) {
-        window.open(url + '/' + clientId, '_blank');
+      if (parseInt(relationId) > 0) {
+        window.open(url + '/' + relationId, '_blank');
       } else {
         $('#myModal').modal('show');
       }
@@ -465,60 +465,60 @@ function getContactDisplayName(contact)
     }
 }
 
-function getClientDisplayName(client)
+function getRelationDisplayName(relation)
 {
-  var contact = client.contacts ? client.contacts[0] : false;
-  if (client.name) {
-    return client.name;
+  var contact = relation.contacts ? relation.contacts[0] : false;
+  if (relation.name) {
+    return relation.name;
   } else if (contact) {
     return getContactDisplayName(contact);
   }
   return '';
 }
 
-function populateInvoiceComboboxes(clientId, invoiceId) {
-  var clientMap = {};
+function populateInvoiceComboboxes(relationId, invoiceId) {
+  var relationMap = {};
   var invoiceMap = {};
-  var invoicesForClientMap = {};
-  var $clientSelect = $('select#client');
+  var invoicesForRelationMap = {};
+  var $relationSelect = $('select#relation');
 
   for (var i=0; i<invoices.length; i++) {
     var invoice = invoices[i];
-    var client = invoice.client;
+    var relation = invoice.relation;
 
-    if (!invoicesForClientMap.hasOwnProperty(client.public_id)) {
-      invoicesForClientMap[client.public_id] = [];
+    if (!invoicesForRelationMap.hasOwnProperty(relation.id)) {
+      invoicesForRelationMap[relation.id] = [];
     }
 
-    invoicesForClientMap[client.public_id].push(invoice);
+    invoicesForRelationMap[relation.id].push(invoice);
     invoiceMap[invoice.public_id] = invoice;
   }
 
-  for (var i=0; i<clients.length; i++) {
-    var client = clients[i];
-    clientMap[client.public_id] = client;
+  for (var i=0; i<relations.length; i++) {
+    var relation = relations[i];
+    relationMap[relation.id] = relation;
   }
 
-  $clientSelect.append(new Option('', ''));
-  for (var i=0; i<clients.length; i++) {
-    var client = clients[i];
-    var clientName = getClientDisplayName(client);
-    if (!clientName) {
+  $relationSelect.append(new Option('', ''));
+  for (var i=0; i<relations.length; i++) {
+    var relation = relations[i];
+    var relationName = getRelationDisplayName(relation);
+    if (!relationName) {
         continue;
     }
-    $clientSelect.append(new Option(clientName, client.public_id));
+    $relationSelect.append(new Option(relationName, relation.id));
   }
 
-  if (clientId) {
-    $clientSelect.val(clientId);
+  if (relationId) {
+    $relationSelect.val(relationId);
   }
 
-  $clientSelect.combobox();
-  $clientSelect.on('change', function(e) {
-    var clientId = $('input[name=client]').val();
+  $relationSelect.combobox();
+  $relationSelect.on('change', function(e) {
+    var relationId = $('input[name=relation]').val();
     var invoiceId = $('input[name=invoice]').val();
     var invoice = invoiceMap[invoiceId];
-    if (invoice && invoice.client.public_id == clientId) {
+    if (invoice && invoice.relation.id == relationId) {
       e.preventDefault();
       return;
     }
@@ -526,26 +526,26 @@ function populateInvoiceComboboxes(clientId, invoiceId) {
     $invoiceCombobox = $('select#invoice');
     $invoiceCombobox.find('option').remove().end().combobox('refresh');
     $invoiceCombobox.append(new Option('', ''));
-    var list = clientId ? (invoicesForClientMap.hasOwnProperty(clientId) ? invoicesForClientMap[clientId] : []) : invoices;
+    var list = relationId ? (invoicesForRelationMap.hasOwnProperty(relationId) ? invoicesForRelationMap[relationId] : []) : invoices;
     for (var i=0; i<list.length; i++) {
       var invoice = list[i];
-      var client = clientMap[invoice.client.public_id];
-      if (!client || !getClientDisplayName(client)) continue; // client is deleted/archived
+      var relation = relationMap[invoice.relation.id];
+      if (!relation || !getRelationDisplayName(relation)) continue; // relation is deleted/archived
       $invoiceCombobox.append(new Option(invoice.invoice_number + ' - ' + invoice.invoice_status.name + ' - ' +
-                getClientDisplayName(client) + ' - ' + formatMoneyInvoice(invoice.amount, invoice) + ' | ' +
+                getRelationDisplayName(relation) + ' - ' + formatMoneyInvoice(invoice.amount, invoice) + ' | ' +
                 formatMoneyInvoice(invoice.balance, invoice),  invoice.public_id));
     }
     $('select#invoice').combobox('refresh');
   });
 
   var $invoiceSelect = $('select#invoice').on('change', function(e) {
-    $clientCombobox = $('select#client');
+    $relationCombobox = $('select#relation');
     var invoiceId = $('input[name=invoice]').val();
     if (invoiceId) {
       var invoice = invoiceMap[invoiceId];
-      var client = clientMap[invoice.client.public_id];
-      invoice.client = client;
-      setComboboxValue($('.client-select'), client.public_id, getClientDisplayName(client));
+      var relation = relationMap[invoice.relation.id];
+      invoice.relation = relation;
+      setComboboxValue($('.relation-select'), relation.id, getRelationDisplayName(relation));
       if (!parseFloat($('#amount').val())) {
         $('#amount').val(parseFloat(invoice.balance).toFixed(2));
       }
@@ -556,18 +556,18 @@ function populateInvoiceComboboxes(clientId, invoiceId) {
 
   if (invoiceId) {
     var invoice = invoiceMap[invoiceId];
-    var client = clientMap[invoice.client.public_id];
-    invoice.client = client;
+    var relation = relationMap[invoice.relation.id];
+    invoice.relation = relation;
     setComboboxValue($('.invoice-select'), invoice.public_id, (invoice.invoice_number + ' - ' +
-            invoice.invoice_status.name + ' - ' + getClientDisplayName(client) + ' - ' +
+            invoice.invoice_status.name + ' - ' + getRelationDisplayName(relation) + ' - ' +
             formatMoneyInvoice(invoice.amount, invoice) + ' | ' + formatMoneyInvoice(invoice.balance, invoice)));
     $invoiceSelect.trigger('change');
-  } else if (clientId) {
-    var client = clientMap[clientId];
-    setComboboxValue($('.client-select'), client.public_id, getClientDisplayName(client));
-    $clientSelect.trigger('change');
+  } else if (relationId) {
+    var relation = relationMap[relationId];
+    setComboboxValue($('.relation-select'), relation.id, getRelationDisplayName(relation));
+    $relationSelect.trigger('change');
   } else {
-    $clientSelect.trigger('change');
+    $relationSelect.trigger('change');
   }
 }
 

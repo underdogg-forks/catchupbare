@@ -121,42 +121,42 @@ class CompanyRepository
                         }])->get();
         }
 
-        foreach ($relations as $client) {
-            if ($client->name) {
+        foreach ($relations as $relation) {
+            if ($relation->name) {
                 $data['relations'][] = [
-                    'value' => $client->name,
-                    'tokens' => implode(',', [$client->name, $client->id_number, $client->vat_number, $client->work_phone]),
-                    'url' => $client->present()->url,
+                    'value' => $relation->name,
+                    'tokens' => implode(',', [$relation->name, $relation->id_number, $relation->vat_number, $relation->work_phone]),
+                    'url' => $relation->present()->url,
                 ];
             }
 
-            if ($client->custom_value1) {
+            if ($relation->custom_value1) {
                 $data[$company->custom_client_label1][] = [
-                    'value' => "{$client->custom_value1}: " . $client->getDisplayName(),
-                    'tokens' => $client->custom_value1,
-                    'url' => $client->present()->url,
+                    'value' => "{$relation->custom_value1}: " . $relation->getDisplayName(),
+                    'tokens' => $relation->custom_value1,
+                    'url' => $relation->present()->url,
                 ];
             }
-            if ($client->custom_value2) {
+            if ($relation->custom_value2) {
                 $data[$company->custom_client_label2][] = [
-                    'value' => "{$client->custom_value2}: " . $client->getDisplayName(),
-                    'tokens' => $client->custom_value2,
-                    'url' => $client->present()->url,
+                    'value' => "{$relation->custom_value2}: " . $relation->getDisplayName(),
+                    'tokens' => $relation->custom_value2,
+                    'url' => $relation->present()->url,
                 ];
             }
 
-            foreach ($client->contacts as $contact) {
+            foreach ($relation->contacts as $contact) {
                 $data['contacts'][] = [
                     'value' => $contact->getDisplayName(),
                     'tokens' => implode(',', [$contact->first_name, $contact->last_name, $contact->email, $contact->phone]),
-                    'url' => $client->present()->url,
+                    'url' => $relation->present()->url,
                 ];
             }
 
-            foreach ($client->invoices as $invoice) {
+            foreach ($relation->invoices as $invoice) {
                 $entityType = $invoice->getEntityType();
                 $data["{$entityType}s"][] = [
-                    'value' => $invoice->getDisplayName() . ': ' . $client->getDisplayName(),
+                    'value' => $invoice->getDisplayName() . ': ' . $relation->getDisplayName(),
                     'tokens' => implode(',', [$invoice->invoice_number, $invoice->po_number]),
                     'url' => $invoice->present()->url,
                 ];
@@ -233,13 +233,13 @@ class CompanyRepository
     public function enablePlan($plan, $credit = 0)
     {
         $company = Auth::user()->company;
-        $client = $this->getNinjaClient($company);
-        $invitation = $this->createNinjaInvoice($client, $company, $plan, $credit);
+        $relation = $this->getNinjaClient($company);
+        $invitation = $this->createNinjaInvoice($relation, $company, $plan, $credit);
 
         return $invitation;
     }
 
-    public function createNinjaCredit($client, $amount)
+    public function createNinjaCredit($relation, $amount)
     {
         $company = $this->getNinjaAccount();
 
@@ -250,14 +250,14 @@ class CompanyRepository
         $credit->public_id = $publicId;
         $credit->company_id = $company->id;
         $credit->user_id = $company->users()->first()->id;
-        $credit->relation_id = $client->id;
+        $credit->relation_id = $relation->id;
         $credit->amount = $amount;
         $credit->save();
 
         return $credit;
     }
 
-    public function createNinjaInvoice($client, $clientAccount, $plan, $credit = 0)
+    public function createNinjaInvoice($relation, $relationAccount, $plan, $credit = 0)
     {
         $term = $plan['term'];
         $plan_cost = $plan['price'];
@@ -270,7 +270,7 @@ class CompanyRepository
 
         $company = $this->getNinjaAccount();
         $lastInvoice = Invoice::withTrashed()->whereCompanyId($company->id)->orderBy('public_id', 'DESC')->first();
-        $renewalDate = $clientAccount->getRenewalDate();
+        $renewalDate = $relationAccount->getRenewalDate();
         $publicId = $lastInvoice ? ($lastInvoice->public_id + 1) : 1;
 
         $invoice = new Invoice();
@@ -278,17 +278,17 @@ class CompanyRepository
         $invoice->company_id = $company->id;
         $invoice->user_id = $company->users()->first()->id;
         $invoice->public_id = $publicId;
-        $invoice->relation_id = $client->id;
+        $invoice->relation_id = $relation->id;
         $invoice->invoice_number = $company->getNextNumber($invoice);
         $invoice->invoice_date = $renewalDate->format('Y-m-d');
         $invoice->amount = $invoice->balance = $plan_cost - $credit;
         $invoice->invoice_type_id = INVOICE_TYPE_STANDARD;
 
         // check for promo/discount
-        $clientCorporation = $clientAccount->corporation;
-        if ($clientCorporation->hasActivePromo() || $clientCorporation->hasActiveDiscount($renewalDate)) {
-            $discount = $invoice->amount * $clientCorporation->discount;
-            $invoice->discount = $clientCorporation->discount * 100;
+        $relationCorporation = $relationAccount->corporation;
+        if ($relationCorporation->hasActivePromo() || $relationCorporation->hasActiveDiscount($renewalDate)) {
+            $discount = $invoice->amount * $relationCorporation->discount;
+            $invoice->discount = $relationCorporation->discount * 100;
             $invoice->amount -= $discount;
             $invoice->balance -= $discount;
         }
@@ -323,7 +323,7 @@ class CompanyRepository
         $invitation->user_id = $company->users()->first()->id;
         $invitation->public_id = $publicId;
         $invitation->invoice_id = $invoice->id;
-        $invitation->contact_id = $client->contacts()->first()->id;
+        $invitation->contact_id = $relation->contacts()->first()->id;
         $invitation->invitation_key = str_random(RANDOM_KEY_LENGTH);
         $invitation->save();
 
@@ -379,27 +379,27 @@ class CompanyRepository
         $company->load('users');
         $ninjaAccount = $this->getNinjaAccount();
         $ninjaUser = $ninjaAccount->getPrimaryUser();
-        $client = Relation::whereCompanyId($ninjaAccount->id)
+        $relation = Relation::whereCompanyId($ninjaAccount->id)
                     ->wherePublicId($company->id)
                     ->first();
-        $clientExists = $client ? true : false;
+        $relationExists = $relation ? true : false;
 
-        if (!$client) {
-            $client = new Relation();
-            $client->public_id = $company->id;
-            $client->company_id = $ninjaAccount->id;
-            $client->user_id = $ninjaUser->id;
-            $client->currency_id = 1;
+        if (!$relation) {
+            $relation = new Relation();
+            $relation->public_id = $company->id;
+            $relation->company_id = $ninjaAccount->id;
+            $relation->user_id = $ninjaUser->id;
+            $relation->currency_id = 1;
         }
 
         foreach (['name', 'address1', 'address2', 'city', 'state', 'postal_code', 'country_id', 'work_phone', 'language_id', 'vat_number'] as $field) {
-            $client->$field = $company->$field;
+            $relation->$field = $company->$field;
         }
 
-        $client->save();
+        $relation->save();
 
-        if ($clientExists) {
-            $contact = $client->getPrimaryContact();
+        if ($relationExists) {
+            $contact = $relation->getPrimaryContact();
         } else {
             $contact = new Contact();
             $contact->user_id = $ninjaUser->id;
@@ -413,9 +413,9 @@ class CompanyRepository
             $contact->$field = $user->$field;
         }
 
-        $client->contacts()->save($contact);
+        $relation->contacts()->save($contact);
 
-        return $client;
+        return $relation;
     }
 
     public function findByKey($key)

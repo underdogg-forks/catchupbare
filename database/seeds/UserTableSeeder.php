@@ -60,7 +60,7 @@ class UserTableSeeder extends Seeder
             'is_admin' => 1,
         ]);
 
-        $client = Relation::create([
+        $relation = Relation::create([
             'user_id' => $user->id,
             'company_id' => $company->id,
             'public_id' => 1,
@@ -77,7 +77,7 @@ class UserTableSeeder extends Seeder
         Contact::create([
             'user_id' => $user->id,
             'company_id' => $company->id,
-            'relation_id' => $client->id,
+            'relation_id' => $relation->id,
             'public_id' => 1,
             'email' => env('TEST_EMAIL', TEST_USERNAME),
             'is_primary' => true,

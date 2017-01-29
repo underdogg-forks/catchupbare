@@ -26,17 +26,17 @@ class QuoteController extends BaseController
 {
     protected $mailer;
     protected $invoiceRepo;
-    protected $clientRepo;
+    protected $relationRepo;
     protected $invoiceService;
     protected $entityType = ENTITY_INVOICE;
 
-    public function __construct(Mailer $mailer, InvoiceRepository $invoiceRepo, RelationRepository $clientRepo, InvoiceService $invoiceService)
+    public function __construct(Mailer $mailer, InvoiceRepository $invoiceRepo, RelationRepository $relationRepo, InvoiceService $invoiceService)
     {
         // parent::__construct();
 
         $this->mailer = $mailer;
         $this->invoiceRepo = $invoiceRepo;
-        $this->clientRepo = $clientRepo;
+        $this->clientRepo = $relationRepo;
         $this->invoiceService = $invoiceService;
     }
 

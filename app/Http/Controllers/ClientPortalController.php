@@ -51,7 +51,7 @@ class ClientPortalController extends BaseController
         }
 
         $invoice = $invitation->invoice;
-        $client = $invoice->relation;
+        $relation = $invoice->relation;
         $company = $invoice->company;
 
         if (!$company->checkSubdomain(Request::server('HTTP_HOST'))) {
@@ -63,7 +63,7 @@ class ClientPortalController extends BaseController
             ]);
         }
 
-        $company->loadLocalizationSettings($client);
+        $company->loadLocalizationSettings($relation);
 
         if (!Input::has('phantomjs') && !Input::has('silent') && !Session::has($invitationKey)
             && (!Auth::check() || Auth::user()->company_id != $invoice->company_id)) {
@@ -105,7 +105,7 @@ class ClientPortalController extends BaseController
         }
 
         $data = [];
-        $paymentTypes = $this->getPaymentTypes($company, $client, $invitation);
+        $paymentTypes = $this->getPaymentTypes($company, $relation, $invitation);
         $paymentURL = '';
         if (count($paymentTypes) == 1) {
             $paymentURL = $paymentTypes[0]['url'];
@@ -169,7 +169,7 @@ class ClientPortalController extends BaseController
         return View::make('invoices.view', $data);
     }
 
-    private function getPaymentTypes($company, $client, $invitation)
+    private function getPaymentTypes($company, $relation, $invitation)
     {
         $links = [];
 
@@ -231,9 +231,9 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
-        $company = $client->company;
-        $company->loadLocalizationSettings($client);
+        $relation = $contact->relation;
+        $company = $relation->company;
+        $company->loadLocalizationSettings($relation);
 
         $color = $company->primary_color ? $company->primary_color : '#0b4d78';
         $customer = false;
@@ -245,14 +245,14 @@ class ClientPortalController extends BaseController
         }
 
         if ($paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN)) {
-            $customer = $paymentDriver->customer($client->id);
+            $customer = $paymentDriver->customer($relation->id);
         }
 
         $data = [
             'color' => $color,
             'contact' => $contact,
             'company' => $company,
-            'relation' => $client,
+            'relation' => $relation,
             'clientFontUrl' => $company->getFontsUrl(),
             'gateway' => $company->getTokenGateway(),
             'paymentMethods' => $customer ? $customer->payment_methods : false,
@@ -268,9 +268,9 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
+        $relation = $contact->relation;
 
-        $query = $this->activityRepo->findByClientId($client->id);
+        $query = $this->activityRepo->findByClientId($relation->id);
         $query->where('activities.adjustment', '!=', 0);
 
         return Datatable::query($query)
@@ -724,17 +724,17 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
-        $company = $client->company;
+        $relation = $contact->relation;
+        $company = $relation->company;
 
         $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
-        $customer = $paymentDriver->customer($client->id);
+        $customer = $paymentDriver->customer($relation->id);
 
         $data = [
             'company' => $company,
             'contact' => $contact,
             'color' => $company->primary_color ? $company->primary_color : '#0b4d78',
-            'relation' => $client,
+            'relation' => $relation,
             'clientViewCSS' => $company->clientViewCSS(),
             'clientFontUrl' => $company->getFontsUrl(),
             'paymentMethods' => $customer ? $customer->payment_methods : false,
@@ -756,11 +756,11 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
-        $company = $client->company;
+        $relation = $contact->relation;
+        $company = $relation->company;
 
         $paymentDriver = $company->paymentDriver(null, GATEWAY_TYPE_BANK_TRANSFER);
-        $result = $paymentDriver->verifyBankAccount($client, $publicId, $amount1, $amount2);
+        $result = $paymentDriver->verifyBankAccount($relation, $publicId, $amount1, $amount2);
 
         if (is_string($result)) {
             Session::flash('error', $result);
@@ -777,11 +777,11 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
+        $relation = $contact->relation;
         $company = $contact->company;
 
         $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
-        $paymentMethod = PaymentMethod::clientId($client->id)
+        $paymentMethod = PaymentMethod::clientId($relation->id)
             ->wherePublicId($publicId)
             ->firstOrFail();
 
@@ -792,7 +792,7 @@ class ClientPortalController extends BaseController
             Session::flash('error', $exception->getMessage());
         }
 
-        return redirect()->to($client->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
+        return redirect()->to($relation->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
     }
 
     public function setDefaultPaymentMethod(){
@@ -800,26 +800,26 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
-        $company = $client->company;
+        $relation = $contact->relation;
+        $company = $relation->company;
 
         $validator = Validator::make(Input::all(), ['source' => 'required']);
         if ($validator->fails()) {
-            return Redirect::to($client->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
+            return Redirect::to($relation->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
         }
 
         $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
-        $paymentMethod = PaymentMethod::clientId($client->id)
+        $paymentMethod = PaymentMethod::clientId($relation->id)
             ->wherePublicId(Input::get('source'))
             ->firstOrFail();
 
-        $customer = $paymentDriver->customer($client->id);
+        $customer = $paymentDriver->customer($relation->id);
         $customer->default_payment_method_id = $paymentMethod->id;
         $customer->save();
 
         Session::flash('message', trans('texts.payment_method_set_as_default'));
 
-        return redirect()->to($client->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
+        return redirect()->to($relation->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
     }
 
     private function paymentMethodError($type, $error, $accGateway = false, $exception = false)
@@ -839,7 +839,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->relation;
+        $relation = $contact->relation;
 
         $validator = Validator::make(Input::all(), ['public_id' => 'required']);
 
@@ -849,7 +849,7 @@ class ClientPortalController extends BaseController
 
         $publicId = Input::get('public_id');
         $enable = Input::get('enable');
-        $invoice = $client->invoices()->where('public_id', intval($publicId))->first();
+        $invoice = $relation->invoices()->where('public_id', intval($publicId))->first();
 
         if ($invoice && $invoice->is_recurring && ($invoice->auto_bill == AUTO_BILL_OPT_IN || $invoice->auto_bill == AUTO_BILL_OPT_OUT)) {
             $invoice->client_enable_auto_bill = $enable ? true : false;

@@ -13,22 +13,22 @@ class ActivityRepository
     public function create($entity, $activityTypeId, $balanceChange = 0, $paidToDateChange = 0, $altEntity = null, $notes = false)
     {
         if ($entity instanceof Relation) {
-            $client = $entity;
+            $relation = $entity;
         } elseif ($entity instanceof Invitation) {
-            $client = $entity->invoice->relation;
+            $relation = $entity->invoice->relation;
         } else {
-            $client = $entity->relation;
+            $relation = $entity->relation;
         }
 
         // init activity and copy over context
-        $activity = self::getBlank($altEntity ?: ($client ?: $entity));
+        $activity = self::getBlank($altEntity ?: ($relation ?: $entity));
         $activity = Utils::copyContext($activity, $entity);
         $activity = Utils::copyContext($activity, $altEntity);
 
         $activity->activity_type_id = $activityTypeId;
         $activity->adjustment = $balanceChange;
-        $activity->relation_id = $client ? $client->id : 0;
-        $activity->balance = $client ? ($client->balance + $balanceChange) : 0;
+        $activity->relation_id = $relation ? $relation->id : 0;
+        $activity->balance = $relation ? ($relation->balance + $balanceChange) : 0;
         $activity->notes = $notes ?: '';
 
         $keyField = $entity->getKeyField();
@@ -37,8 +37,8 @@ class ActivityRepository
         $activity->ip = Request::getClientIp();
         $activity->save();
 
-        if ($client) {
-            $client->updateBalances($balanceChange, $paidToDateChange);
+        if ($relation) {
+            $relation->updateBalances($balanceChange, $paidToDateChange);
         }
 
         return $activity;

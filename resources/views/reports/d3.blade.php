@@ -98,7 +98,7 @@
 
     // create standardized display properties
     _.each(relations, function(relation) {
-      relation.displayName = getClientDisplayName(relation);
+      relation.displayName = getRelationDisplayName(relation);
       relation.displayTotal = +relation.paid_to_date + +relation.balance;
       relation.displayBalance = +relation.balance;
       relation.displayPercent = (+relation.paid_to_date / (+relation.paid_to_date + +relation.balance)).toFixed(2);

@@ -37,16 +37,16 @@ class ClientPortalHeaderComposer
             return false;
         }
 
-        $client = $contact->relation;
+        $relation = $contact->relation;
 
         $hasDocuments = DB::table('invoices')
-                            ->where('invoices.relation_id', '=', $client->id)
+                            ->where('invoices.relation_id', '=', $relation->id)
                             ->whereNull('invoices.deleted_at')
                             ->join('documents', 'documents.invoice_id', '=', 'invoices.id')
                             ->count();
 
-        $view->with('hasQuotes', $client->publicQuotes->count());
-        $view->with('hasCredits', $client->creditsWithBalance->count());
+        $view->with('hasQuotes', $relation->publicQuotes->count());
+        $view->with('hasCredits', $relation->creditsWithBalance->count());
         $view->with('hasDocuments', $hasDocuments);
     }
 }

@@ -62,18 +62,18 @@ class ContactMailer extends Mailer
         $invoice->load('invitations', 'relation.language', 'company');
         $entityType = $invoice->getEntityType();
 
-        $client = $invoice->relation;
+        $relation = $invoice->relation;
         $company = $invoice->company;
 
         $response = null;
 
-        if ($client->trashed()) {
+        if ($relation->trashed()) {
             return trans('texts.email_error_inactive_client');
         } elseif ($invoice->trashed()) {
             return trans('texts.email_error_inactive_invoice');
         }
 
-        $company->loadLocalizationSettings($client);
+        $company->loadLocalizationSettings($relation);
         $emailTemplate = $company->getEmailTemplate($reminder ?: $entityType);
         $emailSubject = $company->getEmailSubject($reminder ?: $entityType);
 
@@ -147,7 +147,7 @@ class ContactMailer extends Mailer
     )
     {
 
-        $client = $invoice->relation;
+        $relation = $invoice->relation;
         $company = $invoice->company;
 
         if (Auth::check()) {
@@ -171,13 +171,13 @@ class ContactMailer extends Mailer
 
         $variables = [
             'company' => $company,
-            'relation' => $client,
+            'relation' => $relation,
             'invitation' => $invitation,
             'amount' => $invoice->getRequestedAmount()
         ];
 
         // Let the relation know they'll be billed later
-        if ($client->autoBillLater()) {
+        if ($relation->autoBillLater()) {
             $variables['autobill'] = $invoice->present()->autoBillEmailMessage();
         }
 
@@ -195,7 +195,7 @@ class ContactMailer extends Mailer
             'invoiceId' => $invoice->id,
             'invitation' => $invitation,
             'company' => $company,
-            'relation' => $client,
+            'relation' => $relation,
             'invoice' => $invoice,
             'documents' => $documentStrings,
             'notes' => $reminder,
@@ -253,9 +253,9 @@ class ContactMailer extends Mailer
     public function sendPaymentConfirmation(Payment $payment)
     {
         $company = $payment->company;
-        $client = $payment->relation;
+        $relation = $payment->relation;
 
-        $company->loadLocalizationSettings($client);
+        $company->loadLocalizationSettings($relation);
 
         $invoice = $payment->invoice;
         $accountName = $company->getDisplayName();
@@ -268,13 +268,13 @@ class ContactMailer extends Mailer
             $invitation = $payment->invitation;
         } else {
             $user = $payment->user;
-            $contact = $client->contacts[0];
+            $contact = $relation->contacts[0];
             $invitation = $payment->invoice->invitations[0];
         }
 
         $variables = [
             'company' => $company,
-            'relation' => $client,
+            'relation' => $relation,
             'invitation' => $invitation,
             'amount' => $payment->amount,
         ];
@@ -283,7 +283,7 @@ class ContactMailer extends Mailer
             'body' => $this->templateService->processVariables($emailTemplate, $variables),
             'link' => $invitation->getLink(),
             'invoice' => $invoice,
-            'relation' => $client,
+            'relation' => $relation,
             'company' => $company,
             'payment' => $payment,
             'entityType' => ENTITY_INVOICE,

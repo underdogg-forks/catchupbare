@@ -7,15 +7,15 @@ class CreateInvoiceIntent extends InvoiceIntent
 {
     public function process()
     {
-        $client = $this->requestClient();
+        $relation = $this->requestClient();
         $invoiceItems = $this->requestInvoiceItems();
 
-        if ( ! $client) {
+        if ( ! $relation) {
             throw new Exception(trans('texts.client_not_found'));
         }
 
         $data = array_merge($this->requestFields(), [
-            'relation_id' => $client->id,
+            'relation_id' => $relation->id,
             'invoice_items' => $invoiceItems,
         ]);
 
@@ -35,7 +35,7 @@ class CreateInvoiceIntent extends InvoiceIntent
         }, $invoice->invoice_items->toArray());
 
         $this->setStateEntityType(ENTITY_INVOICE);
-        $this->setStateEntities(ENTITY_RELATION, $client->public_id);
+        $this->setStateEntities(ENTITY_RELATION, $relation->public_id);
         $this->setStateEntities(ENTITY_INVOICE, $invoice->public_id);
         $this->setStateEntities(ENTITY_INVOICE_ITEM, $invoiceItemIds);
 

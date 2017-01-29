@@ -134,7 +134,7 @@ class VendorController extends BaseController
         $data = array_merge($data, self::getViewModel());
 
         if (Auth::user()->company->isNinjaAccount()) {
-            if ($company = Company::whereId($client->public_id)->first()) {
+            if ($company = Company::whereId($relation->public_id)->first()) {
                 $data['planDetails'] = $company->getPlanDetails(false, false);
             }
         }

@@ -267,7 +267,7 @@
             var $vendorSelect = $('select#vendor_id');
             for (var i = 0; i < vendors.length; i++) {
                 var vendor = vendors[i];
-                $vendorSelect.append(new Option(getClientDisplayName(vendor), vendor.public_id));
+                $vendorSelect.append(new Option(getRelationDisplayName(vendor), vendor.public_id));
             }
             $vendorSelect.combobox();
 
@@ -284,16 +284,16 @@
                 toggleDatePicker('expense_date');
             });
 
-            var $clientSelect = $('select#relation_id');
+            var $relationSelect = $('select#relation_id');
             for (var i=0; i<relations.length; i++) {
                 var relation = relations[i];
-                var clientName = getClientDisplayName(relation);
-                if (!clientName) {
+                var relationName = getRelationDisplayName(relation);
+                if (!relationName) {
                     continue;
                 }
-                $clientSelect.append(new Option(clientName, relation.public_id));
+                $relationSelect.append(new Option(relationName, relation.public_id));
             }
-            $clientSelect.combobox().change(function() {
+            $relationSelect.combobox().change(function() {
                 onClientChange();
             });
 

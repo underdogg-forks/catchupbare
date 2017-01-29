@@ -30,11 +30,11 @@ class InvoiceTransformer extends EntityTransformer
         'documents',
     ];
 
-    public function __construct($company = null, $serializer = null, $client = null)
+    public function __construct($company = null, $serializer = null, $relation = null)
     {
         parent::__construct($company, $serializer);
 
-        $this->relation = $client;
+        $this->relation = $relation;
     }
 
     public function includeInvoiceItems(Invoice $invoice)

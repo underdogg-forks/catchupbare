@@ -42,8 +42,8 @@ class InvoiceReport extends AbstractReport
                                   }, 'invoice_items']);
                         }]);
 
-        foreach ($relations->get() as $client) {
-            foreach ($client->invoices as $invoice) {
+        foreach ($relations->get() as $relation) {
+            foreach ($relation->invoices as $invoice) {
 
                 $payments = count($invoice->payments) ? $invoice->payments : [false];
                 foreach ($payments as $payment) {
@@ -53,20 +53,20 @@ class InvoiceReport extends AbstractReport
                         continue;
                     }
                     $this->data[] = [
-                        $this->isExport ? $client->getDisplayName() : $client->present()->link,
+                        $this->isExport ? $relation->getDisplayName() : $relation->present()->link,
                         $this->isExport ? $invoice->invoice_number : $invoice->present()->link,
                         $invoice->present()->invoice_date,
-                        $company->formatMoney($invoice->amount, $client),
+                        $company->formatMoney($invoice->amount, $relation),
                         $payment ? $payment->present()->payment_date : '',
-                        $payment ? $company->formatMoney($payment->getCompletedAmount(), $client) : '',
+                        $payment ? $company->formatMoney($payment->getCompletedAmount(), $relation) : '',
                         $payment ? $payment->present()->method : '',
                     ];
 
-                    $this->addToTotals($client->currency_id, 'paid', $payment ? $payment->getCompletedAmount() : 0);
+                    $this->addToTotals($relation->currency_id, 'paid', $payment ? $payment->getCompletedAmount() : 0);
                 }
 
-                $this->addToTotals($client->currency_id, 'amount', $invoice->amount);
-                $this->addToTotals($client->currency_id, 'balance', $invoice->balance);
+                $this->addToTotals($relation->currency_id, 'amount', $invoice->amount);
+                $this->addToTotals($relation->currency_id, 'balance', $invoice->balance);
             }
         }
     }

@@ -4,11 +4,11 @@ use App\Models\Expense;
 
 class ExpenseTransformer extends EntityTransformer
 {
-    public function __construct($company = null, $serializer = null, $client = null)
+    public function __construct($company = null, $serializer = null, $relation = null)
     {
         parent::__construct($company, $serializer);
 
-        $this->relation = $client;
+        $this->relation = $relation;
     }
 
     public function transform(Expense $expense)

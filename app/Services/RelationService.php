@@ -22,13 +22,13 @@ class RelationService extends BaseService
 
     /**
      * RelationService constructor.
-     * @param RelationRepository $clientRepo
+     * @param RelationRepository $relationRepo
      * @param DatatableService $datatableService
      * @param NinjaRepository $ninjaRepo
      */
-    public function __construct(RelationRepository $clientRepo, DatatableService $datatableService, NinjaRepository $ninjaRepo)
+    public function __construct(RelationRepository $relationRepo, DatatableService $datatableService, NinjaRepository $ninjaRepo)
     {
-        $this->relationRepo = $clientRepo;
+        $this->relationRepo = $relationRepo;
         $this->ninjaRepo = $ninjaRepo;
         $this->datatableService = $datatableService;
     }
@@ -43,16 +43,16 @@ class RelationService extends BaseService
 
     /**
      * @param $data
-     * @param null $client
+     * @param null $relation
      * @return mixed|null
      */
-    public function save($data, $client = null)
+    public function save($data, $relation = null)
     {
         if (Auth::user()->company->isNinjaAccount() && isset($data['plan'])) {
             $this->ninjaRepo->updatePlanDetails($data['public_id'], $data);
         }
 
-        return $this->relationRepo->save($data, $client);
+        return $this->relationRepo->save($data, $relation);
     }
 
     /**

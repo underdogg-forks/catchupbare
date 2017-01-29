@@ -54,7 +54,7 @@ $LANG = array(
     'enable' => 'Activeer',
     'learn_more' => 'Meer te weten komen',
     'manage_rates' => 'Beheer prijzen',
-    'note_to_client' => 'Bericht aan klant',
+    'note_to_relation' => 'Bericht aan klant',
     'invoice_terms' => 'Factuur voorwaarden',
     'save_as_default_terms' => 'Opslaan als standaard voorwaarden',
     'download_pdf' => 'Download PDF',
@@ -650,7 +650,7 @@ $LANG = array(
     'primary_user' => 'Primaire gebruiker',
     'help' => 'Help',
     'customize_help' => '<p>We gebruiken <a href="http://pdfmake.org/" target="_blank">pdfmake</a> om de factuurontwerpen te definieren. De pdfmake <a href="http://pdfmake.org/playground.html" target="_blank">playground</a> is een interessante manier om de bibliotheek in actie te zien.</p>
-<p>Gebruik puntnotatie om een "dochter eigenschap" te gebruiken. Bijvoorbeeld: om de naam van een klant te tonen gebruik je <code>$client.name</code>.</p>
+<p>Gebruik puntnotatie om een "dochter eigenschap" te gebruiken. Bijvoorbeeld: om de naam van een klant te tonen gebruik je <code>$relation.name</code>.</p>
 <p>Als je ergens hulp bij nodig hebt, stel dan een vraag op ons <a href="https://www.invoiceninja.com/forums/forum/support/" target="_blank">support forum</a>.</p>',
     'invoice_due_date' => 'Vervaldatum',
     'quote_due_date' => 'Geldig tot',

@@ -83,7 +83,7 @@ class ExpenseController extends BaseController
             'vendors' => Vendor::scope()->with('vendor_contacts')->orderBy('name')->get(),
             'vendor' => $vendor,
             'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $request->relation_id,
+            'relationPublicId' => $request->relation_id,
             'categoryPublicId' => $request->category_id,
         ];
 
@@ -132,7 +132,7 @@ class ExpenseController extends BaseController
             'vendors' => Vendor::scope()->with('vendor_contacts')->orderBy('name')->get(),
             'vendorPublicId' => $expense->vendor ? $expense->vendor->public_id : null,
             'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $expense->relation ? $expense->relation->id : null,
+            'relationPublicId' => $expense->relation ? $expense->relation->id : null,
             'categoryPublicId' => $expense->expense_category ? $expense->expense_category->public_id : null,
         ];
 

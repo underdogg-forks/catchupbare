@@ -55,7 +55,7 @@ class ProjectController extends BaseController
             'url' => 'projects',
             'title' => trans('texts.new_project'),
             'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $request->relation_id,
+            'relationPublicId' => $request->relation_id,
         ];
 
         return View::make('projects.edit', $data);
@@ -71,7 +71,7 @@ class ProjectController extends BaseController
             'url' => 'projects/' . $project->public_id,
             'title' => trans('texts.edit_project'),
             'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $project->relation ? $project->relation->id : null,
+            'relationPublicId' => $project->relation ? $project->relation->id : null,
         ];
 
         return View::make('projects.edit', $data);

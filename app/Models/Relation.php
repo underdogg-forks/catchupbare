@@ -17,7 +17,7 @@ class Relation extends EntityModel
     /**
      * @var string
      */
-    protected $presenter = 'App\Ninja\Presenters\ClientPresenter';
+    protected $presenter = 'App\Ninja\Presenters\RelationPresenter';
 
     /**
      * @var array
@@ -436,10 +436,10 @@ class Relation extends EntityModel
         $accGateway = $this->company->getGatewayByType(GATEWAY_TYPE_TOKEN);
 
         if ( ! $accGateway) {
-            return false;
-        }
 
-        return AccountGatewayToken::clientAndGateway($this->id, $accGateway->id)->first();
+        }
+        return false;
+        //return AccountGatewayToken::relationAndGateway($this->id, $accGateway->id)->first();
     }
 
     /**
@@ -447,9 +447,9 @@ class Relation extends EntityModel
      */
     public function defaultPaymentMethod()
     {
-        if ($token = $this->getGatewayToken()) {
+        /*if ($token = $this->getGatewayToken()) {
             return $token->default_payment_method;
-        }
+        }*/
 
         return false;
     }
@@ -459,13 +459,13 @@ class Relation extends EntityModel
      */
     public function autoBillLater()
     {
-        if ($token = $this->getGatewayToken()) {
+        /*if ($token = $this->getGatewayToken()) {
             if ($this->company->auto_bill_on_due_date) {
                 return true;
             }
 
             return $token->autoBillLater();
-        }
+        }*/
 
         return false;
     }
@@ -533,11 +533,11 @@ class Relation extends EntityModel
     }
 }
 
-Relation::creating(function ($client) {
-    $client->setNullValues();
-    $client->company->incrementCounter($client);
+Relation::creating(function ($relation) {
+    $relation->setNullValues();
+    $relation->company->incrementCounter($relation);
 });
 
-Relation::updating(function ($client) {
-    $client->setNullValues();
+Relation::updating(function ($relation) {
+    $relation->setNullValues();
 });

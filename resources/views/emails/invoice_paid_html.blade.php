@@ -12,7 +12,7 @@
     </div>
     &nbsp;
     <div>
-        {{ trans("texts.notification_{$entityType}_paid", ['amount' => $paymentAmount, 'relation' => $clientName, 'invoice' => $invoiceNumber]) }}
+        {{ trans("texts.notification_{$entityType}_paid", ['amount' => $paymentAmount, 'relation' => $relationName, 'invoice' => $invoiceNumber]) }}
     </div>
     &nbsp;
     <div>

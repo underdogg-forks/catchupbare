@@ -1,4 +1,5 @@
-<?php namespace App\Services;
+<?php
+namespace App\Services;
 
 use Utils;
 use Datatable;
@@ -25,7 +26,7 @@ class DatatableService
             $table->addColumn('checkbox', function ($model) {
                 $can_edit = Auth::user()->hasPermission('edit_all') || (isset($model->user_id) && Auth::user()->id == $model->user_id);
 
-                return !$can_edit?'':'<input type="checkbox" name="ids[]" value="' . $model->id
+                return !$can_edit?'':'<input type="checkbox" name="ids[]" value="' . $model->public_id
                         . '" ' . Utils::getEntityRowClass($model) . '>';
             });
         }
@@ -116,16 +117,16 @@ class DatatableService
                 }
 
                 if (($datatable->entityType != ENTITY_USER || $model->id) && $can_edit) {
-                    $dropdown_contents .= "<li><a href=\"javascript:submitForm_{$datatable->entityType}('archive', {$model->id})\">"
+                    $dropdown_contents .= "<li><a href=\"javascript:submitForm_{$datatable->entityType}('archive', {$model->public_id})\">"
                             . mtrans($datatable->entityType, "archive_{$datatable->entityType}") . '</a></li>';
                 }
             } else if($can_edit) {
-                $dropdown_contents .= "<li><a href=\"javascript:submitForm_{$datatable->entityType}('restore', {$model->id})\">"
+                $dropdown_contents .= "<li><a href=\"javascript:submitForm_{$datatable->entityType}('restore', {$model->public_id})\">"
                     . mtrans($datatable->entityType, "restore_{$datatable->entityType}") . '</a></li>';
             }
 
             if (property_exists($model, 'is_deleted') && !$model->is_deleted && $can_edit) {
-                $dropdown_contents .= "<li><a href=\"javascript:submitForm_{$datatable->entityType}('delete', {$model->id})\">"
+                $dropdown_contents .= "<li><a href=\"javascript:submitForm_{$datatable->entityType}('delete', {$model->public_id})\">"
                         . mtrans($datatable->entityType, "delete_{$datatable->entityType}") . '</a></li>';
             }
 

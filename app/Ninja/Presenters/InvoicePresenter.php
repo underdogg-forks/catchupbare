@@ -143,14 +143,14 @@ class InvoicePresenter extends EntityPresenter {
 
     public function email()
     {
-        $client = $this->entity->relation;
-        return count($client->contacts) ? $client->contacts[0]->email : '';
+        $relation = $this->entity->relation;
+        return count($relation->contacts) ? $relation->contacts[0]->email : '';
     }
 
     public function autoBillEmailMessage()
     {
-        $client = $this->entity->relation;
-        $paymentMethod = $client->defaultPaymentMethod();
+        $relation = $this->entity->relation;
+        $paymentMethod = $relation->defaultPaymentMethod();
 
         if ( ! $paymentMethod) {
             return false;

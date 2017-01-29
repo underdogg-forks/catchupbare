@@ -26,12 +26,12 @@ class InvoiceApiController extends BaseAPIController
 
     protected $entityType = ENTITY_INVOICE;
 
-    public function __construct(InvoiceService $invoiceService, InvoiceRepository $invoiceRepo, RelationRepository $clientRepo, PaymentRepository $paymentRepo, PaymentService $paymentService)
+    public function __construct(InvoiceService $invoiceService, InvoiceRepository $invoiceRepo, RelationRepository $relationRepo, PaymentRepository $paymentRepo, PaymentService $paymentService)
     {
         parent::__construct();
 
         $this->invoiceRepo = $invoiceRepo;
-        $this->clientRepo = $clientRepo;
+        $this->clientRepo = $relationRepo;
         $this->paymentRepo = $paymentRepo;
         $this->invoiceService = $invoiceService;
         $this->paymentService = $paymentService;
@@ -113,18 +113,18 @@ class InvoiceApiController extends BaseAPIController
 
         if (isset($data['email'])) {
             $email = $data['email'];
-            $client = Relation::scope()->whereHas('contacts', function($query) use ($email) {
+            $relation = Relation::scope()->whereHas('contacts', function($query) use ($email) {
                 $query->where('email', '=', $email);
             })->first();
 
-            if (!$client) {
+            if (!$relation) {
                 $validator = Validator::make(['email'=>$email], ['email' => 'email']);
                 if ($validator->fails()) {
                     $messages = $validator->messages();
                     return $messages->first();
                 }
 
-                $clientData = ['contact' => ['email' => $email]];
+                $relationData = ['contact' => ['email' => $email]];
                 foreach ([
                     'name',
                     'address1',
@@ -137,7 +137,7 @@ class InvoiceApiController extends BaseAPIController
                     'currency_code',
                 ] as $field) {
                     if (isset($data[$field])) {
-                        $clientData[$field] = $data[$field];
+                        $relationData[$field] = $data[$field];
                     }
                 }
                 foreach ([
@@ -146,18 +146,18 @@ class InvoiceApiController extends BaseAPIController
                     'phone',
                 ] as $field) {
                     if (isset($data[$field])) {
-                        $clientData['contact'][$field] = $data[$field];
+                        $relationData['contact'][$field] = $data[$field];
                     }
                 }
 
-                $client = $this->clientRepo->save($clientData);
+                $relation = $this->clientRepo->save($relationData);
             }
         } else if (isset($data['relation_id'])) {
-            $client = Relation::scope($data['relation_id'])->firstOrFail();
+            $relation = Relation::scope($data['relation_id'])->firstOrFail();
         }
 
-        $data = self::prepareData($data, $client);
-        $data['relation_id'] = $client->id;
+        $data = self::prepareData($data, $relation);
+        $data['relation_id'] = $relation->id;
 
         // in these cases the invoice needs to be set as public
         $isAutoBill = isset($data['auto_bill']) && filter_var($data['auto_bill'], FILTER_VALIDATE_BOOLEAN);
@@ -177,7 +177,7 @@ class InvoiceApiController extends BaseAPIController
             } else if ($isPaid) {
                 $payment = $this->paymentRepo->save([
                     'invoice_id' => $invoice->id,
-                    'relation_id' => $client->id,
+                    'relation_id' => $relation->id,
                     'amount' => $data['paid']
                 ]);
             }
@@ -204,10 +204,10 @@ class InvoiceApiController extends BaseAPIController
         return $this->itemResponse($invoice);
     }
 
-    private function prepareData($data, $client)
+    private function prepareData($data, $relation)
     {
         $company = Auth::user()->company;
-        $company->loadLocalizationSettings($client);
+        $company->loadLocalizationSettings($relation);
 
         // set defaults for optional fields
         $fields = [

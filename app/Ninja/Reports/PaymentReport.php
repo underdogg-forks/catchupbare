@@ -36,19 +36,19 @@ class PaymentReport extends AbstractReport
 
         foreach ($payments->get() as $payment) {
             $invoice = $payment->invoice;
-            $client = $payment->relation;
+            $relation = $payment->relation;
             $this->data[] = [
-                $this->isExport ? $client->getDisplayName() : $client->present()->link,
+                $this->isExport ? $relation->getDisplayName() : $relation->present()->link,
                 $this->isExport ? $invoice->invoice_number : $invoice->present()->link,
                 $invoice->present()->invoice_date,
-                $company->formatMoney($invoice->amount, $client),
+                $company->formatMoney($invoice->amount, $relation),
                 $payment->present()->payment_date,
-                $company->formatMoney($payment->getCompletedAmount(), $client),
+                $company->formatMoney($payment->getCompletedAmount(), $relation),
                 $payment->present()->method,
             ];
 
-            $this->addToTotals($client->currency_id, 'amount', $invoice->amount);
-            $this->addToTotals($client->currency_id, 'paid', $payment->getCompletedAmount());
+            $this->addToTotals($relation->currency_id, 'amount', $invoice->amount);
+            $this->addToTotals($relation->currency_id, 'paid', $payment->getCompletedAmount());
         }
     }
 }

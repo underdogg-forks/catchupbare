@@ -70,23 +70,23 @@ class RelationRepository extends BaseRepository
         return $query;
     }
 
-    public function save($data, $client = null)
+    public function save($data, $relation = null)
     {
         $publicId = isset($data['public_id']) ? $data['public_id'] : false;
 
-        if ($client) {
+        if ($relation) {
            // do nothing
         } elseif (!$publicId || $publicId == '-1') {
-            $client = Relation::createNew();
+            $relation = Relation::createNew();
             if (Auth::check() && Auth::user()->company->client_number_counter && empty($data['id_number'])) {
                 $data['id_number'] = Auth::user()->company->getNextNumber();
             }
         } else {
-            $client = Relation::scope($publicId)->with('contacts')->firstOrFail();
+            $relation = Relation::scope($publicId)->with('contacts')->firstOrFail();
         }
 
-        if ($client->is_deleted) {
-            return $client;
+        if ($relation->is_deleted) {
+            return $relation;
         }
 
         // convert currency code to id
@@ -100,12 +100,12 @@ class RelationRepository extends BaseRepository
             }
         }
 
-        $client->fill($data);
-        $client->save();
+        $relation->fill($data);
+        $relation->save();
 
         /*
         if ( ! isset($data['contact']) && ! isset($data['contacts'])) {
-            return $client;
+            return $relation;
         }
         */
 
@@ -123,13 +123,13 @@ class RelationRepository extends BaseRepository
         });
 
         foreach ($contacts as $contact) {
-            $contact = $client->addContact($contact, $first);
+            $contact = $relation->addContact($contact, $first);
             $contactIds[] = $contact->public_id;
             $first = false;
         }
 
-        if ( ! $client->wasRecentlyCreated) {
-            foreach ($client->contacts as $contact) {
+        if ( ! $relation->wasRecentlyCreated) {
+            foreach ($relation->contacts as $contact) {
                 if (!in_array($contact->public_id, $contactIds)) {
                     $contact->delete();
                 }
@@ -137,17 +137,17 @@ class RelationRepository extends BaseRepository
         }
 
         if (!$publicId || $publicId == '-1') {
-            event(new ClientWasCreated($client));
+            event(new ClientWasCreated($relation));
         } else {
-            event(new ClientWasUpdated($client));
+            event(new ClientWasUpdated($relation));
         }
 
-        return $client;
+        return $relation;
     }
 
-    public function findPhonetically($clientName)
+    public function findPhonetically($relationName)
     {
-        $clientNameMeta = metaphone($clientName);
+        $relationNameMeta = metaphone($relationName);
 
         $map = [];
         $max = SIMILAR_MIN_THRESHOLD;
@@ -155,17 +155,17 @@ class RelationRepository extends BaseRepository
 
         $relations = Relation::scope()->get(['id', 'name', 'public_id']);
 
-        foreach ($relations as $client) {
-            $map[$client->id] = $client;
+        foreach ($relations as $relation) {
+            $map[$relation->id] = $relation;
 
-            if ( ! $client->name) {
+            if ( ! $relation->name) {
                 continue;
             }
 
-            $similar = similar_text($clientNameMeta, metaphone($client->name), $percent);
+            $similar = similar_text($relationNameMeta, metaphone($relation->name), $percent);
 
             if ($percent > $max) {
-                $relationId = $client->id;
+                $relationId = $relation->id;
                 $max = $percent;
             }
         }
@@ -177,7 +177,7 @@ class RelationRepository extends BaseRepository
                 continue;
             }
 
-            $similar = similar_text($clientNameMeta, metaphone($contact->getFullName()), $percent);
+            $similar = similar_text($relationNameMeta, metaphone($contact->getFullName()), $percent);
 
             if ($percent > $max) {
                 $relationId = $contact->relation_id;

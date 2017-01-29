@@ -120,7 +120,7 @@ class TaskController extends BaseController
 
         $data = [
             'task' => null,
-            'clientPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
+            'relationPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
             'projectPublicId' => Input::old('project_id') ? Input::old('project_id') : ($request->project_id ?: 0),
             'method' => 'POST',
             'url' => 'tasks',
@@ -172,7 +172,7 @@ class TaskController extends BaseController
         $data = [
             'task' => $task,
             'entity' => $task,
-            'clientPublicId' => $task->relation ? $task->relation->id : 0,
+            'relationPublicId' => $task->relation ? $task->relation->id : 0,
             'projectPublicId' => $task->project ? $task->project->public_id : 0,
             'method' => 'PUT',
             'url' => 'tasks/'.$task->public_id,

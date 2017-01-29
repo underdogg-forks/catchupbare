@@ -47,14 +47,14 @@ class CurlUtils
             return false;
         }
 
-        $client = Relation::getInstance();
-        $client->getEngine()->setPath($path);
+        $relation = Relation::getInstance();
+        $relation->getEngine()->setPath($path);
 
-        $request = $client->getMessageFactory()->createRequest($url, $method);
-        $response = $client->getMessageFactory()->createResponse();
+        $request = $relation->getMessageFactory()->createRequest($url, $method);
+        $response = $relation->getMessageFactory()->createResponse();
 
         // Send the request
-        $client->send($request, $response);
+        $relation->send($request, $response);
         
         if ($response->getStatus() === 200) {
             return $response->getContent();

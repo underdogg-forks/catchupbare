@@ -100,7 +100,7 @@ class Activity extends Eloquent
     {
         $activityTypeId = $this->activity_type_id;
         $company = $this->company;
-        $client = $this->relation;
+        $relation = $this->relation;
         $user = $this->user;
         $invoice = $this->invoice;
         $contactId = $this->contact_id;
@@ -111,15 +111,15 @@ class Activity extends Eloquent
         $task = $this->task;
 
         $data = [
-            'relation' => $client ? link_to($client->getRoute(), $client->getDisplayName()) : null,
+            'relation' => $relation ? link_to($relation->getRoute(), $relation->getDisplayName()) : null,
             'user' => $isSystem ? '<i>' . trans('texts.system') . '</i>' : $user->getDisplayName(),
             'invoice' => $invoice ? link_to($invoice->getRoute(), $invoice->getDisplayName()) : null,
             'quote' => $invoice ? link_to($invoice->getRoute(), $invoice->getDisplayName()) : null,
-            'contact' => $contactId ? $client->getDisplayName() : $user->getDisplayName(),
+            'contact' => $contactId ? $relation->getDisplayName() : $user->getDisplayName(),
             'payment' => $payment ? $payment->transaction_reference : null,
             'payment_amount' => $payment ? $company->formatMoney($payment->amount, $payment) : null,
             'adjustment' => $this->adjustment ? $company->formatMoney($this->adjustment, $this) : null,
-            'credit' => $credit ? $company->formatMoney($credit->amount, $client) : null,
+            'credit' => $credit ? $company->formatMoney($credit->amount, $relation) : null,
             'task' => $task ? link_to($task->getRoute(), substr($task->description, 0, 30).'...') : null,
             'expense' => $expense ? link_to($expense->getRoute(), substr($expense->public_notes, 0, 30).'...') : null,
         ];

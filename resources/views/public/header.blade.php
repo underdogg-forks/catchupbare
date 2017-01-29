@@ -1,8 +1,8 @@
 @extends('master')
 
 @section('head')
-    @if (!empty($clientFontUrl))
-        <link href="{!! $clientFontUrl !!}" rel="stylesheet" type="text/css">
+    @if (!empty($relationFontUrl))
+        <link href="{!! $relationFontUrl !!}" rel="stylesheet" type="text/css">
     @endif
     <link href="{{ asset('css/built.public.css') }}?no_cache={{ NINJA_VERSION }}" rel="stylesheet" type="text/css"/>
     <style type="text/css">{!! isset($company)?$company->clientViewCSS():'' !!}</style>

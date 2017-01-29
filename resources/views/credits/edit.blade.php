@@ -56,21 +56,21 @@
 	$(function() {
 
 		@if ( ! $credit)
-			var $clientSelect = $('select#relation');
+			var $relationSelect = $('select#relation');
 			for (var i=0; i<relations.length; i++) {
 				var relation = relations[i];
-	            var clientName = getClientDisplayName(relation);
-	            if (!clientName) {
+	            var relationName = getRelationDisplayName(relation);
+	            if (!relationName) {
 	                continue;
 	            }
-				$clientSelect.append(new Option(clientName, relation.public_id));
+				$relationSelect.append(new Option(relationName, relation.public_id));
 			}
 
 			if ({{ $relationPublicId ? 'true' : 'false' }}) {
-				$clientSelect.val({{ $relationPublicId }});
+				$relationSelect.val({{ $relationPublicId }});
 			}
 
-			$clientSelect.combobox();
+			$relationSelect.combobox();
 		@endif
 
 		$('#currency_id').combobox();

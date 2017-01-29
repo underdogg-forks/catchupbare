@@ -200,10 +200,10 @@ class CheckData extends Command {
         }
 
         if ($this->option('fix') == 'true') {
-            foreach ($relations as $client) {
+            foreach ($relations as $relation) {
                 DB::table('relations')
-                    ->where('id', $client->id)
-                    ->update(['paid_to_date' => $client->amount]);
+                    ->where('id', $relation->id)
+                    ->update(['paid_to_date' => $relation->amount]);
             }
         }
     }
@@ -235,15 +235,15 @@ class CheckData extends Command {
             $this->isValid = false;
         }
 
-        foreach ($relations as $client) {
-            $this->logMessage("=== Corporation: {$client->corporation_id} Company:{$client->company_id} Relation:{$client->id} Balance:{$client->balance} Actual Balance:{$client->actual_balance} ===");
+        foreach ($relations as $relation) {
+            $this->logMessage("=== Corporation: {$relation->corporation_id} Company:{$relation->company_id} Relation:{$relation->id} Balance:{$relation->balance} Actual Balance:{$relation->actual_balance} ===");
             $foundProblem = false;
             $lastBalance = 0;
             $lastAdjustment = 0;
             $lastCreatedAt = null;
-            $clientFix = false;
+            $relationFix = false;
             $activities = DB::table('activities')
-                        ->where('relation_id', '=', $client->id)
+                        ->where('relation_id', '=', $relation->id)
                         ->orderBy('activities.id')
                         ->get(['activities.id', 'activities.created_at', 'activities.activity_type_id', 'activities.adjustment', 'activities.balance', 'activities.invoice_id']);
             //$this->logMessage(var_dump($activities));
@@ -292,22 +292,22 @@ class CheckData extends Command {
                         && $invoice->amount > 0;
 
                     // **Fix for ninja invoices which didn't have the invoice_type_id value set
-                    if ($noAdjustment && $client->company_id == 20432) {
+                    if ($noAdjustment && $relation->company_id == 20432) {
                         $this->logMessage("No adjustment for ninja invoice");
                         $foundProblem = true;
-                        $clientFix += $invoice->amount;
+                        $relationFix += $invoice->amount;
                         $activityFix = $invoice->amount;
                     // **Fix for allowing converting a recurring invoice to a normal one without updating the balance**
                     } elseif ($noAdjustment && $invoice->invoice_type_id == INVOICE_TYPE_STANDARD && !$invoice->is_recurring) {
                         $this->logMessage("No adjustment for new invoice:{$activity->invoice_id} amount:{$invoice->amount} invoiceTypeId:{$invoice->invoice_type_id} isRecurring:{$invoice->is_recurring}");
                         $foundProblem = true;
-                        $clientFix += $invoice->amount;
+                        $relationFix += $invoice->amount;
                         $activityFix = $invoice->amount;
                     // **Fix for updating balance when creating a quote or recurring invoice**
                     } elseif ($activity->adjustment != 0 && ($invoice->invoice_type_id == INVOICE_TYPE_QUOTE || $invoice->is_recurring)) {
                         $this->logMessage("Incorrect adjustment for new invoice:{$activity->invoice_id} adjustment:{$activity->adjustment} invoiceTypeId:{$invoice->invoice_type_id} isRecurring:{$invoice->is_recurring}");
                         $foundProblem = true;
-                        $clientFix -= $activity->adjustment;
+                        $relationFix -= $activity->adjustment;
                         $activityFix = 0;
                     }
                 } elseif ($activity->activity_type_id == ACTIVITY_TYPE_DELETE_INVOICE) {
@@ -316,7 +316,7 @@ class CheckData extends Command {
                         $this->logMessage("Incorrect adjustment for deleted invoice adjustment:{$activity->adjustment}");
                         $foundProblem = true;
                         if ($activity->balance != $lastBalance) {
-                            $clientFix -= $activity->adjustment;
+                            $relationFix -= $activity->adjustment;
                         }
                         $activityFix = 0;
                     }
@@ -326,19 +326,19 @@ class CheckData extends Command {
                         $this->logMessage("Incorrect adjustment for archiving invoice adjustment:{$activity->adjustment}");
                         $foundProblem = true;
                         $activityFix = 0;
-                        $clientFix += $activity->adjustment;
+                        $relationFix += $activity->adjustment;
                     }
                 } elseif ($activity->activity_type_id == ACTIVITY_TYPE_UPDATE_INVOICE) {
                     // **Fix for updating balance when updating recurring invoice**
                     if ($activity->adjustment != 0 && $invoice->is_recurring) {
                         $this->logMessage("Incorrect adjustment for updated recurring invoice adjustment:{$activity->adjustment}");
                         $foundProblem = true;
-                        $clientFix -= $activity->adjustment;
+                        $relationFix -= $activity->adjustment;
                         $activityFix = 0;
                     } else if ((strtotime($activity->created_at) - strtotime($lastCreatedAt) <= 1) && $activity->adjustment > 0 && $activity->adjustment == $lastAdjustment) {
                         $this->logMessage("Duplicate adjustment for updated invoice adjustment:{$activity->adjustment}");
                         $foundProblem = true;
-                        $clientFix -= $activity->adjustment;
+                        $relationFix -= $activity->adjustment;
                         $activityFix = 0;
                     }
                 } elseif ($activity->activity_type_id == ACTIVITY_TYPE_UPDATE_QUOTE) {
@@ -346,7 +346,7 @@ class CheckData extends Command {
                     if ($activity->balance != $lastBalance) {
                         $this->logMessage("Incorrect adjustment for updated quote adjustment:{$activity->adjustment}");
                         $foundProblem = true;
-                        $clientFix += $lastBalance - $activity->balance;
+                        $relationFix += $lastBalance - $activity->balance;
                         $activityFix = 0;
                     }
                 } else if ($activity->activity_type_id == ACTIVITY_TYPE_DELETE_PAYMENT) {
@@ -355,13 +355,13 @@ class CheckData extends Command {
                         $this->logMessage("Incorrect adjustment for deleted payment adjustment:{$activity->adjustment}");
                         $foundProblem = true;
                         $activityFix = 0;
-                        $clientFix -= $activity->adjustment;
+                        $relationFix -= $activity->adjustment;
                     }
                 }
 
-                if ($activityFix !== false || $clientFix !== false) {
+                if ($activityFix !== false || $relationFix !== false) {
                     $data = [
-                        'balance' => $activity->balance + $clientFix
+                        'balance' => $activity->balance + $relationFix
                     ];
 
                     if ($activityFix !== false) {
@@ -380,25 +380,25 @@ class CheckData extends Command {
                 $lastCreatedAt = $activity->created_at;
             }
 
-            if ($activity->balance + $clientFix != $client->actual_balance) {
+            if ($activity->balance + $relationFix != $relation->actual_balance) {
                 $this->logMessage("** Creating 'recovered update' activity **");
                 if ($this->option('fix') == 'true') {
                     DB::table('activities')->insert([
                             'created_at' => new Carbon,
                             'updated_at' => new Carbon,
-                            'company_id' => $client->company_id,
-                            'relation_id' => $client->id,
-                            'adjustment' => $client->actual_balance - $activity->balance,
-                            'balance' => $client->actual_balance,
+                            'company_id' => $relation->company_id,
+                            'relation_id' => $relation->id,
+                            'adjustment' => $relation->actual_balance - $activity->balance,
+                            'balance' => $relation->actual_balance,
                     ]);
                 }
             }
 
-            $data = ['balance' => $client->actual_balance];
-            $this->logMessage("Corrected balance:{$client->actual_balance}");
+            $data = ['balance' => $relation->actual_balance];
+            $this->logMessage("Corrected balance:{$relation->actual_balance}");
             if ($this->option('fix') == 'true') {
                 DB::table('relations')
-                    ->where('id', $client->id)
+                    ->where('id', $relation->id)
                     ->update($data);
             }
         }

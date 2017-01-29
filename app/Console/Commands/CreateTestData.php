@@ -32,14 +32,14 @@ class CreateTestData extends Command
 
     /**
      * CreateTestData constructor.
-     * @param RelationRepository $clientRepo
+     * @param RelationRepository $relationRepo
      * @param InvoiceRepository $invoiceRepo
      * @param PaymentRepository $paymentRepo
      * @param VendorRepository $vendorRepo
      * @param ExpenseRepository $expenseRepo
      */
     public function __construct(
-        RelationRepository $clientRepo,
+        RelationRepository $relationRepo,
         InvoiceRepository $invoiceRepo,
         PaymentRepository $paymentRepo,
         VendorRepository $vendorRepo,
@@ -49,7 +49,7 @@ class CreateTestData extends Command
 
         $this->faker = Factory::create();
 
-        $this->clientRepo = $clientRepo;
+        $this->clientRepo = $relationRepo;
         $this->invoiceRepo = $invoiceRepo;
         $this->paymentRepo = $paymentRepo;
         $this->vendorRepo = $vendorRepo;
@@ -94,21 +94,21 @@ class CreateTestData extends Command
                 ]]
             ];
 
-            $client = $this->clientRepo->save($data);
-            $this->info('Relation: ' . $client->name);
+            $relation = $this->clientRepo->save($data);
+            $this->info('Relation: ' . $relation->name);
 
-            $this->createInvoices($client);
+            $this->createInvoices($relation);
         }
     }
 
     /**
-     * @param $client
+     * @param $relation
      */
-    private function createInvoices($client)
+    private function createInvoices($relation)
     {
         for ($i=0; $i<$this->count; $i++) {
             $data = [
-                'relation_id' => $client->id,
+                'relation_id' => $relation->id,
                 'invoice_date_sql' => date_create()->modify(rand(-100, 100) . ' days')->format('Y-m-d'),
                 'due_date_sql' => date_create()->modify(rand(-100, 100) . ' days')->format('Y-m-d'),
                 'invoice_items' => [[
@@ -122,19 +122,19 @@ class CreateTestData extends Command
             $invoice = $this->invoiceRepo->save($data);
             $this->info('Invoice: ' . $invoice->invoice_number);
 
-            $this->createPayment($client, $invoice);
+            $this->createPayment($relation, $invoice);
         }
     }
 
     /**
-     * @param $client
+     * @param $relation
      * @param $invoice
      */
-    private function createPayment($client, $invoice)
+    private function createPayment($relation, $invoice)
     {
         $data = [
             'invoice_id' => $invoice->id,
-            'relation_id' => $client->id,
+            'relation_id' => $relation->id,
             'amount' => $this->faker->randomFloat(2, 0, $invoice->amount),
             'payment_date_sql' => date_create()->modify(rand(-100, 100) . ' days')->format('Y-m-d'),
         ];

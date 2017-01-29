@@ -13,15 +13,15 @@ class ClientWasDeleted extends Event
     /**
      * @var Relation
      */
-    public $client;
+    public $relation;
 
     /**
      * Create a new event instance.
      *
-     * @param Relation $client
+     * @param Relation $relation
      */
-    public function __construct(Relation $client)
+    public function __construct(Relation $relation)
     {
-        $this->relation = $client;
+        $this->relation = $relation;
     }
 }

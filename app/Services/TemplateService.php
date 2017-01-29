@@ -18,8 +18,8 @@ class TemplateService
         /** @var \App\Models\Company $company */
         $company = $data['company'];
 
-        /** @var \App\Models\Relation $client */
-        $client = $data['relation'];
+        /** @var \App\Models\Relation $relation */
+        $relation = $data['relation'];
 
         /** @var \App\Models\Invitation $invitation */
         $invitation = $data['invitation'];
@@ -43,13 +43,13 @@ class TemplateService
 
         $variables = [
             '$footer' => $company->getEmailFooter(),
-            '$client' => $client->getDisplayName(),
+            '$relation' => $relation->getDisplayName(),
             '$company' => $company->getDisplayName(),
             '$dueDate' => $company->formatDate($invoice->due_date),
             '$invoiceDate' => $company->formatDate($invoice->invoice_date),
             '$contact' => $invitation->contact->getDisplayName(),
             '$firstName' => $invitation->contact->first_name,
-            '$amount' => $company->formatMoney($data['amount'], $client),
+            '$amount' => $company->formatMoney($data['amount'], $relation),
             '$invoice' => $invoice->invoice_number,
             '$quote' => $invoice->invoice_number,
             '$link' => $invitation->getLink(),

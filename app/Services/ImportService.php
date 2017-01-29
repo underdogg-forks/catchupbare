@@ -45,7 +45,7 @@ class ImportService
     /**
      * @var RelationRepository
      */
-    protected $clientRepo;
+    protected $relationRepo;
 
     /**
      * @var ContactRepository
@@ -105,7 +105,7 @@ class ImportService
      * ImportService constructor.
      *
      * @param Manager $manager
-     * @param RelationRepository $clientRepo
+     * @param RelationRepository $relationRepo
      * @param InvoiceRepository $invoiceRepo
      * @param PaymentRepository $paymentRepo
      * @param ContactRepository $contactRepo
@@ -113,7 +113,7 @@ class ImportService
      */
     public function __construct(
         Manager $manager,
-        RelationRepository $clientRepo,
+        RelationRepository $relationRepo,
         InvoiceRepository $invoiceRepo,
         PaymentRepository $paymentRepo,
         ContactRepository $contactRepo,
@@ -126,7 +126,7 @@ class ImportService
         $this->fractal = $manager;
         $this->fractal->setSerializer(new ArraySerializer());
 
-        $this->clientRepo = $clientRepo;
+        $this->clientRepo = $relationRepo;
         $this->invoiceRepo = $invoiceRepo;
         $this->paymentRepo = $paymentRepo;
         $this->contactRepo = $contactRepo;
@@ -169,16 +169,16 @@ class ImportService
         foreach ($json['relations'] as $jsonClient) {
 
             if (EntityModel::validate($jsonClient, ENTITY_RELATION) === true) {
-                $client = $this->clientRepo->save($jsonClient);
-                $this->addClientToMaps($client);
-                $this->addSuccess($client);
+                $relation = $this->clientRepo->save($jsonClient);
+                $this->addClientToMaps($relation);
+                $this->addSuccess($relation);
             } else {
                 $this->addFailure(ENTITY_RELATION, $jsonClient);
                 continue;
             }
 
             foreach ($jsonClient['invoices'] as $jsonInvoice) {
-                $jsonInvoice['relation_id'] = $client->id;
+                $jsonInvoice['relation_id'] = $relation->id;
                 if (EntityModel::validate($jsonInvoice, ENTITY_INVOICE) === true) {
                     $invoice = $this->invoiceRepo->save($jsonInvoice);
                     $this->addInvoiceToMaps($invoice);
@@ -191,7 +191,7 @@ class ImportService
                 foreach ($jsonInvoice['payments'] as $jsonPayment) {
                     $jsonPayment['invoice_id'] = $invoice->public_id;
                     if (EntityModel::validate($jsonPayment, ENTITY_PAYMENT) === true) {
-                        $jsonPayment['relation_id'] = $client->id;
+                        $jsonPayment['relation_id'] = $relation->id;
                         $jsonPayment['invoice_id'] = $invoice->id;
                         $payment = $this->paymentRepo->save($jsonPayment);
                         $this->addSuccess($payment);
@@ -745,8 +745,8 @@ class ImportService
         ];
 
         $relations = $this->clientRepo->all();
-        foreach ($relations as $client) {
-            $this->addClientToMaps($client);
+        foreach ($relations as $relation) {
+            $this->addClientToMaps($relation);
         }
 
         $invoices = $this->invoiceRepo->all();
@@ -794,13 +794,13 @@ class ImportService
     }
 
     /**
-     * @param Relation $client
+     * @param Relation $relation
      */
-    private function addClientToMaps(Relation $client)
+    private function addClientToMaps(Relation $relation)
     {
-        if ($name = strtolower(trim($client->name))) {
-            $this->maps['relation'][$name] = $client->id;
-            $this->maps['client_ids'][$client->public_id] = $client->id;
+        if ($name = strtolower(trim($relation->name))) {
+            $this->maps['relation'][$name] = $relation->id;
+            $this->maps['client_ids'][$relation->public_id] = $relation->id;
         }
     }
 

@@ -29,25 +29,25 @@ class ClientReport extends AbstractReport
                                   ->withArchived();
                         }]);
 
-        foreach ($relations->get() as $client) {
+        foreach ($relations->get() as $relation) {
             $amount = 0;
             $paid = 0;
 
-            foreach ($client->invoices as $invoice) {
+            foreach ($relation->invoices as $invoice) {
                 $amount += $invoice->amount;
                 $paid += $invoice->getAmountPaid();
             }
 
             $this->data[] = [
-                $this->isExport ? $client->getDisplayName() : $client->present()->link,
-                $company->formatMoney($amount, $client),
-                $company->formatMoney($paid, $client),
-                $company->formatMoney($amount - $paid, $client)
+                $this->isExport ? $relation->getDisplayName() : $relation->present()->link,
+                $company->formatMoney($amount, $relation),
+                $company->formatMoney($paid, $relation),
+                $company->formatMoney($amount - $paid, $relation)
             ];
 
-            $this->addToTotals($client->currency_id, 'amount', $amount);
-            $this->addToTotals($client->currency_id, 'paid', $paid);
-            $this->addToTotals($client->currency_id, 'balance', $amount - $paid);
+            $this->addToTotals($relation->currency_id, 'amount', $amount);
+            $this->addToTotals($relation->currency_id, 'paid', $paid);
+            $this->addToTotals($relation->currency_id, 'balance', $amount - $paid);
         }
     }
 }

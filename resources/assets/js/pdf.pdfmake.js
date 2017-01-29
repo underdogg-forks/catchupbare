@@ -766,10 +766,10 @@ NINJA.renderClientOrAccountField = function(invoice, field) {
     }
     var company = invoice.company;
     var contact = client.contacts[0];
-    var clientName = client.name || (contact.first_name || contact.last_name ? (contact.first_name + ' ' + contact.last_name) : contact.email);
+    var relationName = client.name || (contact.first_name || contact.last_name ? (contact.first_name + ' ' + contact.last_name) : contact.email);
 
     if (field == 'client.client_name') {
-        return {text:clientName || ' ', style: ['clientName']};
+        return {text:relationName || ' ', style: ['relationName']};
     } else if (field == 'client.contact_name') {
         return (contact.first_name || contact.last_name) ? {text:contact.first_name + ' ' + contact.last_name} : false;
     } else if (field == 'client.id_number') {
@@ -796,7 +796,7 @@ NINJA.renderClientOrAccountField = function(invoice, field) {
     } else if (field == 'client.country') {
         return {text:client.country ? client.country.name : ''};
     } else if (field == 'client.email') {
-        var clientEmail = contact.email == clientName ? '' : contact.email;
+        var clientEmail = contact.email == relationName ? '' : contact.email;
         return {text:clientEmail};
     } else if (field == 'client.phone') {
         return {text:contact.phone};
