@@ -4,10 +4,10 @@ use App\Models\Invoice;
 use Auth;
 use Utils;
 use App\Ninja\Repositories\InvoiceRepository;
-use App\Ninja\Repositories\RelationRepository;
+use Modules\Relations\Repositories\RelationRepository;
 use App\Events\QuoteInvitationWasApproved;
 use App\Models\Invitation;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Ninja\Datatables\InvoiceDatatable;
 
 class InvoiceService extends BaseService

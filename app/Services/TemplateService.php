@@ -18,7 +18,7 @@ class TemplateService
         /** @var \App\Models\Company $company */
         $company = $data['company'];
 
-        /** @var \App\Models\Relation $relation */
+        /** @var \Modules\Relations\Models\Relation $relation */
         $relation = $data['relation'];
 
         /** @var \App\Models\Invitation $invitation */

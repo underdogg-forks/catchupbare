@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Session;
 use Closure;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\RedirectResponse;
 

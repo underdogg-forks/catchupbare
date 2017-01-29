@@ -108,7 +108,7 @@ class Utils
             if (Auth::check()) {
                 $company = Auth::user()->company;
             } elseif ($contactKey = session('contact_key')) {
-                if ($contact = \App\Models\Contact::whereContactKey($contactKey)->first()) {
+                if ($contact = \Modules\Relations\Models\Contact::whereContactKey($contactKey)->first()) {
                     $company = $contact->company;
                 }
             }

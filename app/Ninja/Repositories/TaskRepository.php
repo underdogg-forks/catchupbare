@@ -2,7 +2,7 @@
 
 use Auth;
 use Session;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Project;
 use App\Models\Task;
 

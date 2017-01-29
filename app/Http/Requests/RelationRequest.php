@@ -5,7 +5,7 @@ use Input;
 use Utils;
 use Illuminate\Http\Request;
 use App\Libraries\HistoryUtils;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 
 class RelationRequest extends EntityRequest {

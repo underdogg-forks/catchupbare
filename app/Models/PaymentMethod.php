@@ -37,7 +37,7 @@ class PaymentMethod extends EntityModel
      */
     public function contact()
     {
-        return $this->belongsTo('App\Models\Contact');
+        return $this->belongsTo('Modules\Relations\Models\Contact');
     }
 
     /**

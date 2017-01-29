@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Contact;
+use Modules\Relations\Models\Contact;
 
 /**
  * Class ContactTransformer

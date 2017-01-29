@@ -76,7 +76,7 @@ return [
         
         'relation' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Contact::class,
+            'model' => Modules\Relations\Models\Contact::class,
         ]
     ],
 

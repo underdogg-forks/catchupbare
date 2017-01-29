@@ -5,7 +5,7 @@ use View;
 use Utils;
 use Input;
 use Session;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Services\ProjectService;
 use App\Ninja\Repositories\ProjectRepository;
 use App\Ninja\Datatables\ProjectDatatable;

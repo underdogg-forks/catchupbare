@@ -2014,7 +2014,7 @@ Kom terug naar deze betalingsmethode pagina zodra u de bedragen heeft ontvangen 
     'country_Yemen' => 'Jemen',
     'country_Zambi' => 'Zambia',
 
-    'view_relation_portal' => 'Toon klantportaal',
+    'view_client_portal' => 'Toon klantportaal',
     'view_portal' => 'Toon portaal',
     'vendor_contacts' => 'Leveranciercontacten',
     'all' => 'Alles',

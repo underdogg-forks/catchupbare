@@ -826,7 +826,7 @@ $LANG = array(
     'task_file' => 'Task File',
     'no_mapper' => 'No valid mapping for file',
     'invalid_csv_header' => 'Invalid CSV Header',
-    'client_portal' => 'Relation Portal',
+    'client_portal' => 'Client Portal',
     'admin' => 'Admin',
     'disabled' => 'Disabled',
     'show_archived_users' => 'Show archived users',
@@ -1113,7 +1113,7 @@ $LANG = array(
     'document_date' => 'Document Date',
     'document_size' => 'Size',
 
-    'enable_client_portal' => 'Relation Portal',
+    'enable_client_portal' => 'Enable Client Portal',
     'enable_client_portal_help' => 'Show/hide the relation portal.',
     'enable_client_portal_dashboard' => 'Dashboard',
     'enable_client_portal_dashboard_help' => 'Show/hide the dashboard page in the relation portal.',
@@ -2022,7 +2022,7 @@ $LANG = array(
     'country_Yemen' => 'Yemen',
     'country_Zambi' => 'Zambi',
 
-    'view_relation_portal' => 'View relation portal',
+    'view_client_portal' => 'View client portal',
     'view_portal' => 'View Portal',
     'vendor_contacts' => 'Vendor Contacts',
     'all' => 'All',

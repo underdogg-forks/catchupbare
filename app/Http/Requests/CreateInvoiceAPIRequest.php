@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests;
 
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 class CreateInvoiceAPIRequest extends InvoiceRequest
 {

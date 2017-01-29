@@ -5,7 +5,7 @@ use Auth;
 use DB;
 use View;
 use Utils;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Ninja\Repositories\DashboardRepository;

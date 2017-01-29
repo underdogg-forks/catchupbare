@@ -3,7 +3,7 @@
 use Auth;
 use Utils;
 use App\Ninja\Repositories\ExpenseRepository;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Vendor;
 use App\Models\ExpenseCategory;
 use App\Ninja\Datatables\ExpenseDatatable;

@@ -4,7 +4,7 @@ use Closure;
 use Auth;
 use Session;
 use App\Models\Invitation;
-use App\Models\Contact;
+use Modules\Relations\Models\Contact;
 
 /**
  * Class Authenticate

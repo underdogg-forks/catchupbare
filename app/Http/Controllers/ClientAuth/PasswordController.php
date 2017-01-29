@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Password;
-use App\Models\Contact;
+use Modules\Relations\Models\Contact;
 use App\Models\Invitation;
 
 class PasswordController extends Controller

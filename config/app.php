@@ -159,6 +159,7 @@ return [
         Websight\GcsProvider\CloudStorageServiceProvider::class,
         'Jaybizzle\LaravelCrawlerDetect\LaravelCrawlerDetectServiceProvider',
         Codedge\Updater\UpdaterServiceProvider::class,
+        //Caffeinated\Modules\ModulesServiceProvider::class,
         Nwidart\Modules\LaravelModulesServiceProvider::class,
 
         /*
@@ -263,6 +264,7 @@ return [
         'Crawler'   => 'Jaybizzle\LaravelCrawlerDetect\Facades\LaravelCrawlerDetect',
         'Updater' => Codedge\Updater\UpdaterFacade::class,
         'Module' => Nwidart\Modules\Facades\Module::class,
+        //'Module' => Caffeinated\Modules\Facades\Module::class,
 
         'Utils' => App\Libraries\Utils::class,
         'HTMLUtils' => App\Libraries\HTMLUtils::class,

@@ -8,7 +8,7 @@ use Input;
 use Redirect;
 use Session;
 use DropdownButton;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Task;
 use App\Models\Project;
 use App\Ninja\Repositories\TaskRepository;

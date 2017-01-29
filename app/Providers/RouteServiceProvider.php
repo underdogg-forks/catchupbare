@@ -1,4 +1,5 @@
-<?php namespace App\Providers;
+<?php
+namespace App\Providers;
 
 use App;
 use Illuminate\Routing\Router;

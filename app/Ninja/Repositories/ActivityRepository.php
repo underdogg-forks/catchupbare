@@ -5,7 +5,7 @@ use Auth;
 use Utils;
 use Request;
 use App\Models\Activity;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Invitation;
 
 class ActivityRepository

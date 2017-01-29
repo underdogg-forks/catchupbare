@@ -108,7 +108,7 @@ class Expense extends EntityModel
      */
     public function relation()
     {
-        return $this->belongsTo('App\Models\Relation')->withTrashed();
+        return $this->belongsTo('Modules\Relations\Models\Relation')->withTrashed();
     }
 
     /**

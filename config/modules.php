@@ -23,12 +23,13 @@ return [
     */
 
     'stubs' => [
-        'enabled' => true,
-        'path' => base_path() . '/app/Console/Commands/stubs',
+        'enabled' => false,
+        'path' => base_path() . '/vendor/nwidart/laravel-modules/src/Commands/stubs',
         'files' => [
             'start' => 'start.php',
             'routes' => 'Http/routes.php',
             'json' => 'module.json',
+            'views/index' => 'Resources/views/index.blade.php',
             'views/master' => 'Resources/views/layouts/master.blade.php',
             'scaffold/config' => 'Config/config.php',
             'composer' => 'composer.json',
@@ -37,6 +38,7 @@ return [
             'start' => ['LOWER_NAME'],
             'routes' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE'],
             'json' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE'],
+            'views/index' => ['LOWER_NAME'],
             'views/master' => ['STUDLY_NAME'],
             'scaffold/config' => ['STUDLY_NAME'],
             'composer' => [
@@ -98,24 +100,19 @@ return [
             'event' => 'Events',
             'listener' => 'Events/Handlers',
             'migration' => 'Database/Migrations',
-            'model' => 'Models',
+            'model' => 'Entities',
             'repository' => 'Repositories',
             'seeder' => 'Database/Seeders',
             'controller' => 'Http/Controllers',
             'filter' => 'Http/Middleware',
             'request' => 'Http/Requests',
             'provider' => 'Providers',
-            'lang' => 'Resources/lang/en',
+            'lang' => 'Resources/lang',
             'views' => 'Resources/views',
             'test' => 'Tests',
             'jobs' => 'Jobs',
             'emails' => 'Emails',
             'notifications' => 'Notifications',
-            'datatable' => 'Datatables',
-            'policy' => 'Policies',
-            'presenter' => 'Presenters',
-            'api-controller' => 'Http/ApiControllers',
-            'transformer' => 'Transformers',
         ],
     ],
     /*
@@ -144,10 +141,10 @@ return [
     */
 
     'composer' => [
-        'vendor' => 'invoiceninja',
+        'vendor' => 'nwidart',
         'author' => [
-            'name' => 'Hillel Coren',
-            'email' => 'contact@invoiceninja.com',
+            'name' => 'Nicolas Widart',
+            'email' => 'n.widart@gmail.com',
         ],
     ],
     /*

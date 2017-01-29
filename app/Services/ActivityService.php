@@ -1,6 +1,6 @@
 <?php namespace App\Services;
 
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Ninja\Repositories\ActivityRepository;
 use App\Ninja\Datatables\ActivityDatatable;
 

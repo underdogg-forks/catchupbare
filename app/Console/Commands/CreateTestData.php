@@ -4,7 +4,7 @@ use Auth;
 use Utils;
 use Illuminate\Console\Command;
 use Faker\Factory;
-use App\Ninja\Repositories\RelationRepository;
+use Modules\Relations\Repositories\RelationRepository;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\VendorRepository;

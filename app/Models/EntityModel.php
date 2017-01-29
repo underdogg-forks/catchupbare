@@ -229,7 +229,7 @@ class EntityModel extends Eloquent
         }
     }
 
-    // converts "App\Models\Relation" to "relation_id"
+    // converts "Modules\Relations\Models\Relation" to "relation_id"
     /**
      * @return string
      */

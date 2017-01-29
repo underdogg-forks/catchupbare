@@ -17,7 +17,7 @@ use App\Models\Gateway;
 use App\Models\Invitation;
 use App\Models\Document;
 use App\Models\PaymentMethod;
-use App\Models\Contact;
+use Modules\Relations\Models\Contact;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\ActivityRepository;

@@ -25,8 +25,8 @@ Route::get('/invoice_now', 'HomeController@invoiceNow');
 Route::get('/keep_alive', 'HomeController@keepAlive');
 Route::post('/get_started', 'AccountController@getStarted');
 
-// Relation visible pages
-Route::group(['middleware' => 'auth:relation'], function() {
+// Client visible pages
+Route::group(['middleware' => 'auth:client'], function() {
     Route::get('view/{invitation_key}', 'ClientPortalController@view');
     Route::get('download/{invitation_key}', 'ClientPortalController@download');
     Route::put('sign/{invitation_key}', 'ClientPortalController@sign');
@@ -155,12 +155,7 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::post('settings/payment_gateway_limits', 'AccountController@savePaymentGatewayLimits');
     Route::post('users/change_password', 'UserController@changePassword');
 
-    Route::resource('relations', 'RelationController');
-    Route::get('api/relations', 'RelationController@getDatatable');
-    Route::get('api/activities/{relation_id?}', 'ActivityController@getDatatable');
-    Route::get('relations/{relation_id}', 'RelationController@show');
-    Route::post('relations/bulk', 'RelationController@bulk');
-    Route::get('relations/statement/{relation_id}', 'RelationController@statement');
+
 
     Route::resource('tasks', 'TaskController');
     Route::get('api/tasks/{relation_id?}', 'TaskController@getDatatable');

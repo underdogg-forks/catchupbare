@@ -5,7 +5,7 @@ use Utils;
 use Auth;
 use Exception;
 use App\Models\Company;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Activity;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\CompanyRepository;
@@ -45,7 +45,7 @@ class PaymentService extends BaseService
      */
     public function autoBillInvoice(Invoice $invoice)
     {
-        /** @var \App\Models\Relation $relation */
+        /** @var \Modules\Relations\Models\Relation $relation */
         $relation = $invoice->relation;
 
         /** @var \App\Models\Company $company */

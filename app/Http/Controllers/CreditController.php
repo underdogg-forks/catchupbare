@@ -6,7 +6,7 @@ use Session;
 use URL;
 use Utils;
 use View;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Credit;
 use App\Services\CreditService;
 use App\Ninja\Repositories\CreditRepository;

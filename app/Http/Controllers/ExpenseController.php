@@ -11,7 +11,7 @@ use Cache;
 use App\Models\Vendor;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\TaxRate;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Services\ExpenseService;

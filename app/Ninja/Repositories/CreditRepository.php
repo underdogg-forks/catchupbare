@@ -3,7 +3,7 @@
 use DB;
 use Utils;
 use App\Models\Credit;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 class CreditRepository extends BaseRepository
 {

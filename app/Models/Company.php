@@ -161,7 +161,7 @@ class Company extends Eloquent
      */
     public function relations()
     {
-        return $this->hasMany('App\Models\Relation');
+        return $this->hasMany('Modules\Relations\Models\Relation');
     }
 
     /**
@@ -169,7 +169,7 @@ class Company extends Eloquent
      */
     public function contacts()
     {
-        return $this->hasMany('App\Models\Contact');
+        return $this->hasMany('Modules\Relations\Models\Contact');
     }
 
     /**

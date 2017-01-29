@@ -2,7 +2,7 @@
 
 use App\Models\Company;
 use App\Models\Task;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 /**
  * @SWG\Definition(definition="Task", @SWG\Xml(name="Task"))

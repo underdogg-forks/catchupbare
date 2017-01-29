@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Relation; 
-use App\Models\Contact; 
+use Modules\Relations\Models\Relation; 
+use Modules\Relations\Models\Contact; 
 use App\Models\Country;
 
 /*

@@ -2018,7 +2018,7 @@ Atención! tu password puede estar transmitida como texto plano, considera habil
     'country_Yemen' => 'Yemen',
     'country_Zambi' => 'Zambi',
 
-    'view_relation_portal' => 'Ver portal de cliente',
+    'view_client_portal' => 'Ver portal de cliente',
     'view_portal' => 'Ver portal',
     'vendor_contacts' => 'Vendor Contacts',
     'all' => 'All',

@@ -2015,7 +2015,7 @@ $LANG = array(
     'country_Yemen' => 'Yemen',
     'country_Zambi' => 'Zambi',
 
-    'view_relation_portal' => 'View relation portal',
+    'view_client_portal' => 'View client portal',
     'view_portal' => 'View Portal',
     'vendor_contacts' => 'Vendor Contacts',
     'all' => 'All',

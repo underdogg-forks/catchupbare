@@ -3,7 +3,7 @@
 use Auth;
 use Carbon;
 use App\Models\Invoice;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 /**
  * Class GeneratesNumbers

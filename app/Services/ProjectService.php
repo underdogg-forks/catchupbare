@@ -2,7 +2,7 @@
 
 use Utils;
 use Auth;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Ninja\Repositories\ProjectRepository;
 use App\Ninja\Datatables\ProjectDatatable;
 

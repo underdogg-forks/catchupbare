@@ -124,7 +124,7 @@ class BaseIntent
 
     protected function requestClient()
     {
-        $relationRepo = app('App\Ninja\Repositories\RelationRepository');
+        $relationRepo = app('Modules\Relations\Repositories\RelationRepository');
         $relation = false;
 
         foreach ($this->data->entities as $param) {

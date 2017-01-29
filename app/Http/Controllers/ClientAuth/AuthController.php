@@ -4,7 +4,7 @@ use Session;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use App\Models\Contact;
+use Modules\Relations\Models\Contact;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class AuthController extends Controller

@@ -7,7 +7,7 @@ use View;
 use Cache;
 use DropdownButton;
 use App\Models\Invoice;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Mailers\ContactMailer;
 use App\Services\PaymentService;

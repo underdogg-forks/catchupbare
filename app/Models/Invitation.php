@@ -36,7 +36,7 @@ class Invitation extends EntityModel
      */
     public function contact()
     {
-        return $this->belongsTo('App\Models\Contact')->withTrashed();
+        return $this->belongsTo('Modules\Relations\Models\Contact')->withTrashed();
     }
 
     /**

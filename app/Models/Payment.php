@@ -56,7 +56,7 @@ class Payment extends EntityModel
      */
     public function relation()
     {
-        return $this->belongsTo('App\Models\Relation')->withTrashed();
+        return $this->belongsTo('Modules\Relations\Models\Relation')->withTrashed();
     }
 
     /**
@@ -80,7 +80,7 @@ class Payment extends EntityModel
      */
     public function contact()
     {
-        return $this->belongsTo('App\Models\Contact');
+        return $this->belongsTo('Modules\Relations\Models\Contact');
     }
 
     /**

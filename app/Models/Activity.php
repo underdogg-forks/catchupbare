@@ -43,7 +43,7 @@ class Activity extends Eloquent
      */
     public function contact()
     {
-        return $this->belongsTo('App\Models\Contact')->withTrashed();
+        return $this->belongsTo('Modules\Relations\Models\Contact')->withTrashed();
     }
 
     /**
@@ -51,7 +51,7 @@ class Activity extends Eloquent
      */
     public function relation()
     {
-        return $this->belongsTo('App\Models\Relation')->withTrashed();
+        return $this->belongsTo('Modules\Relations\Models\Relation')->withTrashed();
     }
 
     /**

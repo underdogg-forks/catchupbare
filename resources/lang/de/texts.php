@@ -2022,7 +2022,7 @@ Sobald Sie die Beträge erhalten haben, kommen Sie bitte wieder zurück zu diese
     'country_Yemen' => 'Jemen',
     'country_Zambi' => 'Sambia',
 
-    'view_relation_portal' => 'Kundenportal anzeigen',
+    'view_client_portal' => 'Kundenportal anzeigen',
     'view_portal' => 'Portal anzeigen',
     'vendor_contacts' => 'Lieferantenkontakte',
     'all' => 'Alle',

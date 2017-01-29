@@ -1,6 +1,6 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 /**
  * @SWG\Definition(definition="Relation", @SWG\Xml(name="Relation"))

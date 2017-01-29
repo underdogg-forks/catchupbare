@@ -3,7 +3,7 @@
 use App\Models\Company;
 use App\Models\Payment;
 use App\Models\Invoice;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 /**
  * @SWG\Definition(definition="Payment", required={"invoice_id"}, @SWG\Xml(name="Payment"))

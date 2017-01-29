@@ -3,8 +3,8 @@
 use App\Http\Requests\RelationRequest;
 use Response;
 use Input;
-use App\Models\Relation;
-use App\Ninja\Repositories\RelationRepository;
+use Modules\Relations\Models\Relation;
+use Modules\Relations\Repositories\RelationRepository;
 use App\Http\Requests\CreateRelationRequest;
 use App\Http\Requests\UpdateRelationRequest;
 

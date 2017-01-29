@@ -1,7 +1,7 @@
 <?php namespace App\Ninja\Transformers;
 
 use App\Models\Company;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 use App\Models\Invoice;
 
 /**

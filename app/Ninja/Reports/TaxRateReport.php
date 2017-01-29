@@ -3,7 +3,7 @@
 namespace App\Ninja\Reports;
 
 use Auth;
-use App\Models\Relation;
+use Modules\Relations\Models\Relation;
 
 class TaxRateReport extends AbstractReport
 {
