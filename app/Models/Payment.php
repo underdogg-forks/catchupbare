@@ -54,9 +54,9 @@ class Payment extends EntityModel
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
     /**
@@ -126,7 +126,7 @@ class Payment extends EntityModel
     /*
     public function getAmount()
     {
-        return Utils::formatMoney($this->amount, $this->client->getCurrencyId());
+        return Utils::formatMoney($this->amount, $this->relation->getCurrencyId());
     }
     */
 
@@ -336,7 +336,7 @@ class Payment extends EntityModel
 
     public function statusLabel()
     {
-        $amount = $this->company->formatMoney($this->refunded, $this->client);
+        $amount = $this->company->formatMoney($this->refunded, $this->relation);
         return static::calcStatusLabel($this->payment_status_id, $this->payment_status->name, $amount);
     }
 

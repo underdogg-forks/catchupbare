@@ -8,9 +8,9 @@ use App\Libraries\Skype\InvoiceCard;
 
 class InvoicePresenter extends EntityPresenter {
 
-    public function client()
+    public function relation()
     {
-        return $this->entity->client ? $this->entity->client->getDisplayName() : '';
+        return $this->entity->relation ? $this->entity->relation->getDisplayName() : '';
     }
 
     public function user()
@@ -23,7 +23,7 @@ class InvoicePresenter extends EntityPresenter {
         $invoice = $this->entity;
         $company = $invoice->company;
 
-        return $company->formatMoney($invoice->amount, $invoice->client);
+        return $company->formatMoney($invoice->amount, $invoice->relation);
     }
 
     public function requestedAmount()
@@ -31,7 +31,7 @@ class InvoicePresenter extends EntityPresenter {
         $invoice = $this->entity;
         $company = $invoice->company;
 
-        return $company->formatMoney($invoice->getRequestedAmount(), $invoice->client);
+        return $company->formatMoney($invoice->getRequestedAmount(), $invoice->relation);
     }
 
     public function balanceDueLabel()
@@ -143,13 +143,13 @@ class InvoicePresenter extends EntityPresenter {
 
     public function email()
     {
-        $client = $this->entity->client;
+        $client = $this->entity->relation;
         return count($client->contacts) ? $client->contacts[0]->email : '';
     }
 
     public function autoBillEmailMessage()
     {
-        $client = $this->entity->client;
+        $client = $this->entity->relation;
         $paymentMethod = $client->defaultPaymentMethod();
 
         if ( ! $paymentMethod) {
@@ -227,7 +227,7 @@ class InvoicePresenter extends EntityPresenter {
             foreach ($invoice->payments as $payment) {
                 $label = trans('texts.view_payment');
                 if (count($invoice->payments) > 1) {
-                    $label .= ' - ' . $invoice->company->formatMoney($payment->amount, $invoice->client);
+                    $label .= ' - ' . $invoice->company->formatMoney($payment->amount, $invoice->relation);
                 }
                 $actions[] = ['url' => $payment->present()->url, 'label' => $label];
             }

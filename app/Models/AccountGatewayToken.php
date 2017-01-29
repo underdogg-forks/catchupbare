@@ -61,13 +61,13 @@ class AccountGatewayToken extends Eloquent
 
     /**
      * @param $query
-     * @param $clientId
+     * @param $relationId
      * @param $accGatewayId
      * @return mixed
      */
-    public function scopeClientAndGateway($query, $clientId, $accGatewayId)
+    public function scopeClientAndGateway($query, $relationId, $accGatewayId)
     {
-        $query->where('client_id', '=', $clientId)
+        $query->where('relation_id', '=', $relationId)
             ->where('acc_gateway_id', '=', $accGatewayId);
 
         return $query;

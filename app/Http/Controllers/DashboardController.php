@@ -5,7 +5,7 @@ use Auth;
 use DB;
 use View;
 use Utils;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Ninja\Repositories\DashboardRepository;
@@ -62,7 +62,7 @@ class DashboardController extends BaseController
 
         // check if the company has multiple curencies
         $currencyIds = $company->currency_id ? [$company->currency_id] : [DEFAULT_CURRENCY];
-        $data = Client::scope()
+        $data = Relation::scope()
             ->withArchived()
             ->distinct()
             ->get(['currency_id'])

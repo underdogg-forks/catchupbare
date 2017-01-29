@@ -6,7 +6,7 @@ use Session;
 use URL;
 use Utils;
 use View;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Credit;
 use App\Services\CreditService;
 use App\Ninja\Repositories\CreditRepository;
@@ -43,20 +43,20 @@ class CreditController extends BaseController
         ]);
     }
 
-    public function getDatatable($clientPublicId = null)
+    public function getDatatable($relationPublicId = null)
     {
-        return $this->creditService->getDatatable($clientPublicId, Input::get('sSearch'));
+        return $this->creditService->getDatatable($relationPublicId, Input::get('sSearch'));
     }
 
     public function create(CreditRequest $request)
     {
         $data = [
-            'clientPublicId' => Input::old('client') ? Input::old('client') : ($request->client_id ?: 0),
+            'clientPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
             'credit' => null,
             'method' => 'POST',
             'url' => 'credits',
             'title' => trans('texts.new_credit'),
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
         ];
 
         return View::make('credits.edit', $data);
@@ -71,13 +71,13 @@ class CreditController extends BaseController
         $credit->credit_date = Utils::fromSqlDate($credit->credit_date);
 
         $data = array(
-            'client' => $credit->client,
-            'clientPublicId' => $credit->client->public_id,
+            'relation' => $credit->relation,
+            'clientPublicId' => $credit->relation->id,
             'credit' => $credit,
             'method' => 'PUT',
             'url' => 'credits/'.$publicId,
             'title' => 'Edit Credit',
-            'clients' => null,
+            'relations' => null,
         );
 
         return View::make('credits.edit', $data);
@@ -102,7 +102,7 @@ class CreditController extends BaseController
         $message = $credit->wasRecentlyCreated ? trans('texts.created_credit') : trans('texts.updated_credit');
         Session::flash('message', $message);
 
-        return redirect()->to("clients/{$credit->client->public_id}#credits");
+        return redirect()->to("relations/{$credit->relation->id}#credits");
     }
 
     public function bulk()

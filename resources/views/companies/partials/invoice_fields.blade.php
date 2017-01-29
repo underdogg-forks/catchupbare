@@ -4,7 +4,7 @@ function ViewModel(data) {
     var self = this;
 
     self.invoice_fields = ko.observableArray();
-    self.client_fields = ko.observableArray();
+    self.relation_fields = ko.observableArray();
     self.account_fields1 = ko.observableArray();
     self.account_fields2 = ko.observableArray();
     window.field_map = [];
@@ -17,7 +17,7 @@ function ViewModel(data) {
 
     self.resetFields = function() {
         self.invoice_fields.removeAll();
-        self.client_fields.removeAll();
+        self.relation_fields.removeAll();
         self.account_fields1.removeAll();
         self.account_fields2.removeAll();
     }
@@ -29,10 +29,10 @@ function ViewModel(data) {
     }
 
     self.updateSelects = function() {
-        var usedFields = [].concat(self.invoice_fields(), self.client_fields(), self.account_fields1(), self.account_fields2());
+        var usedFields = [].concat(self.invoice_fields(), self.relation_fields(), self.account_fields1(), self.account_fields2());
         var selects = [
             'invoice_fields',
-            'client_fields',
+            'relation_fields',
             'account_fields1',
             'account_fields2',
         ];
@@ -55,7 +55,7 @@ function ViewModel(data) {
         self.onChange();
     }
     self.removeClientFields = function(item) {
-        self.client_fields.remove(item);
+        self.relation_fields.remove(item);
         self.onChange();
     }
     self.removeAccountFields1 = function(item) {

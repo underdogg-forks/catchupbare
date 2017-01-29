@@ -30,17 +30,17 @@ class ClientPortalHeaderComposer
         }
 
         $contact = Contact::where('contact_key', '=', $contactKey)
-                        ->with('client')
+                        ->with('relation')
                         ->first();
 
         if ( ! $contact || $contact->is_deleted) {
             return false;
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
 
         $hasDocuments = DB::table('invoices')
-                            ->where('invoices.client_id', '=', $client->id)
+                            ->where('invoices.relation_id', '=', $client->id)
                             ->whereNull('invoices.deleted_at')
                             ->join('documents', 'documents.invoice_id', '=', 'invoices.id')
                             ->count();

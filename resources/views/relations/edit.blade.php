@@ -21,8 +21,8 @@
 
     @include('partials.autocomplete_fix')
 
-	@if ($client)
-		{!! Former::populate($client) !!}
+	@if ($relation)
+		{!! Former::populate($relation) !!}
         {!! Former::hidden('public_id') !!}
 	@elseif ($company->client_number_counter)
 		{!! Former::populateField('id_number', $company->getNextNumber()) !!}
@@ -239,7 +239,7 @@
     @if ($data)
         window.model = new ClientModel({!! $data !!});
     @else
-	    window.model = new ClientModel({!! $client !!});
+	    window.model = new ClientModel({!! $relation !!});
     @endif
 
 	model.showContact = function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
@@ -261,7 +261,7 @@
 	</script>
 
 	<center class="buttons">
-    	{!! Button::normal(trans('texts.cancel'))->large()->asLinkTo(URL::to('/clients/' . ($client ? $client->public_id : '')))->appendIcon(Icon::create('remove-circle')) !!}
+    	{!! Button::normal(trans('texts.cancel'))->large()->asLinkTo(URL::to('/relations/' . ($relation ? $relation->id : '')))->appendIcon(Icon::create('remove-circle')) !!}
         {!! Button::success(trans('texts.save'))->submit()->large()->appendIcon(Icon::create('floppy-disk')) !!}
 	</center>
 

@@ -4,7 +4,7 @@
 
 
 	{!! Former::open($url)->addClass('col-md-10 col-md-offset-1 warn-on-exit')->method($method)->rules(array(
-			'client' => 'required',
+			'relation' => 'required',
   		'amount' => 'required',
 	)) !!}
 
@@ -22,9 +22,9 @@
             <div class="panel-body">
 
 			@if ($credit)
-				{!! Former::plaintext()->label('client')->value($client->getDisplayName()) !!}
+				{!! Former::plaintext()->label('relation')->value($relation->getDisplayName()) !!}
 			@else
-				{!! Former::select('client')->addOption('', '')->addGroupClass('client-select') !!}
+				{!! Former::select('relation')->addOption('', '')->addGroupClass('relation-select') !!}
 			@endif
 
 			{!! Former::text('amount') !!}
@@ -51,23 +51,23 @@
 	<script type="text/javascript">
 
 
-	var clients = {!! $clients ?: 'false' !!};
+	var relations = {!! $relations ?: 'false' !!};
 
 	$(function() {
 
 		@if ( ! $credit)
-			var $clientSelect = $('select#client');
-			for (var i=0; i<clients.length; i++) {
-				var client = clients[i];
-	            var clientName = getClientDisplayName(client);
+			var $clientSelect = $('select#relation');
+			for (var i=0; i<relations.length; i++) {
+				var relation = relations[i];
+	            var clientName = getClientDisplayName(relation);
 	            if (!clientName) {
 	                continue;
 	            }
-				$clientSelect.append(new Option(clientName, client.public_id));
+				$clientSelect.append(new Option(clientName, relation.public_id));
 			}
 
-			if ({{ $clientPublicId ? 'true' : 'false' }}) {
-				$clientSelect.val({{ $clientPublicId }});
+			if ({{ $relationPublicId ? 'true' : 'false' }}) {
+				$clientSelect.val({{ $relationPublicId }});
 			}
 
 			$clientSelect.combobox();
@@ -76,8 +76,8 @@
 		$('#currency_id').combobox();
 		$('#credit_date').datepicker('update', '{{ $credit ? $credit->credit_date : 'new Date()' }}');
 
-        @if (!$clientPublicId)
-            $('.client-select input.form-control').focus();
+        @if (!$relationPublicId)
+            $('.relation-select input.form-control').focus();
         @else
             $('#amount').focus();
         @endif

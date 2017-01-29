@@ -1,5 +1,5 @@
 <tr>
-    <td>{{ trans('texts.client') }}</td>
+    <td>{{ trans('texts.relation') }}</td>
     @if ($multiUser)
         <td>{{ trans('texts.user') }}</td>
     @endif
@@ -10,9 +10,9 @@
 </tr>
 
 @foreach ($contacts as $contact)
-    @if (!$contact->client->is_deleted)
+    @if (!$contact->relation->is_deleted)
         <tr>
-            <td>{{ $contact->client->getDisplayName() }}</td>
+            <td>{{ $contact->relation->getDisplayName() }}</td>
             @if ($multiUser)
                 <td>{{ $contact->user->getDisplayName() }}</td>
             @endif

@@ -7,7 +7,7 @@ class AddQuoteToInvoiceOption extends Migration
 {
     /**
      * Run the migrations.
-     * Make the conversion of a quote into an invoice automatically after a client approves optional.
+     * Make the conversion of a quote into an invoice automatically after a relation approves optional.
      *
      * @return void
      */

@@ -11,7 +11,7 @@ use Cache;
 use App\Models\Vendor;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\TaxRate;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Services\ExpenseService;
@@ -82,8 +82,8 @@ class ExpenseController extends BaseController
             'title' => trans('texts.new_expense'),
             'vendors' => Vendor::scope()->with('vendor_contacts')->orderBy('name')->get(),
             'vendor' => $vendor,
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $request->client_id,
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
+            'clientPublicId' => $request->relation_id,
             'categoryPublicId' => $request->category_id,
         ];
 
@@ -105,7 +105,7 @@ class ExpenseController extends BaseController
             $actions[] = ['url' => 'javascript:submitAction("invoice")', 'label' => trans('texts.invoice_expense')];
 
             // check for any open invoices
-            $invoices = $expense->client_id ? $this->invoiceRepo->findOpenInvoices($expense->client_id, ENTITY_EXPENSE) : [];
+            $invoices = $expense->relation_id ? $this->invoiceRepo->findOpenInvoices($expense->relation_id, ENTITY_EXPENSE) : [];
 
             foreach ($invoices as $invoice) {
                 $actions[] = ['url' => 'javascript:submitAction("add_to_invoice", '.$invoice->public_id.')', 'label' => trans('texts.add_to_invoice', ['invoice' => $invoice->invoice_number])];
@@ -131,8 +131,8 @@ class ExpenseController extends BaseController
             'actions' => $actions,
             'vendors' => Vendor::scope()->with('vendor_contacts')->orderBy('name')->get(),
             'vendorPublicId' => $expense->vendor ? $expense->vendor->public_id : null,
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $expense->client ? $expense->client->public_id : null,
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
+            'clientPublicId' => $expense->relation ? $expense->relation->id : null,
             'categoryPublicId' => $expense->expense_category ? $expense->expense_category->public_id : null,
         ];
 
@@ -185,17 +185,17 @@ class ExpenseController extends BaseController
         {
             case 'invoice':
             case 'add_to_invoice':
-                $expenses = Expense::scope($ids)->with('client')->get();
-                $clientPublicId = null;
+                $expenses = Expense::scope($ids)->with('relation')->get();
+                $relationPublicId = null;
                 $currencyId = null;
 
-                // Validate that either all expenses do not have a client or if there is a client, it is the same client
+                // Validate that either all expenses do not have a relation or if there is a relation, it is the same relation
                 foreach ($expenses as $expense)
                 {
-                    if ($expense->client) {
-                        if (!$clientPublicId) {
-                            $clientPublicId = $expense->client->public_id;
-                        } elseif ($clientPublicId != $expense->client->public_id) {
+                    if ($expense->relation) {
+                        if (!$relationPublicId) {
+                            $relationPublicId = $expense->relation->id;
+                        } elseif ($relationPublicId != $expense->relation->id) {
                             Session::flash('error', trans('texts.expense_error_multiple_clients'));
                             return Redirect::to('expenses');
                         }
@@ -215,7 +215,7 @@ class ExpenseController extends BaseController
                 }
 
                 if ($action == 'invoice') {
-                    return Redirect::to("invoices/create/{$clientPublicId}")
+                    return Redirect::to("invoices/create/{$relationPublicId}")
                             ->with('expenseCurrencyId', $currencyId)
                             ->with('expenses', $ids);
                 } else {

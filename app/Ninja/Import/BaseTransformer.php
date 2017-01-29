@@ -31,7 +31,7 @@ class BaseTransformer extends TransformerAbstract
     public function hasClient($name)
     {
         $name = trim(strtolower($name));
-        return isset($this->maps[ENTITY_CLIENT][$name]);
+        return isset($this->maps[ENTITY_RELATION][$name]);
     }
 
     /**
@@ -81,7 +81,7 @@ class BaseTransformer extends TransformerAbstract
     public function getClientId($name)
     {
         $name = strtolower(trim($name));
-        return isset($this->maps[ENTITY_CLIENT][$name]) ? $this->maps[ENTITY_CLIENT][$name] : null;
+        return isset($this->maps[ENTITY_RELATION][$name]) ? $this->maps[ENTITY_RELATION][$name] : null;
     }
 
     /**
@@ -191,7 +191,7 @@ class BaseTransformer extends TransformerAbstract
     {
         $invoiceNumber = $this->getInvoiceNumber($invoiceNumber);
         $invoiceNumber = strtolower($invoiceNumber);
-        return isset($this->maps[ENTITY_INVOICE.'_'.ENTITY_CLIENT][$invoiceNumber])? $this->maps[ENTITY_INVOICE.'_'.ENTITY_CLIENT][$invoiceNumber] : null;
+        return isset($this->maps[ENTITY_INVOICE.'_'.ENTITY_RELATION][$invoiceNumber])? $this->maps[ENTITY_INVOICE.'_'.ENTITY_RELATION][$invoiceNumber] : null;
     }
 
 

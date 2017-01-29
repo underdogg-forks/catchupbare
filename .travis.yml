@@ -90,7 +90,7 @@ after_script:
   - cat .env
   - mysql -u root -e 'select * from companies;' ninja
   - mysql -u root -e 'select * from account_gateways;' ninja
-  - mysql -u root -e 'select * from clients;' ninja
+  - mysql -u root -e 'select * from relations;' ninja
   - mysql -u root -e 'select * from invoices;' ninja
   - mysql -u root -e 'select * from invoice_items;' ninja
   - mysql -u root -e 'select * from payments;' ninja

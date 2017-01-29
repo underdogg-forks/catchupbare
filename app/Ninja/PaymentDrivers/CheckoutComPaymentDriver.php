@@ -6,7 +6,7 @@ class CheckoutComPaymentDriver extends BasePaymentDriver
     {
         $response = $this->gateway()->purchase([
             'amount' => $this->invoice()->getRequestedAmount(),
-            'currency' => $this->client()->getCurrencyCode()
+            'currency' => $this->relation()->getCurrencyCode()
         ])->send();
 
         if ($response->isRedirect()) {

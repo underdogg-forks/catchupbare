@@ -14,7 +14,7 @@ WARNING: Please backup your database before running this script
 ##################################################################
 
 Since the application was released a number of bugs have inevitably been found.
-Although the bugs have always been fixed in some cases they've caused the client's
+Although the bugs have always been fixed in some cases they've caused the relation's
 balance, paid to date and/or activity records to become inaccurate. This script will
 check for errors and correct the data.
 
@@ -26,9 +26,9 @@ php artisan ninja:check-data
 
 Options:
 
---client_id:<value>
+--relation_id:<value>
 
-    Limits the script to a single client
+    Limits the script to a single relation
 
 --fix=true
 
@@ -60,14 +60,14 @@ class CheckData extends Command {
     {
         $this->logMessage(date('Y-m-d') . ' Running CheckData...');
 
-        if (!$this->option('client_id')) {
+        if (!$this->option('relation_id')) {
             $this->checkPaidToDate();
             $this->checkBlankInvoiceHistory();
         }
 
         $this->checkBalances();
 
-        if (!$this->option('client_id')) {
+        if (!$this->option('relation_id')) {
             $this->checkAccountData();
         }
 
@@ -109,34 +109,34 @@ class CheckData extends Command {
         $tables = [
             'activities' => [
                 ENTITY_INVOICE,
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
                 ENTITY_CONTACT,
                 ENTITY_PAYMENT,
                 ENTITY_INVITATION,
                 ENTITY_USER
             ],
             'invoices' => [
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
                 ENTITY_USER
             ],
             'payments' => [
                 ENTITY_INVOICE,
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
                 ENTITY_USER,
                 ENTITY_INVITATION,
                 ENTITY_CONTACT
             ],
             'tasks' => [
                 ENTITY_INVOICE,
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
                 ENTITY_USER
             ],
             'credits' => [
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
                 ENTITY_USER
             ],
             'expenses' => [
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
                 ENTITY_VENDOR,
                 ENTITY_INVOICE,
                 ENTITY_USER
@@ -149,7 +149,7 @@ class CheckData extends Command {
             ],
             'projects' => [
                 ENTITY_USER,
-                ENTITY_CLIENT,
+                ENTITY_RELATION,
             ]
         ];
 
@@ -182,26 +182,26 @@ class CheckData extends Command {
 
     private function checkPaidToDate()
     {
-        // update client paid_to_date value
-        $clients = DB::table('clients')
-                    ->join('payments', 'payments.client_id', '=', 'clients.id')
+        // update relation paid_to_date value
+        $relations = DB::table('relations')
+                    ->join('payments', 'payments.relation_id', '=', 'relations.id')
                     ->join('invoices', 'invoices.id', '=', 'payments.invoice_id')
                     ->where('payments.is_deleted', '=', 0)
                     ->where('payments.payment_status_id', '!=', 2)
                     ->where('payments.payment_status_id', '!=', 3)
                     ->where('invoices.is_deleted', '=', 0)
-                    ->groupBy('clients.id')
-                    ->havingRaw('clients.paid_to_date != sum(payments.amount - payments.refunded) and clients.paid_to_date != 999999999.9999')
-                    ->get(['clients.id', 'clients.paid_to_date', DB::raw('sum(payments.amount) as amount')]);
-        $this->logMessage(count($clients) . ' clients with incorrect paid to date');
+                    ->groupBy('relations.id')
+                    ->havingRaw('relations.paid_to_date != sum(payments.amount - payments.refunded) and relations.paid_to_date != 999999999.9999')
+                    ->get(['relations.id', 'relations.paid_to_date', DB::raw('sum(payments.amount) as amount')]);
+        $this->logMessage(count($relations) . ' relations with incorrect paid to date');
 
-        if (count($clients) > 0) {
+        if (count($relations) > 0) {
             $this->isValid = false;
         }
 
         if ($this->option('fix') == 'true') {
-            foreach ($clients as $client) {
-                DB::table('clients')
+            foreach ($relations as $client) {
+                DB::table('relations')
                     ->where('id', $client->id)
                     ->update(['paid_to_date' => $client->amount]);
             }
@@ -210,40 +210,40 @@ class CheckData extends Command {
 
     private function checkBalances()
     {
-        // find all clients where the balance doesn't equal the sum of the outstanding invoices
-        $clients = DB::table('clients')
-                    ->join('invoices', 'invoices.client_id', '=', 'clients.id')
-                    ->join('companies', 'companies.id', '=', 'clients.company_id')
+        // find all relations where the balance doesn't equal the sum of the outstanding invoices
+        $relations = DB::table('relations')
+                    ->join('invoices', 'invoices.relation_id', '=', 'relations.id')
+                    ->join('companies', 'companies.id', '=', 'relations.company_id')
                     ->where('companies.id', '!=', 20432)
-                    ->where('clients.is_deleted', '=', 0)
+                    ->where('relations.is_deleted', '=', 0)
                     ->where('invoices.is_deleted', '=', 0)
                     ->where('invoices.is_public', '=', 1)
                     ->where('invoices.invoice_type_id', '=', INVOICE_TYPE_STANDARD)
                     ->where('invoices.is_recurring', '=', 0)
-                    ->havingRaw('abs(clients.balance - sum(invoices.balance)) > .01 and clients.balance != 999999999.9999');
+                    ->havingRaw('abs(relations.balance - sum(invoices.balance)) > .01 and relations.balance != 999999999.9999');
 
-        if ($this->option('client_id')) {
-            $clients->where('clients.id', '=', $this->option('client_id'));
+        if ($this->option('relation_id')) {
+            $relations->where('relations.id', '=', $this->option('relation_id'));
         }
 
-        $clients = $clients->groupBy('clients.id', 'clients.balance', 'clients.created_at')
+        $relations = $relations->groupBy('relations.id', 'relations.balance', 'relations.created_at')
                 ->orderBy('companies.corporation_id', 'DESC')
-                ->get(['companies.corporation_id', 'clients.company_id', 'clients.id', 'clients.balance', 'clients.paid_to_date', DB::raw('sum(invoices.balance) actual_balance')]);
-        $this->logMessage(count($clients) . ' clients with incorrect balance/activities');
+                ->get(['companies.corporation_id', 'relations.company_id', 'relations.id', 'relations.balance', 'relations.paid_to_date', DB::raw('sum(invoices.balance) actual_balance')]);
+        $this->logMessage(count($relations) . ' relations with incorrect balance/activities');
 
-        if (count($clients) > 0) {
+        if (count($relations) > 0) {
             $this->isValid = false;
         }
 
-        foreach ($clients as $client) {
-            $this->logMessage("=== Corporation: {$client->corporation_id} Company:{$client->company_id} Client:{$client->id} Balance:{$client->balance} Actual Balance:{$client->actual_balance} ===");
+        foreach ($relations as $client) {
+            $this->logMessage("=== Corporation: {$client->corporation_id} Company:{$client->company_id} Relation:{$client->id} Balance:{$client->balance} Actual Balance:{$client->actual_balance} ===");
             $foundProblem = false;
             $lastBalance = 0;
             $lastAdjustment = 0;
             $lastCreatedAt = null;
             $clientFix = false;
             $activities = DB::table('activities')
-                        ->where('client_id', '=', $client->id)
+                        ->where('relation_id', '=', $client->id)
                         ->orderBy('activities.id')
                         ->get(['activities.id', 'activities.created_at', 'activities.activity_type_id', 'activities.adjustment', 'activities.balance', 'activities.invoice_id']);
             //$this->logMessage(var_dump($activities));
@@ -387,7 +387,7 @@ class CheckData extends Command {
                             'created_at' => new Carbon,
                             'updated_at' => new Carbon,
                             'company_id' => $client->company_id,
-                            'client_id' => $client->id,
+                            'relation_id' => $client->id,
                             'adjustment' => $client->actual_balance - $activity->balance,
                             'balance' => $client->actual_balance,
                     ]);
@@ -397,7 +397,7 @@ class CheckData extends Command {
             $data = ['balance' => $client->actual_balance];
             $this->logMessage("Corrected balance:{$client->actual_balance}");
             if ($this->option('fix') == 'true') {
-                DB::table('clients')
+                DB::table('relations')
                     ->where('id', $client->id)
                     ->update($data);
             }
@@ -419,7 +419,7 @@ class CheckData extends Command {
     {
         return [
             ['fix', null, InputOption::VALUE_OPTIONAL, 'Fix data', null],
-            ['client_id', null, InputOption::VALUE_OPTIONAL, 'Client id', null],
+            ['relation_id', null, InputOption::VALUE_OPTIONAL, 'Relation id', null],
         ];
     }
 

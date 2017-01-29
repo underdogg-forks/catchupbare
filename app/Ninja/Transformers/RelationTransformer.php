@@ -1,9 +1,9 @@
 <?php namespace App\Ninja\Transformers;
 
-use App\Models\Client;
+use App\Models\Relation;
 
 /**
- * @SWG\Definition(definition="Client", @SWG\Xml(name="Client"))
+ * @SWG\Definition(definition="Relation", @SWG\Xml(name="Relation"))
  */
 
 class ClientTransformer extends EntityTransformer
@@ -50,40 +50,40 @@ class ClientTransformer extends EntityTransformer
     ];
 
     /**
-     * @param Client $client
+     * @param Relation $client
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeContacts(Client $client)
+    public function includeContacts(Relation $client)
     {
         $transformer = new ContactTransformer($this->company, $this->serializer);
         return $this->includeCollection($client->contacts, $transformer, ENTITY_CONTACT);
     }
 
     /**
-     * @param Client $client
+     * @param Relation $client
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeInvoices(Client $client)
+    public function includeInvoices(Relation $client)
     {
         $transformer = new InvoiceTransformer($this->company, $this->serializer, $client);
         return $this->includeCollection($client->invoices, $transformer, ENTITY_INVOICE);
     }
 
     /**
-     * @param Client $client
+     * @param Relation $client
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeCredits(Client $client)
+    public function includeCredits(Relation $client)
     {
         $transformer = new CreditTransformer($this->company, $this->serializer);
         return $this->includeCollection($client->credits, $transformer, ENTITY_CREDIT);
     }
 
     /**
-     * @param Client $client
+     * @param Relation $client
      * @return \League\Fractal\Resource\Collection
      */
-    public function includeExpenses(Client $client)
+    public function includeExpenses(Relation $client)
     {
         $transformer = new ExpenseTransformer($this->company, $this->serializer);
         return $this->includeCollection($client->expenses, $transformer, ENTITY_EXPENSE);
@@ -91,10 +91,10 @@ class ClientTransformer extends EntityTransformer
 
 
     /**
-     * @param Client $client
+     * @param Relation $client
      * @return array
      */
-    public function transform(Client $client)
+    public function transform(Relation $client)
     {
         return array_merge($this->getDefaults($client), [
             'id' => (int) $client->public_id,

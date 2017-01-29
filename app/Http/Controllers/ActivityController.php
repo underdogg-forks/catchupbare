@@ -13,8 +13,8 @@ class ActivityController extends BaseController
         $this->activityService = $activityService;
     }
 
-    public function getDatatable($clientPublicId)
+    public function getDatatable($relationPublicId)
     {
-        return $this->activityService->getDatatable($clientPublicId);
+        return $this->activityService->getDatatable($relationPublicId);
     }
 }

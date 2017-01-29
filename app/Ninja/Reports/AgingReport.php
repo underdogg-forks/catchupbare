@@ -3,12 +3,12 @@
 namespace App\Ninja\Reports;
 
 use Auth;
-use App\Models\Client;
+use App\Models\Relation;
 
 class AgingReport extends AbstractReport
 {
     public $columns = [
-        'client',
+        'relation',
         'invoice_number',
         'invoice_date',
         'due_date',
@@ -21,7 +21,7 @@ class AgingReport extends AbstractReport
     {
         $company = Auth::user()->company;
 
-        $clients = Client::scope()
+        $relations = Relation::scope()
                         ->withArchived()
                         ->with('contacts')
                         ->with(['invoices' => function($query) {
@@ -34,7 +34,7 @@ class AgingReport extends AbstractReport
                                   ->with(['invoice_items']);
                         }]);
 
-        foreach ($clients->get() as $client) {
+        foreach ($relations->get() as $client) {
             foreach ($client->invoices as $invoice) {
 
                 $this->data[] = [

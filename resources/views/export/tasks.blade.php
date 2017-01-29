@@ -1,5 +1,5 @@
 <tr>
-    <td>{{ trans('texts.client') }}</td>
+    <td>{{ trans('texts.relation') }}</td>
     @if ($multiUser)
         <td>{{ trans('texts.user') }}</td>
     @endif
@@ -9,9 +9,9 @@
 </tr>
 
 @foreach ($tasks as $task)
-    @if (!$task->client || !$task->client->is_deleted)
+    @if (!$task->relation || !$task->relation->is_deleted)
         <tr>
-            <td>{{ $task->present()->client }}</td>
+            <td>{{ $task->present()->relation }}</td>
             @if ($multiUser)
                 <td>{{ $task->present()->user }}</td>
             @endif

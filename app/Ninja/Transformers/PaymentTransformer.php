@@ -3,7 +3,7 @@
 use App\Models\Company;
 use App\Models\Payment;
 use App\Models\Invoice;
-use App\Models\Client;
+use App\Models\Relation;
 
 /**
  * @SWG\Definition(definition="Payment", required={"invoice_id"}, @SWG\Xml(name="Payment"))
@@ -19,7 +19,7 @@ class PaymentTransformer extends EntityTransformer
     protected $defaultIncludes = [];
 
     protected $availableIncludes = [
-        'client',
+        'relation',
         'invoice',
     ];
 
@@ -40,7 +40,7 @@ class PaymentTransformer extends EntityTransformer
     public function includeClient(Payment $payment)
     {
         $transformer = new ClientTransformer($this->company, $this->serializer);
-        return $this->includeItem($payment->client, $transformer, 'client');
+        return $this->includeItem($payment->relation, $transformer, 'relation');
     }
 
     public function transform(Payment $payment)

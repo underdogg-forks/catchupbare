@@ -76,9 +76,9 @@ class Contact extends EntityModel implements AuthenticatableContract, CanResetPa
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
     /**
@@ -139,6 +139,6 @@ class Contact extends EntityModel implements AuthenticatableContract, CanResetPa
      */
     public function getLinkAttribute()
     {
-        return \URL::to('client/dashboard/' . $this->contact_key);
+        return \URL::to('relation/dashboard/' . $this->contact_key);
     }
 }

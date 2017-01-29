@@ -18,7 +18,7 @@ use App\Libraries\CurlUtils;
 class Invoice extends EntityModel implements BalanceAffecting
 {
     use PresentableTrait;
-    use OwnedByClientTrait;
+    use OwnedByRelationTrait;
     use SoftDeletes {
         SoftDeletes::trashed as parentTrashed;
     }
@@ -113,7 +113,7 @@ class Invoice extends EntityModel implements BalanceAffecting
     public static function getImportColumns()
     {
         return [
-            Client::$fieldName,
+            Relation::$fieldName,
             Invoice::$fieldInvoiceNumber,
             Invoice::$fieldPONumber,
             Invoice::$fieldInvoiceDate,
@@ -133,7 +133,7 @@ class Invoice extends EntityModel implements BalanceAffecting
         return [
             'number^po' => 'invoice_number',
             'amount' => 'amount',
-            'client|organization' => 'name',
+            'relation|organization' => 'name',
             'paid^date' => 'paid',
             'invoice date|create date' => 'invoice_date',
             'po number' => 'po_number',
@@ -261,7 +261,7 @@ class Invoice extends EntityModel implements BalanceAffecting
      */
     public function trashed()
     {
-        if ($this->client && $this->client->trashed()) {
+        if ($this->relation && $this->relation->trashed()) {
             return true;
         }
 
@@ -287,9 +287,9 @@ class Invoice extends EntityModel implements BalanceAffecting
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
     /**
@@ -742,8 +742,8 @@ class Invoice extends EntityModel implements BalanceAffecting
      */
     public function getCurrencyCode()
     {
-        if ($this->client->currency) {
-            return $this->client->currency->code;
+        if ($this->relation->currency) {
+            return $this->relation->currency->code;
         } elseif ($this->company->currency) {
             return $this->company->currency->code;
         } else {
@@ -771,7 +771,7 @@ class Invoice extends EntityModel implements BalanceAffecting
             'invoice_items',
             'documents',
             'expenses',
-            'client',
+            'relation',
             'tax_name1',
             'tax_rate1',
             'tax_name2',
@@ -793,7 +793,7 @@ class Invoice extends EntityModel implements BalanceAffecting
             'has_expenses',
         ]);
 
-        $this->client->setVisible([
+        $this->relation->setVisible([
             'name',
             'id_number',
             'vat_number',
@@ -867,7 +867,7 @@ class Invoice extends EntityModel implements BalanceAffecting
             ]);
         }
 
-        foreach ($this->client->contacts as $contact) {
+        foreach ($this->relation->contacts as $contact) {
             $contact->setVisible([
                 'first_name',
                 'last_name',
@@ -1032,9 +1032,9 @@ class Invoice extends EntityModel implements BalanceAffecting
                     return date('Y-m-d', $dueDate);// SQL format
                 }
             }
-            else if ($this->client->payment_terms != 0) {
-                // No custom due date set for this invoice; use the client's payment terms
-                $days = $this->client->payment_terms;
+            else if ($this->relation->payment_terms != 0) {
+                // No custom due date set for this invoice; use the relation's payment terms
+                $days = $this->relation->payment_terms;
                 if ($days == -1) {
                     $days = 0;
                 }

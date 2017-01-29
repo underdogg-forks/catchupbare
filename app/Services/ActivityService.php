@@ -1,6 +1,6 @@
 <?php namespace App\Services;
 
-use App\Models\Client;
+use App\Models\Relation;
 use App\Ninja\Repositories\ActivityRepository;
 use App\Ninja\Datatables\ActivityDatatable;
 
@@ -32,14 +32,14 @@ class ActivityService extends BaseService
     }
 
     /**
-     * @param null $clientPublicId
+     * @param null $relationPublicId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($clientPublicId = null)
+    public function getDatatable($relationPublicId = null)
     {
-        $clientId = Client::getPrivateId($clientPublicId);
+        $relationId = Relation::getPrivateId($relationPublicId);
 
-        $query = $this->activityRepo->findByClientId($clientId);
+        $query = $this->activityRepo->findByClientId($relationId);
 
         return $this->datatableService->createDatatable(new ActivityDatatable(false), $query);
     }

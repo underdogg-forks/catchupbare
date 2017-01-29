@@ -9,14 +9,14 @@
 </tr>
 
 @foreach ($credits as $credit)
-    @if (!$credit->client->is_deleted)
+    @if (!$credit->relation->is_deleted)
         <tr>
-            <td>{{ $credit->client->getDisplayName() }}</td>
+            <td>{{ $credit->relation->getDisplayName() }}</td>
             @if ($multiUser)
                 <td>{{ $credit->user->getDisplayName() }}</td>
             @endif
-            <td>{{ $company->formatMoney($credit->amount, $credit->client) }}</td>
-            <td>{{ $company->formatMoney($credit->balance, $credit->client) }}</td>
+            <td>{{ $company->formatMoney($credit->amount, $credit->relation) }}</td>
+            <td>{{ $company->formatMoney($credit->balance, $credit->relation) }}</td>
             <td>{{ $credit->present()->credit_date }}</td>
         </tr>
     @endif

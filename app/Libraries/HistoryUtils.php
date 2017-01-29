@@ -21,7 +21,7 @@ class HistoryUtils
         }
 
         $activityTypes = [
-            ACTIVITY_TYPE_CREATE_CLIENT,
+            ACTIVITY_TYPE_CREATE_RELATION,
             ACTIVITY_TYPE_CREATE_TASK,
             ACTIVITY_TYPE_UPDATE_TASK,
             ACTIVITY_TYPE_CREATE_EXPENSE,
@@ -36,7 +36,7 @@ class HistoryUtils
             ACTIVITY_TYPE_VIEW_QUOTE,
         ];
 
-        $activities = Activity::with(['client.contacts', 'invoice', 'task', 'expense'])
+        $activities = Activity::with(['relation.contacts', 'invoice', 'task', 'expense'])
             ->whereIn('user_id', $userIds)
             ->whereIn('activity_type_id', $activityTypes)
             ->orderBy('id', 'desc')
@@ -45,26 +45,26 @@ class HistoryUtils
 
         foreach ($activities->reverse() as $activity)
         {
-            if ($activity->activity_type_id == ACTIVITY_TYPE_CREATE_CLIENT) {
-                $entity = $activity->client;
+            if ($activity->activity_type_id == ACTIVITY_TYPE_CREATE_RELATION) {
+                $entity = $activity->relation;
             } else if ($activity->activity_type_id == ACTIVITY_TYPE_CREATE_TASK || $activity->activity_type_id == ACTIVITY_TYPE_UPDATE_TASK) {
                 $entity = $activity->task;
                 if ( ! $entity) {
                     continue;
                 }
-                $entity->setRelation('client', $activity->client);
+                $entity->setRelation('relation', $activity->relation);
             } else if ($activity->activity_type_id == ACTIVITY_TYPE_CREATE_EXPENSE || $activity->activity_type_id == ACTIVITY_TYPE_UPDATE_EXPENSE) {
                 $entity = $activity->expense;
                 if ( ! $entity) {
                     continue;
                 }
-                $entity->setRelation('client', $activity->client);
+                $entity->setRelation('relation', $activity->relation);
             } else {
                 $entity = $activity->invoice;
                 if ( ! $entity) {
                     continue;
                 }
-                $entity->setRelation('client', $activity->client);
+                $entity->setRelation('relation', $activity->relation);
             }
 
             static::trackViewed($entity);
@@ -75,7 +75,7 @@ class HistoryUtils
     {
         $entityType = $entity->getEntityType();
         $trackedTypes = [
-            ENTITY_CLIENT,
+            ENTITY_RELATION,
             ENTITY_INVOICE,
             ENTITY_QUOTE,
             ENTITY_TASK,
@@ -128,15 +128,15 @@ class HistoryUtils
         $object->name = $entity->present()->titledName;
         $object->timestamp = time();
 
-        if ($entity->isEntityType(ENTITY_CLIENT)) {
-            $object->client_id = $entity->public_id;
-            $object->client_name = $entity->getDisplayName();
-        } elseif (method_exists($entity, 'client') && $entity->client) {
-            $object->client_id = $entity->client->public_id;
-            $object->client_name = $entity->client->getDisplayName();
+        if ($entity->isEntityType(ENTITY_RELATION)) {
+            $object->relation_id = $entity->public_id;
+            $object->relation_name = $entity->getDisplayName();
+        } elseif (method_exists($entity, 'relation') && $entity->relation) {
+            $object->relation_id = $entity->relation->id;
+            $object->relation_name = $entity->relation->getDisplayName();
         } else {
-            $object->client_id = 0;
-            $object->client_name = 0;
+            $object->relation_id = 0;
+            $object->relation_name = 0;
         }
 
         return $object;
@@ -144,29 +144,29 @@ class HistoryUtils
 
     public static function renderHtml($companyId)
     {
-        $lastClientId = false;
-        $clientMap = [];
+        $lastRelationId = false;
+        $relationMap = [];
         $str = '';
 
         $history = Session::get(RECENTLY_VIEWED, []);
         $history = isset($history[$companyId]) ? $history[$companyId] : [];
 
-        foreach ($history as $item)
+        /*foreach ($history as $item)
         {
-            if ($item->entityType == ENTITY_CLIENT && isset($clientMap[$item->client_id])) {
+            if ($item->entityType == ENTITY_RELATION && isset($relationMap[$item->relation_id])) {
                 continue;
             }
 
-            $clientMap[$item->client_id] = true;
+            $relationMap[$item->relation_id] = true;
 
-            if ($lastClientId === false || $item->client_id != $lastClientId)
+            if ($lastRelationId === false || $item->relation_id != $lastRelationId)
             {
                 $icon = '<i class="fa fa-users" style="width:32px"></i>';
-                if ($item->client_id) {
-                    $link = url('/clients/' . $item->client_id);
-                    $name = $item->client_name ;
+                if ($item->relation_id) {
+                    $link = url('/relations/' . $item->relation_id);
+                    $name = $item->relation_name ;
 
-                    $buttonLink = url('/invoices/create/' . $item->client_id);
+                    $buttonLink = url('/invoices/create/' . $item->relation_id);
                     $button = '<a type="button" class="btn btn-primary btn-sm pull-right" href="' . $buttonLink . '">
                                     <i class="fa fa-plus-circle" style="width:20px" title="' . trans('texts.create_invoice') . '"></i>
                                 </a>';
@@ -177,16 +177,16 @@ class HistoryUtils
                 }
 
                 $str .= sprintf('<li>%s<a href="%s"><div>%s %s</div></a></li>', $button, $link, $icon, $name);
-                $lastClientId = $item->client_id;
+                $lastRelationId = $item->relation_id;
             }
 
-            if ($item->entityType == ENTITY_CLIENT) {
+            if ($item->entityType == ENTITY_RELATION) {
                 continue;
             }
 
             $icon = '<i class="fa fa-' . EntityModel::getIcon($item->entityType . 's') . '" style="width:24px"></i>';
             $str .= sprintf('<li style="text-align:right; padding-right:18px;"><a href="%s">%s %s</a></li>', $item->url, $item->name, $icon);
-        }
+        }*/
 
         return $str;
     }

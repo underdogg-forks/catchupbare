@@ -24,9 +24,9 @@ class AddInvoiceDesignTable extends Migration
         DB::table('invoice_designs')->where('id', 1)->update([
             'javascript' => "var GlobalY=0;//Y position of line at current page
 
-	    var client = invoice.client;
+	    var relation = invoice.relation;
 	    var company = invoice.company;
-	    var currencyId = client.currency_id;
+	    var currencyId = relation.currency_id;
 
 	    layout.headerRight = 550;
 	    layout.rowHeight = 15;
@@ -118,9 +118,9 @@ class AddInvoiceDesignTable extends Migration
         DB::table('invoice_designs')->where('id', 2)->update([
             'javascript' => "  var GlobalY=0;//Y position of line at current page
 
-			  var client = invoice.client;
+			  var relation = invoice.relation;
 			  var company = invoice.company;
-			  var currencyId = client.currency_id;
+			  var currencyId = relation.currency_id;
 
 			  layout.headerRight = 150;
 			  layout.rowHeight = 15;
@@ -266,9 +266,9 @@ class AddInvoiceDesignTable extends Migration
         ]);
 
         DB::table('invoice_designs')->where('id', 3)->update([
-            'javascript' => "    var client = invoice.client;
+            'javascript' => "    var relation = invoice.relation;
 	    var company = invoice.company;
-	    var currencyId = client.currency_id;
+	    var currencyId = relation.currency_id;
 
 	    layout.headerRight = 400;
 	    layout.rowHeight = 15;
@@ -417,9 +417,9 @@ class AddInvoiceDesignTable extends Migration
         ]);
 
         DB::table('invoice_designs')->where('id', 4)->update([
-            'javascript' => "  var client = invoice.client;
+            'javascript' => "  var relation = invoice.relation;
 		  var company = invoice.company;
-		  var currencyId = client.currency_id;  
+		  var currencyId = relation.currency_id;  
 		  
       layout.accountTop += 25;
       layout.headerTop += 25;

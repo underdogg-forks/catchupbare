@@ -48,9 +48,9 @@ class Project extends EntityModel
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
 }

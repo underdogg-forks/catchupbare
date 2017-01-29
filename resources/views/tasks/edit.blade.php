@@ -49,15 +49,15 @@
 
             @if ($task && $task->invoice_id)
                 {!! Former::plaintext()
-                        ->label('client')
-                        ->value($task->client->getDisplayName()) !!}
+                        ->label('relation')
+                        ->value($task->relation->getDisplayName()) !!}
                 @if ($task->project)
                     {!! Former::plaintext()
                             ->label('project')
                             ->value($task->present()->project) !!}
                 @endif
             @else
-                {!! Former::select('client')->addOption('', '')->addGroupClass('client-select') !!}
+                {!! Former::select('relation')->addOption('', '')->addGroupClass('relation-select') !!}
                 {!! Former::select('project_id')->addOption('', '')->addGroupClass('project-select')
                         ->label(trans('texts.project')) !!}
             @endif
@@ -221,7 +221,7 @@
       }
     }
 
-    var clients = {!! $clients !!};
+    var relations = {!! $relations !!};
     var projects = {!! $projects !!};
 
     var timeLabels = {};
@@ -441,8 +441,8 @@
     ko.applyBindings(model);
 
     $(function() {
-        @if (!$task && !$clientPublicId)
-            $('.client-select input.form-control').focus();
+        @if (!$task && !$relationPublicId)
+            $('.relation-select input.form-control').focus();
         @else
             $('#description').focus();
         @endif
@@ -495,44 +495,44 @@
             showTimeDetails();
         @endif
 
-        // setup clients and project comboboxes
-        var clientId = {{ $clientPublicId }};
+        // setup relations and project comboboxes
+        var clientId = {{ $relationPublicId }};
         var projectId = {{ $projectPublicId }};
 
         var clientMap = {};
         var projectMap = {};
         var projectsForClientMap = {};
         var projectsForAllClients = [];
-        var $clientSelect = $('select#client');
+        var $clientSelect = $('select#relation');
 
         for (var i=0; i<projects.length; i++) {
           var project = projects[i];
           projectMap[project.public_id] = project;
 
-          var client = project.client;
-          if (!client) {
+          var relation = project.relation;
+          if (!relation) {
               projectsForAllClients.push(project);
           } else {
-              if (!projectsForClientMap.hasOwnProperty(client.public_id)) {
-                projectsForClientMap[client.public_id] = [];
+              if (!projectsForClientMap.hasOwnProperty(relation.public_id)) {
+                projectsForClientMap[relation.public_id] = [];
               }
-              projectsForClientMap[client.public_id].push(project);
+              projectsForClientMap[relation.public_id].push(project);
           }
         }
 
-        for (var i=0; i<clients.length; i++) {
-          var client = clients[i];
-          clientMap[client.public_id] = client;
+        for (var i=0; i<relations.length; i++) {
+          var relation = relations[i];
+          clientMap[relation.public_id] = relation;
         }
 
         $clientSelect.append(new Option('', ''));
-        for (var i=0; i<clients.length; i++) {
-          var client = clients[i];
-          var clientName = getClientDisplayName(client);
+        for (var i=0; i<relations.length; i++) {
+          var relation = relations[i];
+          var clientName = getClientDisplayName(relation);
           if (!clientName) {
               continue;
           }
-          $clientSelect.append(new Option(clientName, client.public_id));
+          $clientSelect.append(new Option(clientName, relation.public_id));
         }
 
         if (clientId) {
@@ -541,10 +541,10 @@
 
         $clientSelect.combobox();
         $clientSelect.on('change', function(e) {
-          var clientId = $('input[name=client]').val();
+          var clientId = $('input[name=relation]').val();
           var projectId = $('input[name=project_id]').val();
           var project = projectMap[projectId];
-          if (project && ((project.client && project.client.public_id == clientId) || !project.client)) {
+          if (project && ((project.relation && project.relation.public_id == clientId) || !project.relation)) {
             e.preventDefault();
             return;
           }
@@ -561,15 +561,15 @@
         });
 
         var $projectSelect = $('select#project_id').on('change', function(e) {
-          $clientCombobox = $('select#client');
+          $clientCombobox = $('select#relation');
           var projectId = $('input[name=project_id]').val();
           if (projectId) {
             var project = projectMap[projectId];
-            if (project.client) {
-                var client = clientMap[project.client.public_id];
-                if (client) {
-                    project.client = client;
-                    setComboboxValue($('.client-select'), client.public_id, getClientDisplayName(client));
+            if (project.relation) {
+                var relation = clientMap[project.relation.public_id];
+                if (relation) {
+                    project.relation = relation;
+                    setComboboxValue($('.relation-select'), relation.public_id, getClientDisplayName(relation));
                 }
             }
           } else {

@@ -108,13 +108,13 @@ class PaymentMethod extends EntityModel
 
     /**
      * @param $query
-     * @param $clientId
+     * @param $relationId
      * @return mixed
      */
-    public function scopeClientId($query, $clientId)
+    public function scopeClientId($query, $relationId)
     {
-        $query->whereHas('contact', function($query) use ($clientId) {
-            $query->whereClientId($clientId);
+        $query->whereHas('contact', function($query) use ($relationId) {
+            $query->whereRelationId($relationId);
         });
     }
 

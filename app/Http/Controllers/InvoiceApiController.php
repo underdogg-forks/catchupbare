@@ -6,10 +6,10 @@ use Response;
 use Input;
 use Validator;
 use App\Models\Invoice;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Contact;
 use App\Models\Product;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Http\Requests\InvoiceRequest;
@@ -26,7 +26,7 @@ class InvoiceApiController extends BaseAPIController
 
     protected $entityType = ENTITY_INVOICE;
 
-    public function __construct(InvoiceService $invoiceService, InvoiceRepository $invoiceRepo, ClientRepository $clientRepo, PaymentRepository $paymentRepo, PaymentService $paymentService)
+    public function __construct(InvoiceService $invoiceService, InvoiceRepository $invoiceRepo, RelationRepository $clientRepo, PaymentRepository $paymentRepo, PaymentService $paymentService)
     {
         parent::__construct();
 
@@ -57,7 +57,7 @@ class InvoiceApiController extends BaseAPIController
     {
         $invoices = Invoice::scope()
                         ->withTrashed()
-                        ->with('invoice_items', 'client')
+                        ->with('invoice_items', 'relation')
                         ->orderBy('created_at', 'desc');
 
         return $this->listResponse($invoices);
@@ -113,7 +113,7 @@ class InvoiceApiController extends BaseAPIController
 
         if (isset($data['email'])) {
             $email = $data['email'];
-            $client = Client::scope()->whereHas('contacts', function($query) use ($email) {
+            $client = Relation::scope()->whereHas('contacts', function($query) use ($email) {
                 $query->where('email', '=', $email);
             })->first();
 
@@ -152,12 +152,12 @@ class InvoiceApiController extends BaseAPIController
 
                 $client = $this->clientRepo->save($clientData);
             }
-        } else if (isset($data['client_id'])) {
-            $client = Client::scope($data['client_id'])->firstOrFail();
+        } else if (isset($data['relation_id'])) {
+            $client = Relation::scope($data['relation_id'])->firstOrFail();
         }
 
         $data = self::prepareData($data, $client);
-        $data['client_id'] = $client->id;
+        $data['relation_id'] = $client->id;
 
         // in these cases the invoice needs to be set as public
         $isAutoBill = isset($data['auto_bill']) && filter_var($data['auto_bill'], FILTER_VALIDATE_BOOLEAN);
@@ -177,7 +177,7 @@ class InvoiceApiController extends BaseAPIController
             } else if ($isPaid) {
                 $payment = $this->paymentRepo->save([
                     'invoice_id' => $invoice->id,
-                    'client_id' => $client->id,
+                    'relation_id' => $client->id,
                     'amount' => $data['paid']
                 ]);
             }
@@ -194,7 +194,7 @@ class InvoiceApiController extends BaseAPIController
         }
 
         $invoice = Invoice::scope($invoice->public_id)
-                        ->with('client', 'invoice_items', 'invitations')
+                        ->with('relation', 'invoice_items', 'invitations')
                         ->first();
 
         if (isset($data['download_invoice']) && boolval($data['download_invoice'])) {
@@ -338,7 +338,7 @@ class InvoiceApiController extends BaseAPIController
         $this->invoiceService->save($data, $request->entity());
 
         $invoice = Invoice::scope($publicId)
-                        ->with('client', 'invoice_items', 'invitations')
+                        ->with('relation', 'invoice_items', 'invitations')
                         ->firstOrFail();
 
         return $this->itemResponse($invoice);

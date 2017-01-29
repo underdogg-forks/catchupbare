@@ -144,7 +144,7 @@ class AppServiceProvider extends ServiceProvider
             $publicClientId = $parameters[0];
             $amount = $parameters[1];
 
-            $client = \App\Models\Client::scope($publicClientId)->firstOrFail();
+            $client = \App\Models\Relation::scope($publicClientId)->firstOrFail();
             $credit = $client->getTotalCredit();
 
             return $credit >= $amount;

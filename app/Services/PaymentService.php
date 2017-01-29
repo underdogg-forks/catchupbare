@@ -5,7 +5,7 @@ use Utils;
 use Auth;
 use Exception;
 use App\Models\Company;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Activity;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\CompanyRepository;
@@ -45,8 +45,8 @@ class PaymentService extends BaseService
      */
     public function autoBillInvoice(Invoice $invoice)
     {
-        /** @var \App\Models\Client $client */
-        $client = $invoice->client;
+        /** @var \App\Models\Relation $client */
+        $client = $invoice->relation;
 
         /** @var \App\Models\Company $company */
         $company = $client->company;
@@ -66,7 +66,7 @@ class PaymentService extends BaseService
             $data = [
                 'payment_type_id' => PAYMENT_TYPE_CREDIT,
                 'invoice_id' => $invoice->id,
-                'client_id' => $client->id,
+                'relation_id' => $client->id,
                 'amount' => $amount,
             ];
             $payment = $this->paymentRepo->save($data);
@@ -130,10 +130,10 @@ class PaymentService extends BaseService
         }
     }
 
-    public function getDatatable($clientPublicId, $search)
+    public function getDatatable($relationPublicId, $search)
     {
-        $datatable = new PaymentDatatable(true, $clientPublicId);
-        $query = $this->paymentRepo->find($clientPublicId, $search);
+        $datatable = new PaymentDatatable(true, $relationPublicId);
+        $query = $this->paymentRepo->find($relationPublicId, $search);
 
         if(!Utils::hasPermission('view_all')){
             $query->where('payments.user_id', '=', Auth::user()->id);

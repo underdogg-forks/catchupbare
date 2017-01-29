@@ -4,9 +4,9 @@ use App\Models\Company;
 
 class NinjaRepository
 {
-    public function updatePlanDetails($clientPublicId, $data)
+    public function updatePlanDetails($relationPublicId, $data)
     {
-        $company = Company::whereId($clientPublicId)->first();
+        $company = Company::whereId($relationPublicId)->first();
 
         if (!$company) {
             return;

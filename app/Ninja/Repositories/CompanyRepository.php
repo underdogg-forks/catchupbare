@@ -13,7 +13,7 @@ use App\Models\AccountGateway;
 use App\Models\Invitation;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Credit;
 use App\Models\Language;
 use App\Models\Contact;
@@ -95,13 +95,13 @@ class CompanyRepository
         $company = $user->company;
 
         $data = [
-            'clients' => [],
+            'relations' => [],
             'contacts' => [],
             'invoices' => [],
             'quotes' => [],
         ];
 
-        // include custom client fields in search
+        // include custom relation fields in search
         if ($company->custom_client_label1) {
             $data[$company->custom_client_label1] = [];
         }
@@ -110,20 +110,20 @@ class CompanyRepository
         }
 
         if ($user->hasPermission('view_all')) {
-            $clients = Client::scope()
+            $relations = Relation::scope()
                         ->with('contacts', 'invoices')
                         ->get();
         } else {
-            $clients = Client::scope()
+            $relations = Relation::scope()
                         ->where('user_id', '=', $user->id)
                         ->with(['contacts', 'invoices' => function($query) use ($user) {
                             $query->where('user_id', '=', $user->id);
                         }])->get();
         }
 
-        foreach ($clients as $client) {
+        foreach ($relations as $client) {
             if ($client->name) {
-                $data['clients'][] = [
+                $data['relations'][] = [
                     'value' => $client->name,
                     'tokens' => implode(',', [$client->name, $client->id_number, $client->vat_number, $client->work_phone]),
                     'url' => $client->present()->url,
@@ -170,7 +170,7 @@ class CompanyRepository
     {
         $entityTypes = [
             ENTITY_INVOICE,
-            ENTITY_CLIENT,
+            ENTITY_RELATION,
             ENTITY_QUOTE,
             ENTITY_TASK,
             ENTITY_EXPENSE,
@@ -250,7 +250,7 @@ class CompanyRepository
         $credit->public_id = $publicId;
         $credit->company_id = $company->id;
         $credit->user_id = $company->users()->first()->id;
-        $credit->client_id = $client->id;
+        $credit->relation_id = $client->id;
         $credit->amount = $amount;
         $credit->save();
 
@@ -278,7 +278,7 @@ class CompanyRepository
         $invoice->company_id = $company->id;
         $invoice->user_id = $company->users()->first()->id;
         $invoice->public_id = $publicId;
-        $invoice->client_id = $client->id;
+        $invoice->relation_id = $client->id;
         $invoice->invoice_number = $company->getNextNumber($invoice);
         $invoice->invoice_date = $renewalDate->format('Y-m-d');
         $invoice->amount = $invoice->balance = $plan_cost - $credit;
@@ -379,13 +379,13 @@ class CompanyRepository
         $company->load('users');
         $ninjaAccount = $this->getNinjaAccount();
         $ninjaUser = $ninjaAccount->getPrimaryUser();
-        $client = Client::whereCompanyId($ninjaAccount->id)
+        $client = Relation::whereCompanyId($ninjaAccount->id)
                     ->wherePublicId($company->id)
                     ->first();
         $clientExists = $client ? true : false;
 
         if (!$client) {
-            $client = new Client();
+            $client = new Relation();
             $client->public_id = $company->id;
             $client->company_id = $ninjaAccount->id;
             $client->user_id = $ninjaUser->id;
@@ -421,7 +421,7 @@ class CompanyRepository
     public function findByKey($key)
     {
         $company = Company::whereAccountKey($key)
-                    ->with('clients.invoices.invoice_items', 'clients.contacts')
+                    ->with('relations.invoices.invoice_items', 'relations.contacts')
                     ->firstOrFail();
 
         return $company;

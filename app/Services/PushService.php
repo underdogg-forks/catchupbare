@@ -118,9 +118,9 @@ class PushService
     private function entitySentMessage(Invoice $invoice)
     {
         if($invoice->isType(INVOICE_TYPE_QUOTE))
-            return trans('texts.notification_quote_sent_subject', ['invoice' => $invoice->invoice_number, 'client' => $invoice->client->name]);
+            return trans('texts.notification_quote_sent_subject', ['invoice' => $invoice->invoice_number, 'relation' => $invoice->relation->name]);
         else
-            return trans('texts.notification_invoice_sent_subject', ['invoice' => $invoice->invoice_number, 'client' => $invoice->client->name]);
+            return trans('texts.notification_invoice_sent_subject', ['invoice' => $invoice->invoice_number, 'relation' => $invoice->relation->name]);
     }
 
     /**
@@ -129,7 +129,7 @@ class PushService
      */
     private function invoicePaidMessage(Invoice $invoice)
     {
-        return trans('texts.notification_invoice_paid_subject', ['invoice' => $invoice->invoice_number, 'client' => $invoice->client->name]);
+        return trans('texts.notification_invoice_paid_subject', ['invoice' => $invoice->invoice_number, 'relation' => $invoice->relation->name]);
     }
 
     /**
@@ -138,7 +138,7 @@ class PushService
      */
     private function quoteApprovedMessage(Invoice $invoice)
     {
-        return trans('texts.notification_quote_approved_subject', ['invoice' => $invoice->invoice_number, 'client' => $invoice->client->name]);
+        return trans('texts.notification_quote_approved_subject', ['invoice' => $invoice->invoice_number, 'relation' => $invoice->relation->name]);
     }
 
     /**
@@ -148,8 +148,8 @@ class PushService
     private function entityViewedMessage(Invoice $invoice)
     {
         if($invoice->isType(INVOICE_TYPE_QUOTE))
-            return trans('texts.notification_quote_viewed_subject', ['invoice' => $invoice->invoice_number, 'client' => $invoice->client->name]);
+            return trans('texts.notification_quote_viewed_subject', ['invoice' => $invoice->invoice_number, 'relation' => $invoice->relation->name]);
         else
-            return trans('texts.notification_invoice_viewed_subject', ['invoice' => $invoice->invoice_number, 'client' => $invoice->client->name]);
+            return trans('texts.notification_invoice_viewed_subject', ['invoice' => $invoice->invoice_number, 'relation' => $invoice->relation->name]);
     }
 }

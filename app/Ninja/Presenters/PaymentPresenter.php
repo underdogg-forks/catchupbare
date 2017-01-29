@@ -7,12 +7,12 @@ class PaymentPresenter extends EntityPresenter {
 
     public function amount()
     {
-        return Utils::formatMoney($this->entity->amount, $this->entity->client->currency_id);
+        return Utils::formatMoney($this->entity->amount, $this->entity->relation->currency_id);
     }
 
-    public function client()
+    public function relation()
     {
-        return $this->entity->client ? $this->entity->client->getDisplayName() : '';
+        return $this->entity->relation ? $this->entity->relation->getDisplayName() : '';
     }
 
     public function payment_date()

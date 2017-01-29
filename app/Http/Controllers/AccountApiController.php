@@ -78,7 +78,7 @@ class AccountApiController extends BaseAPIController
         $updatedAt = $request->updated_at ? date('Y-m-d H:i:s', $request->updated_at) : false;
 
         $transformer = new AccountTransformer(null, $request->serializer);
-        $company->load(array_merge($transformer->getDefaultIncludes(), ['projects.client']));
+        $company->load(array_merge($transformer->getDefaultIncludes(), ['projects.relation']));
         $company = $this->createItem($company, $transformer, 'company');
 
         return $this->response($company);

@@ -34,7 +34,7 @@
                     enableShippingAddress: false,
                     enableBillingAddress: false,
                     headless: true,
-                    locale: "{{$client->language?$client->language->locale:$client->company->language->locale}}"
+                    locale: "{{$relation->language?$relation->language->locale:$relation->company->language->locale}}"
                 },
                 dataCollector: {
                     paypal: true
@@ -62,7 +62,7 @@
                 if(!email)return;
 
                 WePay.bank_acc.create({
-                    'client_id': '{{ WEPAY_CLIENT_ID }}',
+                    'relation_id': '{{ WEPAY_CLIENT_ID }}',
                     'email':email
                 }, function(data){
                     dataObj = JSON.parse(data);
@@ -128,19 +128,19 @@
 <center>
     @if (false && $company->getGatewayByType(GATEWAY_TYPE_CREDIT_CARD) && $company->getGatewayByType(GATEWAY_TYPE_TOKEN))
         {!! Button::success(strtoupper(trans('texts.add_credit_card')))
-        ->asLinkTo(URL::to('/client/add/credit_card')) !!}
+        ->asLinkTo(URL::to('/relation/add/credit_card')) !!}
         &nbsp;
     @endif
     @if (false && $company->getGatewayByType(GATEWAY_TYPE_BANK_TRANSFER) && $company->getGatewayByType(GATEWAY_TYPE_TOKEN))
         {!! Button::success(strtoupper(trans('texts.add_bank_acc')))
             ->withAttributes(['id'=>'add-ach'])
-            ->asLinkTo(URL::to('/client/add/bank_transfer')) !!}
+            ->asLinkTo(URL::to('/relation/add/bank_transfer')) !!}
         &nbsp;
     @endif
     @if (false && $company->getGatewayByType(GATEWAY_TYPE_PAYPAL) && $company->getGatewayByType(GATEWAY_TYPE_TOKEN))
         {!! Button::success(strtoupper(trans('texts.add_paypal_account')))
             ->withAttributes(['id'=>'add-paypal'])
-            ->asLinkTo(URL::to('/client/add/paypal')) !!}
+            ->asLinkTo(URL::to('/relation/add/paypal')) !!}
         <div id="paypal-container"></div>
     @endif
 </center>
@@ -148,7 +148,7 @@
 <div class="modal fade" id="completeVerificationModal" tabindex="-1" role="dialog" aria-labelledby="completeVerificationModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="min-width:150px">
         <div class="modal-content">
-            {!! Former::open('/client/payment_methods/verify') !!}
+            {!! Former::open('/relation/payment_methods/verify') !!}
 
             @if (Utils::isNinjaDev())
                 <script>
@@ -218,7 +218,7 @@
     </div>
 </div>
 
-{!! Former::open(URL::to('/client/payment_methods/default'))->id('defaultSourceForm') !!}
+{!! Former::open(URL::to('/relation/payment_methods/default'))->id('defaultSourceForm') !!}
     <input type="hidden" name="source" id="default_id">
 {!! Former::close() !!}
 
@@ -231,7 +231,7 @@
     }
 
     function removePaymentMethod(sourceId) {
-        $('#removeForm').attr('action', '{{ URL::to('/client/payment_methods/%s/remove') }}'.replace('%s', sourceId))
+        $('#removeForm').attr('action', '{{ URL::to('/relation/payment_methods/%s/remove') }}'.replace('%s', sourceId))
         $('#removePaymentMethodModal').modal('show');
     }
 

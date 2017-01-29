@@ -18,9 +18,9 @@ class ClientPresenter extends EntityPresenter {
 
     public function paid_to_date()
     {
-        $client = $this->entity;
-        $company = $client->company;
+        $relation = $this->entity;
+        $company = $relation->company;
 
-        return $company->formatMoney($client->paid_to_date, $client);
+        return $company->formatMoney($relation->paid_to_date, $relation);
     }
 }

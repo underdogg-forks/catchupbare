@@ -142,11 +142,11 @@
             )) !!}
 
     {!! Former::populateField('account_holder_type', 'individual') !!}
-    {!! Former::populateField('country_id', $client->country_id) !!}
-    {!! Former::populateField('currency_id', $client->getCurrencyCode()) !!}
+    {!! Former::populateField('country_id', $relation->country_id) !!}
+    {!! Former::populateField('currency_id', $relation->getCurrencyCode()) !!}
 
     @if (Utils::isNinjaDev())
-        {!! Former::populateField('account_holder_name', 'Test Client') !!}
+        {!! Former::populateField('account_holder_name', 'Test Relation') !!}
         <script>
             $(function() {
                 $('#routing_number').val('110000000');
@@ -238,7 +238,7 @@
                         ->large() !!}
 
         @if ($accGateway->getPlaidEnabled() && !empty($amount))
-            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
+            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $relation, CURRENCY_DECORATOR_CODE)  ))
                         ->submit()
                         ->withAttributes(['style'=>'display:none', 'id'=>'pay_now_button'])
                         ->large() !!}

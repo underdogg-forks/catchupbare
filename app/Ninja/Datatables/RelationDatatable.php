@@ -4,9 +4,9 @@ use Utils;
 use URL;
 use Auth;
 
-class ClientDatatable extends EntityDatatable
+class RelationDatatable extends EntityDatatable
 {
-    public $entityType = ENTITY_CLIENT;
+    public $entityType = ENTITY_RELATION;
     public $sortCol = 4;
 
     public function columns()
@@ -15,19 +15,19 @@ class ClientDatatable extends EntityDatatable
             [
                 'name',
                 function ($model) {
-                    return link_to("clients/{$model->id}", $model->name ?: '')->toHtml();
+                    return link_to("relations/{$model->id}", $model->name ?: '')->toHtml();
                 }
             ],
             [
                 'contact',
                 function ($model) {
-                    return link_to("clients/{$model->id}", $model->contact ?: '')->toHtml();
+                    return link_to("relations/{$model->id}", $model->contact ?: '')->toHtml();
                 }
             ],
             [
                 'email',
                 function ($model) {
-                    return link_to("clients/{$model->id}", $model->email ?: '')->toHtml();
+                    return link_to("relations/{$model->id}", $model->email ?: '')->toHtml();
                 }
             ],
             [
@@ -55,19 +55,19 @@ class ClientDatatable extends EntityDatatable
     {
         return [
             [
-                trans('texts.edit_client'),
+                trans('texts.edit_relation'),
                 function ($model) {
-                    return URL::to("clients/{$model->id}/edit");
+                    return URL::to("relations/{$model->id}/edit");
                 },
                 function ($model) {
-                    return Auth::user()->can('editByOwner', [ENTITY_CLIENT, $model->user_id]);
+                    return Auth::user()->can('editByOwner', [ENTITY_RELATION, $model->user_id]);
                 }
             ],
             [
                 '--divider--', function(){return false;},
                 function ($model) {
                     $user = Auth::user();
-                    return $user->can('editByOwner', [ENTITY_CLIENT, $model->user_id]) && ($user->can('create', ENTITY_TASK) || $user->can('create', ENTITY_INVOICE));
+                    return $user->can('editByOwner', [ENTITY_RELATION, $model->user_id]) && ($user->can('create', ENTITY_TASK) || $user->can('create', ENTITY_INVOICE));
                 }
             ],
             [

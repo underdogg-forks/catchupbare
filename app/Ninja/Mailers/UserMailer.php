@@ -57,7 +57,7 @@ class UserMailer extends Mailer
         $entityType = $invoice->getEntityType();
         $view = ($notificationType == 'approved' ? ENTITY_QUOTE : ENTITY_INVOICE) . "_{$notificationType}";
         $company = $user->company;
-        $client = $invoice->client;
+        $client = $invoice->relation;
 
         $data = [
             'entityType' => $entityType,
@@ -77,7 +77,7 @@ class UserMailer extends Mailer
 
         $subject = trans("texts.notification_{$entityType}_{$notificationType}_subject", [
             'invoice' => $invoice->invoice_number,
-            'client' => $client->getDisplayName()
+            'relation' => $client->getDisplayName()
         ]);
 
         $this->sendTo($user->email, CONTACT_EMAIL, CONTACT_NAME, $subject, $view, $data);

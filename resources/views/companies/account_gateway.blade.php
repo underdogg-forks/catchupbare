@@ -20,7 +20,7 @@
         {!! Former::populateField('publishable_key', $accGateway->getPublishableStripeKey() ? str_repeat('*', strlen($accGateway->getPublishableStripeKey())) : '') !!}
         {!! Former::populateField('enable_ach', $accGateway->getAchEnabled() ? 1 : 0) !!}
         {!! Former::populateField('enable_paypal', $accGateway->getPayPalEnabled() ? 1 : 0) !!}
-        {!! Former::populateField('plaid_client_id', $accGateway->getPlaidClientId() ? str_repeat('*', strlen($accGateway->getPlaidClientId())) : '') !!}
+        {!! Former::populateField('plaid_relation_id', $accGateway->getPlaidClientId() ? str_repeat('*', strlen($accGateway->getPlaidClientId())) : '') !!}
         {!! Former::populateField('plaid_secret', $accGateway->getPlaidSecret() ? str_repeat('*', strlen($accGateway->getPlaidSecret())) : '') !!}
         {!! Former::populateField('plaid_public_key', $accGateway->getPlaidPublicKey() ? str_repeat('*', strlen($accGateway->getPlaidPublicKey())) : '') !!}
 
@@ -168,7 +168,7 @@
                         <div class="help-block">{{trans('texts.plaid_optional')}}</div>
                     </div>
                 </div>
-                {!! Former::text('plaid_client_id')->label(trans('texts.client_id')) !!}
+                {!! Former::text('plaid_relation_id')->label(trans('texts.relation_id')) !!}
                 {!! Former::text('plaid_secret')->label(trans('texts.secret')) !!}
                 {!! Former::text('plaid_public_key')->label(trans('texts.public_key'))
                     ->help(trans('texts.plaid_environment_help')) !!}

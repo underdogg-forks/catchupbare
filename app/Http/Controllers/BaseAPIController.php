@@ -91,11 +91,11 @@ class BaseAPIController extends Controller
             $query->where('updated_at', '>=', date('Y-m-d H:i:s', $updatedAt));
         }
 
-        if ($clientPublicId = Input::get('client_id')) {
-            $filter = function($query) use ($clientPublicId) {
-                $query->where('public_id', '=', $clientPublicId);
+        if ($relationPublicId = Input::get('relation_id')) {
+            $filter = function($query) use ($relationPublicId) {
+                $query->where('public_id', '=', $relationPublicId);
             };
-            $query->whereHas('client', $filter);
+            $query->whereHas('relation', $filter);
         }
 
         if ( ! Utils::hasPermission('view_all')){
@@ -192,10 +192,10 @@ class BaseAPIController extends Controller
         foreach ($included as $include) {
             if ($include == 'invoices') {
                 $data[] = 'invoices.invoice_items';
-            } elseif ($include == 'client') {
-                $data[] = 'client.contacts';
-            } elseif ($include == 'clients') {
-                $data[] = 'clients.contacts';
+            } elseif ($include == 'relation') {
+                $data[] = 'relation.contacts';
+            } elseif ($include == 'relations') {
+                $data[] = 'relations.contacts';
             } elseif ($include == 'vendors') {
                 $data[] = 'vendors.vendor_contacts';
             } elseif ($include) {

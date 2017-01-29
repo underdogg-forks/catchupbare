@@ -2,7 +2,7 @@
 
 use Utils;
 use Auth;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Ninja\Repositories\ProjectRepository;
 use App\Ninja\Datatables\ProjectDatatable;
 
@@ -47,21 +47,21 @@ class ProjectService extends BaseService
      */
     public function save($data, $project = false)
     {
-        if (isset($data['client_id']) && $data['client_id']) {
-            $data['client_id'] = Client::getPrivateId($data['client_id']);
+        if (isset($data['relation_id']) && $data['relation_id']) {
+            $data['relation_id'] = Relation::getPrivateId($data['relation_id']);
         }
 
         return $this->projectRepo->save($data, $project);
     }
 
     /**
-     * @param $clientPublicId
+     * @param $relationPublicId
      * @param $search
      * @return \Illuminate\Http\JsonResponse
      */
     public function getDatatable($search, $userId)
     {
-        // we don't support bulk edit and hide the client on the individual client page
+        // we don't support bulk edit and hide the relation on the individual relation page
         $datatable = new ProjectDatatable();
 
         $query = $this->projectRepo->find($search, $userId);

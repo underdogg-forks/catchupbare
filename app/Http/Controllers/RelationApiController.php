@@ -1,20 +1,20 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests\ClientRequest;
+use App\Http\Requests\RelationRequest;
 use Response;
 use Input;
-use App\Models\Client;
-use App\Ninja\Repositories\ClientRepository;
-use App\Http\Requests\CreateClientRequest;
-use App\Http\Requests\UpdateClientRequest;
+use App\Models\Relation;
+use App\Ninja\Repositories\RelationRepository;
+use App\Http\Requests\CreateRelationRequest;
+use App\Http\Requests\UpdateRelationRequest;
 
 class ClientApiController extends BaseAPIController
 {
     protected $clientRepo;
 
-    protected $entityType = ENTITY_CLIENT;
+    protected $entityType = ENTITY_RELATION;
 
-    public function __construct(ClientRepository $clientRepo)
+    public function __construct(RelationRepository $clientRepo)
     {
         parent::__construct();
 
@@ -23,13 +23,13 @@ class ClientApiController extends BaseAPIController
 
     /**
      * @SWG\Get(
-     *   path="/clients",
-     *   summary="List of clients",
-     *   tags={"client"},
+     *   path="/relations",
+     *   summary="List of relations",
+     *   tags={"relation"},
      *   @SWG\Response(
      *     response=200,
-     *     description="A list with clients",
-     *      @SWG\Schema(type="array", @SWG\Items(ref="#/definitions/Client"))
+     *     description="A list with relations",
+     *      @SWG\Schema(type="array", @SWG\Items(ref="#/definitions/Relation"))
      *   ),
      *   @SWG\Response(
      *     response="default",
@@ -39,29 +39,29 @@ class ClientApiController extends BaseAPIController
      */
     public function index()
     {
-        $clients = Client::scope()
+        $relations = Relation::scope()
             ->orderBy('created_at', 'desc')
             ->withTrashed();
 
         // Filter by email
         if ($email = Input::get('email')) {
-            $clients = $clients->whereHas('contacts', function ($query) use ($email) {
+            $relations = $relations->whereHas('contacts', function ($query) use ($email) {
                 $query->where('email', $email);
             });
         }
 
-        return $this->listResponse($clients);
+        return $this->listResponse($relations);
     }
 
     /**
      * @SWG\Get(
-     *   path="/clients/{client_id}",
-     *   summary="Individual Client",
-     *   tags={"client"},
+     *   path="/relations/{relation_id}",
+     *   summary="Individual Relation",
+     *   tags={"relation"},
      *   @SWG\Response(
      *     response=200,
-     *     description="A single client",
-     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Client"))
+     *     description="A single relation",
+     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Relation"))
      *   ),
      *   @SWG\Response(
      *     response="default",
@@ -70,7 +70,7 @@ class ClientApiController extends BaseAPIController
      * )
      */
 
-    public function show(ClientRequest $request)
+    public function show(RelationRequest $request)
     {
         return $this->itemResponse($request->entity());
     }
@@ -80,18 +80,18 @@ class ClientApiController extends BaseAPIController
 
     /**
      * @SWG\Post(
-     *   path="/clients",
-     *   tags={"client"},
-     *   summary="Create a client",
+     *   path="/relations",
+     *   tags={"relation"},
+     *   summary="Create a relation",
      *   @SWG\Parameter(
      *     in="body",
      *     name="body",
-     *     @SWG\Schema(ref="#/definitions/Client")
+     *     @SWG\Schema(ref="#/definitions/Relation")
      *   ),
      *   @SWG\Response(
      *     response=200,
-     *     description="New client",
-     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Client"))
+     *     description="New relation",
+     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Relation"))
      *   ),
      *   @SWG\Response(
      *     response="default",
@@ -99,7 +99,7 @@ class ClientApiController extends BaseAPIController
      *   )
      * )
      */
-    public function store(CreateClientRequest $request)
+    public function store(CreateRelationRequest $request)
     {
         $client = $this->clientRepo->save($request->input());
 
@@ -108,18 +108,18 @@ class ClientApiController extends BaseAPIController
 
     /**
      * @SWG\Put(
-     *   path="/clients/{client_id}",
-     *   tags={"client"},
-     *   summary="Update a client",
+     *   path="/relations/{relation_id}",
+     *   tags={"relation"},
+     *   summary="Update a relation",
      *   @SWG\Parameter(
      *     in="body",
      *     name="body",
-     *     @SWG\Schema(ref="#/definitions/Client")
+     *     @SWG\Schema(ref="#/definitions/Relation")
      *   ),
      *   @SWG\Response(
      *     response=200,
-     *     description="Update client",
-     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Client"))
+     *     description="Update relation",
+     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Relation"))
      *   ),
      *   @SWG\Response(
      *     response="default",
@@ -128,7 +128,7 @@ class ClientApiController extends BaseAPIController
      * )
      */
 
-    public function update(UpdateClientRequest $request, $publicId)
+    public function update(UpdateRelationRequest $request, $publicId)
     {
         if ($request->action) {
             return $this->handleAction($request);
@@ -146,18 +146,18 @@ class ClientApiController extends BaseAPIController
 
     /**
      * @SWG\Delete(
-     *   path="/clients/{client_id}",
-     *   tags={"client"},
-     *   summary="Delete a client",
+     *   path="/relations/{relation_id}",
+     *   tags={"relation"},
+     *   summary="Delete a relation",
      *   @SWG\Parameter(
      *     in="body",
      *     name="body",
-     *     @SWG\Schema(ref="#/definitions/Client")
+     *     @SWG\Schema(ref="#/definitions/Relation")
      *   ),
      *   @SWG\Response(
      *     response=200,
-     *     description="Delete client",
-     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Client"))
+     *     description="Delete relation",
+     *      @SWG\Schema(type="object", @SWG\Items(ref="#/definitions/Relation"))
      *   ),
      *   @SWG\Response(
      *     response="default",
@@ -166,7 +166,7 @@ class ClientApiController extends BaseAPIController
      * )
      */
 
-    public function destroy(UpdateClientRequest $request)
+    public function destroy(UpdateRelationRequest $request)
     {
         $client = $request->entity();
 

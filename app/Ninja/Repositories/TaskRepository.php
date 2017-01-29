@@ -2,7 +2,7 @@
 
 use Auth;
 use Session;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Project;
 use App\Models\Task;
 
@@ -13,24 +13,24 @@ class TaskRepository extends BaseRepository
         return 'App\Models\Task';
     }
 
-    public function find($clientPublicId = null, $filter = null)
+    public function find($relationPublicId = null, $filter = null)
     {
         $query = \DB::table('tasks')
-                    ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
-                    ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
+                    ->leftJoin('relations', 'tasks.relation_id', '=', 'relations.id')
+                    ->leftJoin('contacts', 'contacts.relation_id', '=', 'relations.id')
                     ->leftJoin('invoices', 'invoices.id', '=', 'tasks.invoice_id')
                     ->leftJoin('projects', 'projects.id', '=', 'tasks.project_id')
                     ->where('tasks.company_id', '=', Auth::user()->company_id)
-                    ->where(function ($query) { // handle when client isn't set
+                    ->where(function ($query) { // handle when relation isn't set
                         $query->where('contacts.is_primary', '=', true)
                                 ->orWhere('contacts.is_primary', '=', null);
                     })
                     ->where('contacts.deleted_at', '=', null)
                     ->select(
                         'tasks.public_id',
-                        \DB::raw("COALESCE(NULLIF(clients.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) client_name"),
-                        'clients.public_id as client_public_id',
-                        'clients.user_id as client_user_id',
+                        \DB::raw("COALESCE(NULLIF(relations.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) relation_name"),
+                        'relations.public_id as relation_public_id',
+                        'relations.user_id as client_user_id',
                         'contacts.first_name',
                         'contacts.email',
                         'contacts.last_name',
@@ -54,10 +54,10 @@ class TaskRepository extends BaseRepository
                         'projects.user_id as project_user_id'
                     );
 
-        if ($clientPublicId) {
-            $query->where('clients.public_id', '=', $clientPublicId);
+        if ($relationPublicId) {
+            $query->where('relations.public_id', '=', $relationPublicId);
         } else {
-            $query->whereNull('clients.deleted_at');
+            $query->whereNull('relations.deleted_at');
         }
 
         $this->applyFilters($query, ENTITY_TASK);
@@ -86,7 +86,7 @@ class TaskRepository extends BaseRepository
 
         if ($filter) {
             $query->where(function ($query) use ($filter) {
-                $query->where('clients.name', 'like', '%'.$filter.'%')
+                $query->where('relations.name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.first_name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.last_name', 'like', '%'.$filter.'%')
                       ->orWhere('tasks.description', 'like', '%'.$filter.'%')
@@ -112,8 +112,8 @@ class TaskRepository extends BaseRepository
             return $task;
         }
 
-        if (isset($data['client'])) {
-            $task->client_id = $data['client'] ? Client::getPrivateId($data['client']) : null;
+        if (isset($data['relation'])) {
+            $task->relation_id = $data['relation'] ? Relation::getPrivateId($data['relation']) : null;
         }
         if (isset($data['project_id'])) {
             $task->project_id = $data['project_id'] ? Project::getPrivateId($data['project_id']) : null;

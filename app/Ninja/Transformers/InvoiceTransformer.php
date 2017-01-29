@@ -1,7 +1,7 @@
 <?php namespace App\Ninja\Transformers;
 
 use App\Models\Company;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Invoice;
 
 /**
@@ -14,7 +14,7 @@ class InvoiceTransformer extends EntityTransformer
     * @SWG\Property(property="id", type="integer", example=1, readOnly=true)
     * @SWG\Property(property="amount", type="float", example=10, readOnly=true)
     * @SWG\Property(property="balance", type="float", example=10, readOnly=true)
-    * @SWG\Property(property="client_id", type="integer", example=1)
+    * @SWG\Property(property="relation_id", type="integer", example=1)
     * @SWG\Property(property="invoice_number", type="string", example="0001")
     * @SWG\Property(property="invoice_status_id", type="integer", example=1)
     */
@@ -26,7 +26,7 @@ class InvoiceTransformer extends EntityTransformer
     protected $availableIncludes = [
         'invitations',
         'payments',
-        'client',
+        'relation',
         'documents',
     ];
 
@@ -34,7 +34,7 @@ class InvoiceTransformer extends EntityTransformer
     {
         parent::__construct($company, $serializer);
 
-        $this->client = $client;
+        $this->relation = $client;
     }
 
     public function includeInvoiceItems(Invoice $invoice)
@@ -58,7 +58,7 @@ class InvoiceTransformer extends EntityTransformer
     public function includeClient(Invoice $invoice)
     {
         $transformer = new ClientTransformer($this->company, $this->serializer);
-        return $this->includeItem($invoice->client, $transformer, ENTITY_CLIENT);
+        return $this->includeItem($invoice->relation, $transformer, ENTITY_RELATION);
     }
 
     public function includeExpenses(Invoice $invoice)
@@ -80,7 +80,7 @@ class InvoiceTransformer extends EntityTransformer
             'id' => (int) $invoice->public_id,
             'amount' => (float) $invoice->amount,
             'balance' => (float) $invoice->balance,
-            'client_id' => (int) ($this->client ? $this->client->public_id : $invoice->client->public_id),
+            'relation_id' => (int) ($this->relation ? $this->relation->id : $invoice->relation->id),
             'invoice_status_id' => (int) $invoice->invoice_status_id,
             'updated_at' => $this->getTimestamp($invoice->updated_at),
             'archived_at' => $this->getTimestamp($invoice->deleted_at),

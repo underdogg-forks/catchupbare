@@ -60,7 +60,7 @@
 @section('body')
 <div class="container">
 
-  {!! Former::open('/client/password/reset')->addClass('form-signin')->rules(array(
+  {!! Former::open('/relation/password/reset')->addClass('form-signin')->rules(array(
         'password' => 'required',
         'password_confirmation' => 'required',        
   )) !!}

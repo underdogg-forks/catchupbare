@@ -19,7 +19,7 @@
         ->onsubmit('onFormSubmit(event)')
         ->method($method)
         ->rules(array(
-    		'client' => 'required',
+    		'relation' => 'required',
     		'invoice' => 'required',
     		'amount' => 'required',
     	)) !!}
@@ -40,11 +40,11 @@
             <div class="panel-body">
 
             @if ($payment)
-             {!! Former::plaintext()->label('client')->value($payment->client->getDisplayName()) !!}
+             {!! Former::plaintext()->label('relation')->value($payment->relation->getDisplayName()) !!}
              {!! Former::plaintext()->label('invoice')->value($payment->invoice->getDisplayName()) !!}
              {!! Former::plaintext()->label('amount')->value($payment->present()->amount) !!}
             @else
-			 {!! Former::select('client')->addOption('', '')->addGroupClass('client-select') !!}
+			 {!! Former::select('relation')->addOption('', '')->addGroupClass('relation-select') !!}
 			 {!! Former::select('invoice')->addOption('', '')->addGroupClass('invoice-select') !!}
 			 {!! Former::text('amount') !!}
 
@@ -97,7 +97,7 @@
 	<script type="text/javascript">
 
 	var invoices = {!! $invoices !!};
-	var clients = {!! $clients !!};
+	var relations = {!! $relations !!};
 
 	$(function() {
 
@@ -108,13 +108,13 @@
           @endif
         @else
           $('#payment_date').datepicker('update', new Date());
-		  populateInvoiceComboboxes({{ $clientPublicId }}, {{ $invoicePublicId }});
+		  populateInvoiceComboboxes({{ $relationPublicId }}, {{ $invoicePublicId }});
         @endif
 
 		$('#payment_type_id').combobox();
 
-        @if (!$payment && !$clientPublicId)
-            $('.client-select input.form-control').focus();
+        @if (!$payment && !$relationPublicId)
+            $('.relation-select input.form-control').focus();
         @elseif (!$payment && !$invoicePublicId)
             $('.invoice-select input.form-control').focus();
         @elseif (!$payment)

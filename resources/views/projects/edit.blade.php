@@ -7,7 +7,7 @@
             ->method($method)
             ->rules([
                 'name' => 'required',
-				'client_id' => 'required',
+				'relation_id' => 'required',
             ]) !!}
 
     @if ($project)
@@ -28,13 +28,13 @@
             <div class="panel-body">
 
 				@if ($project)
-					{!! Former::plaintext('client_name')
-							->value($project->client->getDisplayName()) !!}
+					{!! Former::plaintext('relation_name')
+							->value($project->relation->getDisplayName()) !!}
 				@else
-					{!! Former::select('client_id')
+					{!! Former::select('relation_id')
 							->addOption('', '')
-							->label(trans('texts.client'))
-							->addGroupClass('client-select') !!}
+							->label(trans('texts.relation'))
+							->addGroupClass('relation-select') !!}
 				@endif
 
                 {!! Former::text('name') !!}
@@ -52,7 +52,7 @@
         {!! Button::success(trans('texts.save'))->submit()->large()->appendIcon(Icon::create('floppy-disk')) !!}
 		@if ($project && Auth::user()->can('create', ENTITY_TASK))
 	    	{!! Button::primary(trans('texts.new_task'))->large()
-					->asLinkTo(url("/tasks/create/{$project->client->public_id}/{$project->public_id}"))
+					->asLinkTo(url("/tasks/create/{$project->relation->id}/{$project->public_id}"))
 					->appendIcon(Icon::create('plus-sign')) !!}
 		@endif
 	</center>
@@ -61,28 +61,28 @@
 
     <script>
 
-		var clients = {!! $clients !!};
+		var relations = {!! $relations !!};
 
         $(function() {
-			var $clientSelect = $('select#client_id');
-            for (var i=0; i<clients.length; i++) {
-                var client = clients[i];
-                var clientName = getClientDisplayName(client);
+			var $clientSelect = $('select#relation_id');
+            for (var i=0; i<relations.length; i++) {
+                var relation = relations[i];
+                var clientName = getClientDisplayName(relation);
                 if (!clientName) {
                     continue;
                 }
-                $clientSelect.append(new Option(clientName, client.public_id));
+                $clientSelect.append(new Option(clientName, relation.public_id));
             }
-			@if ($clientPublicId)
-				$clientSelect.val({{ $clientPublicId }});
+			@if ($relationPublicId)
+				$clientSelect.val({{ $relationPublicId }});
 			@endif
 
 			$clientSelect.combobox();
 
-			@if ($clientPublicId)
+			@if ($relationPublicId)
 				$('#name').focus();
 			@else
-				$('.client-select input.form-control').focus();
+				$('.relation-select input.form-control').focus();
 			@endif
         });
 

@@ -34,14 +34,14 @@ class TaskService extends BaseService
     }
 
     /**
-     * @param $clientPublicId
+     * @param $relationPublicId
      * @param $search
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($clientPublicId, $search)
+    public function getDatatable($relationPublicId, $search)
     {
-        $datatable = new TaskDatatable(true, $clientPublicId);
-        $query = $this->taskRepo->find($clientPublicId, $search);
+        $datatable = new TaskDatatable(true, $relationPublicId);
+        $query = $this->taskRepo->find($relationPublicId, $search);
 
         if(!Utils::hasPermission('view_all')){
             $query->where('tasks.user_id', '=', Auth::user()->id);

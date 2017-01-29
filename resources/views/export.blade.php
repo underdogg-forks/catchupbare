@@ -5,9 +5,9 @@
     </tr>
     <tr><td></td></tr>
 
-    @if (isset($clients) && $clients && count($clients))
-        <tr><td>{{ strtoupper(trans('texts.clients')) }}</td></tr>
-        @include('export.clients')
+    @if (isset($relations) && $relations && count($relations))
+        <tr><td>{{ strtoupper(trans('texts.relations')) }}</td></tr>
+        @include('export.relations')
     @endif
 
     @if (isset($contacts) && $contacts && count($contacts))

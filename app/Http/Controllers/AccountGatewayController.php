@@ -266,7 +266,7 @@ class AccountGatewayController extends BaseController
                 $config->publishableKey = $oldConfig->publishableKey;
             }
 
-            $plaidClientId = trim(Input::get('plaid_client_id'));
+            $plaidClientId = trim(Input::get('plaid_relation_id'));
             if ($plaidClientId = str_replace('*', '', $plaidClientId)) {
                 $config->plaidClientId = $plaidClientId;
             } elseif ($oldConfig && property_exists($oldConfig, 'plaidClientId')) {
@@ -387,7 +387,7 @@ class AccountGatewayController extends BaseController
             $wepay = Utils::setupWePay();
 
             $userDetails = [
-                'client_id' => WEPAY_CLIENT_ID,
+                'relation_id' => WEPAY_CLIENT_ID,
                 'client_secret' => WEPAY_CLIENT_SECRET,
                 'email' => Input::get('email'),
                 'first_name' => Input::get('first_name'),

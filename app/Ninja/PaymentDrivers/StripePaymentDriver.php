@@ -111,7 +111,7 @@ class StripePaymentDriver extends BasePaymentDriver
     public function createToken()
     {
         $invoice = $this->invitation->invoice;
-        $client = $invoice->client;
+        $client = $invoice->relation;
 
         $data = $this->paymentDetails();
         $data['description'] = $client->getDisplayName();
@@ -226,11 +226,11 @@ class StripePaymentDriver extends BasePaymentDriver
 
     private function getPlaidToken($publicToken, $companyId)
     {
-        $clientId = $this->accGateway->getPlaidClientId();
+        $relationId = $this->accGateway->getPlaidClientId();
         $secret = $this->accGateway->getPlaidSecret();
 
-        if (!$clientId) {
-            throw new Exception('plaid client id not set'); // TODO use text strings
+        if (!$relationId) {
+            throw new Exception('plaid relation id not set'); // TODO use text strings
         }
 
         if (!$secret) {
@@ -246,7 +246,7 @@ class StripePaymentDriver extends BasePaymentDriver
                     'allow_redirects' => false,
                     'headers'  => ['content-type' => 'application/x-www-form-urlencoded'],
                     'body' => http_build_query([
-                        'client_id' => $clientId,
+                        'relation_id' => $relationId,
                         'secret' => $secret,
                         'public_token' => $publicToken,
                         'company_id' => $companyId,

@@ -3,7 +3,7 @@
 use Auth;
 use Carbon;
 use App\Models\Invoice;
-use App\Models\Client;
+use App\Models\Relation;
 
 /**
  * Class GeneratesNumbers
@@ -16,7 +16,7 @@ trait GeneratesNumbers
      */
     public function getNextNumber($entity = false)
     {
-        $entity = $entity ?: new Client();
+        $entity = $entity ?: new Relation();
         $entityType = $entity->getEntityType();
 
         $counter = $this->getCounter($entityType);
@@ -24,7 +24,7 @@ trait GeneratesNumbers
         $counterOffset = 0;
         $check = false;
 
-        if ($entityType == ENTITY_CLIENT && ! $this->clientNumbersEnabled()) {
+        if ($entityType == ENTITY_RELATION && ! $this->clientNumbersEnabled()) {
             return '';
         }
 
@@ -36,8 +36,8 @@ trait GeneratesNumbers
                 $number = $prefix . str_pad($counter, $this->invoice_number_padding, '0', STR_PAD_LEFT);
             }
 
-            if ($entity->isEntityType(ENTITY_CLIENT)) {
-                $check = Client::scope(false, $this->id)->whereIdNumber($number)->withTrashed()->first();
+            if ($entity->isEntityType(ENTITY_RELATION)) {
+                $check = Relation::scope(false, $this->id)->whereIdNumber($number)->withTrashed()->first();
             } else {
                 $check = Invoice::scope(false, $this->id)->whereInvoiceNumber($number)->withTrashed()->first();
             }
@@ -47,7 +47,7 @@ trait GeneratesNumbers
 
         // update the counter to be caught up
         if ($counterOffset > 1) {
-            if ($entity->isEntityType(ENTITY_CLIENT)) {
+            if ($entity->isEntityType(ENTITY_RELATION)) {
                 if ($this->clientNumbersEnabled()) {
                     $this->client_number_counter += $counterOffset - 1;
                     $this->save();
@@ -155,7 +155,7 @@ trait GeneratesNumbers
 
         $pattern = str_replace($search, $replace, $pattern);
 
-        if ($entity->client_id) {
+        if ($entity->relation_id) {
             $pattern = $this->getClientInvoiceNumber($pattern, $entity);
         }
 
@@ -169,7 +169,7 @@ trait GeneratesNumbers
      */
     private function getClientInvoiceNumber($pattern, $invoice)
     {
-        if (!$invoice->client) {
+        if (!$invoice->relation) {
             return $pattern;
         }
 
@@ -180,9 +180,9 @@ trait GeneratesNumbers
         ];
 
         $replace = [
-            $invoice->client->custom_value1,
-            $invoice->client->custom_value2,
-            $invoice->client->id_number,
+            $invoice->relation->custom_value1,
+            $invoice->relation->custom_value2,
+            $invoice->relation->id_number,
         ];
 
         return str_replace($search, $replace, $pattern);
@@ -194,7 +194,7 @@ trait GeneratesNumbers
      */
     public function getCounter($entityType)
     {
-        if ($entityType == ENTITY_CLIENT) {
+        if ($entityType == ENTITY_RELATION) {
             return $this->client_number_counter;
         } elseif ($entityType == ENTITY_QUOTE && ! $this->share_counter) {
             return $this->quote_number_counter;
@@ -218,7 +218,7 @@ trait GeneratesNumbers
      */
     public function incrementCounter($entity)
     {
-        if ($entity->isEntityType(ENTITY_CLIENT)) {
+        if ($entity->isEntityType(ENTITY_RELATION)) {
             if ($this->client_number_counter) {
                 $this->client_number_counter += 1;
             }

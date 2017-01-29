@@ -59,9 +59,9 @@ class $STUDLY_NAME$Repository extends BaseRepository
 
         /*
         if (!$publicId || $publicId == '-1') {
-            event(new ClientWasCreated($client));
+            event(new ClientWasCreated($relation));
         } else {
-            event(new ClientWasUpdated($client));
+            event(new ClientWasUpdated($relation));
         }
         */
 

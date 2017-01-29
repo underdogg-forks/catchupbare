@@ -38,7 +38,7 @@ class QuoteApiController extends BaseAPIController
          $invoices = Invoice::scope()
                          ->withTrashed()
                          ->quotes()
-                         ->with('invoice_items', 'client')
+                         ->with('invoice_items', 'relation')
                          ->orderBy('created_at', 'desc');
 
          return $this->listResponse($invoices);

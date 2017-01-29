@@ -71,7 +71,7 @@ class CreateVendorsTable extends Migration
             $table->unsignedInteger('vendor_id')->nullable();
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('invoice_id')->nullable();
-            $table->unsignedInteger('client_id')->nullable();
+            $table->unsignedInteger('relation_id')->nullable();
             $table->boolean('is_deleted')->default(false);
             $table->decimal('amount', 13, 2);
             $table->decimal('foreign_amount', 13, 2);

@@ -1,19 +1,19 @@
 <?php namespace App\Services;
 
 use Auth;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Ninja\Repositories\NinjaRepository;
-use App\Ninja\Datatables\ClientDatatable;
+use App\Ninja\Datatables\RelationDatatable;
 
 /**
- * Class ClientService
+ * Class RelationService
  */
-class ClientService extends BaseService
+class RelationService extends BaseService
 {
     /**
-     * @var ClientRepository
+     * @var RelationRepository
      */
-    protected $clientRepo;
+    protected $relationRepo;
 
     /**
      * @var DatatableService
@@ -21,24 +21,24 @@ class ClientService extends BaseService
     protected $datatableService;
 
     /**
-     * ClientService constructor.
-     * @param ClientRepository $clientRepo
+     * RelationService constructor.
+     * @param RelationRepository $clientRepo
      * @param DatatableService $datatableService
      * @param NinjaRepository $ninjaRepo
      */
-    public function __construct(ClientRepository $clientRepo, DatatableService $datatableService, NinjaRepository $ninjaRepo)
+    public function __construct(RelationRepository $clientRepo, DatatableService $datatableService, NinjaRepository $ninjaRepo)
     {
-        $this->clientRepo = $clientRepo;
+        $this->relationRepo = $clientRepo;
         $this->ninjaRepo = $ninjaRepo;
         $this->datatableService = $datatableService;
     }
 
     /**
-     * @return ClientRepository
+     * @return RelationRepository
      */
     protected function getRepo()
     {
-        return $this->clientRepo;
+        return $this->relationRepo;
     }
 
     /**
@@ -52,7 +52,7 @@ class ClientService extends BaseService
             $this->ninjaRepo->updatePlanDetails($data['public_id'], $data);
         }
 
-        return $this->clientRepo->save($data, $client);
+        return $this->relationRepo->save($data, $client);
     }
 
     /**
@@ -62,9 +62,9 @@ class ClientService extends BaseService
      */
     public function getDatatable($search, $userId)
     {
-        $datatable = new ClientDatatable();
+        $datatable = new RelationDatatable();
 
-        $query = $this->clientRepo->find($search, $userId);
+        $query = $this->relationRepo->find($search, $userId);
 
         return $this->datatableService->createDatatable($datatable, $query);
     }

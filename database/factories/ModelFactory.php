@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Client; 
+use App\Models\Relation; 
 use App\Models\Contact; 
 use App\Models\Country;
 
@@ -17,8 +17,8 @@ use App\Models\Country;
 
 $factory->define(Contact::class, function (Faker\Generator $faker) {
     return [
-        'client_id' => function() {
-            return factory(Client::class)->create()->id;
+        'relation_id' => function() {
+            return factory(Relation::class)->create()->id;
         },
         'user_id' => 1,
         'company_id' => 1,
@@ -32,11 +32,11 @@ $factory->define(Contact::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Client::class, function (Faker\Generator $faker) {
+$factory->define(Relation::class, function (Faker\Generator $faker) {
     return [
         'user_id' => 1,
         'company_id' => 1,
-        'public_id' => Client::count() + 1,
+        'public_id' => Relation::count() + 1,
         'name' => $faker->name,
         'address1' => $faker->streetAddress,
         'address2' => $faker->secondaryAddress,

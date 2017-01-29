@@ -1,6 +1,6 @@
 {!! trans('texts.email_salutation', ['name' => $userName]) !!}
 
-{!! trans("texts.notification_invoice_payment_failed", ['amount' => $paymentAmount, 'client' => $clientName, 'invoice' => $invoiceNumber]) !!}
+{!! trans("texts.notification_invoice_payment_failed", ['amount' => $paymentAmount, 'relation' => $clientName, 'invoice' => $invoiceNumber]) !!}
 
 {!! $payment->gateway_error !!}
 

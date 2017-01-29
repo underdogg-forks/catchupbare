@@ -4,18 +4,18 @@ use App\Models\Invoice;
 use Auth;
 use Utils;
 use App\Ninja\Repositories\InvoiceRepository;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Events\QuoteInvitationWasApproved;
 use App\Models\Invitation;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Ninja\Datatables\InvoiceDatatable;
 
 class InvoiceService extends BaseService
 {
     /**
-     * @var ClientRepository
+     * @var RelationRepository
      */
-    protected $clientRepo;
+    protected $relationRepo;
 
     /**
      * @var InvoiceRepository
@@ -30,17 +30,17 @@ class InvoiceService extends BaseService
     /**
      * InvoiceService constructor.
      *
-     * @param ClientRepository $clientRepo
+     * @param RelationRepository $relationRepo
      * @param InvoiceRepository $invoiceRepo
      * @param DatatableService $datatableService
      */
     public function __construct(
-        ClientRepository $clientRepo,
+        RelationRepository $relationRepo,
         InvoiceRepository $invoiceRepo,
         DatatableService $datatableService
     )
     {
-        $this->clientRepo = $clientRepo;
+        $this->relationRepo = $relationRepo;
         $this->invoiceRepo = $invoiceRepo;
         $this->datatableService = $datatableService;
     }
@@ -60,43 +60,43 @@ class InvoiceService extends BaseService
      */
     public function save(array $data, Invoice $invoice = null)
     {
-        if (isset($data['client'])) {
-            $canSaveClient = false;
-            $canViewClient = false;
-            $clientPublicId = array_get($data, 'client.public_id') ?: array_get($data, 'client.id');
-            if (empty($clientPublicId) || $clientPublicId == '-1') {
-                $canSaveClient = Auth::user()->can('create', ENTITY_CLIENT);
+        if (isset($data['relation'])) {
+            $canSaveRelation = false;
+            $canViewRelation = false;
+            $relationPublicId = array_get($data, 'relation.id') ?: array_get($data, 'relation.id');
+            if (empty($relationPublicId) || $relationPublicId == '-1') {
+                $canSaveRelation = Auth::user()->can('create', ENTITY_RELATION);
             } else {
-                $client = Client::scope($clientPublicId)->first();
-                $canSaveClient = Auth::user()->can('edit', $client);
-                $canViewClient = Auth::user()->can('view', $client);
+                $relation = Relation::scope($relationPublicId)->first();
+                $canSaveRelation = Auth::user()->can('edit', $relation);
+                $canViewRelation = Auth::user()->can('view', $relation);
             }
-            if ($canSaveClient) {
-                $client = $this->clientRepo->save($data['client']);
+            if ($canSaveRelation) {
+                $relation = $this->relationRepo->save($data['relation']);
             }
-            if ($canSaveClient || $canViewClient) {
-                $data['client_id'] = $client->id;
+            if ($canSaveRelation || $canViewRelation) {
+                $data['relation_id'] = $relation->id;
             }
         }
 
         $invoice = $this->invoiceRepo->save($data, $invoice);
 
-        $client = $invoice->client;
-        $client->load('contacts');
+        $relation = $invoice->relation;
+        $relation->load('contacts');
         $sendInvoiceIds = [];
 
-        foreach ($client->contacts as $contact) {
+        foreach ($relation->contacts as $contact) {
             if ($contact->send_invoice) {
                 $sendInvoiceIds[] = $contact->id;
             }
         }
 
-        // if no contacts are selected auto-select the first to enusre there's an invitation
+        // if no contacts are selected auto-select the first to ensure there's an invitation
         if ( ! count($sendInvoiceIds)) {
-            $sendInvoiceIds[] = $client->contacts[0]->id;
+            $sendInvoiceIds[] = $relation->contacts[0]->id;
         }
 
-        foreach ($client->contacts as $contact) {
+        foreach ($relation->contacts as $contact) {
             $invitation = Invitation::scope()->whereContactId($contact->id)->whereInvoiceId($invoice->id)->first();
 
             if (in_array($contact->id, $sendInvoiceIds) && !$invitation) {
@@ -157,12 +157,12 @@ class InvoiceService extends BaseService
         return $invitation->invitation_key;
     }
 
-    public function getDatatable($companyId, $clientPublicId = null, $entityType, $search)
+    public function getDatatable($companyId, $relationPublicId = null, $entityType, $search)
     {
-        $datatable = new InvoiceDatatable(true, $clientPublicId);
+        $datatable = new InvoiceDatatable(true, $relationPublicId);
         $datatable->entityType = $entityType;
 
-        $query = $this->invoiceRepo->getInvoices($companyId, $clientPublicId, $entityType, $search)
+        $query = $this->invoiceRepo->getInvoices($companyId, $relationPublicId, $entityType, $search)
                     ->where('invoices.invoice_type_id', '=', $entityType == ENTITY_QUOTE ? INVOICE_TYPE_QUOTE : INVOICE_TYPE_STANDARD);
 
         if(!Utils::hasPermission('view_all')){

@@ -60,7 +60,7 @@
 @section('body')
 <div class="container">
 
-{!! Former::open('client/recover_password')->addClass('form-signin') !!}
+{!! Former::open('relation/recover_password')->addClass('form-signin') !!}
     <div class="modal-header">
         @if (!isset($company) || !$company->hasFeature(FEATURE_WHITE_LABEL))
             <a href="{{ NINJA_WEB_URL }}" target="_blank">

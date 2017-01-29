@@ -24,9 +24,9 @@ class DocumentRepository extends BaseRepository
     public function find()
     {
         $accountid = \Auth::user()->company_id;
-        $query = DB::table('clients')
-                    ->join('companies', 'companies.id', '=', 'clients.company_id')
-                    ->leftjoin('clients', 'clients.id', '=', 'clients.client_id')
+        $query = DB::table('relations')
+                    ->join('companies', 'companies.id', '=', 'relations.company_id')
+                    ->leftjoin('relations', 'relations.id', '=', 'relations.relation_id')
                     ->where('documents.company_id', '=', $accountid)
                     ->select(
                         'documents.company_id',
@@ -184,11 +184,11 @@ class DocumentRepository extends BaseRepository
           ->join('companies', 'companies.id', '=', 'invitations.company_id')
           ->join('invoices', 'invoices.id', '=', 'invitations.invoice_id')
           ->join('documents', 'documents.invoice_id', '=', 'invitations.invoice_id')
-          ->join('clients', 'clients.id', '=', 'invoices.client_id')
+          ->join('relations', 'relations.id', '=', 'invoices.relation_id')
           ->where('invitations.contact_id', '=', $contactId)
           ->where('invitations.deleted_at', '=', null)
           ->where('invoices.is_deleted', '=', false)
-          ->where('clients.deleted_at', '=', null)
+          ->where('relations.deleted_at', '=', null)
           ->where('invoices.is_recurring', '=', false)
           ->where('invoices.is_public', '=', true)
           // TODO: This needs to be a setting to also hide the activity on the dashboard page
@@ -211,7 +211,7 @@ class DocumentRepository extends BaseRepository
             })
             ->addColumn('name', function ($model) {
                 return link_to(
-                    '/client/documents/'.$model->invitation_key.'/'.$model->public_id.'/'.$model->name,
+                    '/relation/documents/'.$model->invitation_key.'/'.$model->public_id.'/'.$model->name,
                     $model->name,
                     ['target'=>'_blank']
                 )->toHtml();

@@ -15,7 +15,7 @@ class CreateInvoiceIntent extends InvoiceIntent
         }
 
         $data = array_merge($this->requestFields(), [
-            'client_id' => $client->id,
+            'relation_id' => $client->id,
             'invoice_items' => $invoiceItems,
         ]);
 
@@ -35,7 +35,7 @@ class CreateInvoiceIntent extends InvoiceIntent
         }, $invoice->invoice_items->toArray());
 
         $this->setStateEntityType(ENTITY_INVOICE);
-        $this->setStateEntities(ENTITY_CLIENT, $client->public_id);
+        $this->setStateEntities(ENTITY_RELATION, $client->public_id);
         $this->setStateEntities(ENTITY_INVOICE, $invoice->public_id);
         $this->setStateEntities(ENTITY_INVOICE_ITEM, $invoiceItemIds);
 

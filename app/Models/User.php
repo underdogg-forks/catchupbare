@@ -207,7 +207,7 @@ class User extends Authenticatable
      */
     public function getMaxNumClients()
     {
-        if ($this->hasFeature(FEATURE_MORE_CLIENTS)) {
+        if ($this->hasFeature(FEATURE_MORE_RELATIONS)) {
             return MAX_NUM_CLIENTS_PRO;
         }
 
@@ -223,7 +223,7 @@ class User extends Authenticatable
      */
     public function getMaxNumVendors()
     {
-        if ($this->hasFeature(FEATURE_MORE_CLIENTS)) {
+        if ($this->hasFeature(FEATURE_MORE_RELATIONS)) {
             return MAX_NUM_VENDORS_PRO;
         }
 

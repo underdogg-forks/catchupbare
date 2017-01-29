@@ -17,7 +17,7 @@
 
     <p>&nbsp;</p>
 
-    @if (isset($amount) && $client && $company->showTokenCheckbox())
+    @if (isset($amount) && $relation && $company->showTokenCheckbox())
         <input id="token_billing" type="checkbox" name="token_billing" {{ $company->selectTokenCheckbox() ? 'CHECKED' : '' }} value="1" style="margin-left:0px; vertical-align:top">
         <label for="token_billing" class="checkbox" style="display: inline;">{{ trans('texts.token_billing_braintree_paypal') }}</label>
         <span class="help-block" style="font-size:15px">
@@ -29,7 +29,7 @@
 
     <center>
         @if(isset($amount))
-            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
+            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $relation, CURRENCY_DECORATOR_CODE)  ))
                             ->submit()
                             ->large() !!}
         @else

@@ -39,7 +39,7 @@ class CreatePaymentAPIRequest extends PaymentRequest
 
         $this->merge([
             'invoice_id' => $invoice->id,
-            'client_id' => $invoice->client->id,
+            'relation_id' => $invoice->relation->id,
         ]);
 
         $rules = [
@@ -47,7 +47,7 @@ class CreatePaymentAPIRequest extends PaymentRequest
         ];
 
         if ($this->payment_type_id == PAYMENT_TYPE_CREDIT) {
-            $rules['payment_type_id'] = 'has_credit:' . $invoice->client->public_id . ',' . $this->amount;
+            $rules['payment_type_id'] = 'has_credit:' . $invoice->relation->id . ',' . $this->amount;
         }
 
         return $rules;

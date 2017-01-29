@@ -125,7 +125,7 @@ class NinjaController extends BaseController
             'hideHeader' => true,
             'url' => 'license',
             'amount' => $affiliate->price,
-            'client' => false,
+            'relation' => false,
             'contact' => false,
             'gateway' => $gateway,
             'company' => $company,
@@ -185,7 +185,7 @@ class NinjaController extends BaseController
                 $details = self::getLicensePaymentDetails(Input::all(), $affiliate);
 
                 $gateway = Omnipay::create($accGateway->gateway->provider);
-                $gateway->initialize((array) $accGateway->getConfig());
+                $gateway->initialize((array)$accGateway->getConfig());
                 $response = $gateway->purchase($details)->send();
 
                 $ref = $response->getTransactionReference();
@@ -220,7 +220,7 @@ class NinjaController extends BaseController
             $this->contactMailer->sendLicensePaymentConfirmation($name, $license->email, $affiliate->price, $license->license_key, $license->product_id);
 
             if (Session::has('return_url')) {
-                $data['redirectTo'] = Session::get('return_url')."?license_key={$license->license_key}&product_id=".Session::get('product_id');
+                $data['redirectTo'] = Session::get('return_url') . "?license_key={$license->license_key}&product_id=" . Session::get('product_id');
                 $data['message'] = 'Redirecting to ' . Session::get('return_url');
             }
 
@@ -240,9 +240,9 @@ class NinjaController extends BaseController
         $productId = Input::get('product_id', PRODUCT_ONE_CLICK_INSTALL);
 
         $license = License::where('license_key', '=', $licenseKey)
-                    ->where('is_claimed', '<', 10)
-                    ->where('product_id', '=', $productId)
-                    ->first();
+            ->where('is_claimed', '<', 10)
+            ->where('product_id', '=', $productId)
+            ->first();
 
         if ($license) {
             if ($license->transaction_reference != 'TEST_MODE') {
@@ -284,6 +284,6 @@ class NinjaController extends BaseController
         $corporation->plan = null;
         $corporation->save();
 
-		return RESULT_SUCCESS;
-	}
+        return RESULT_SUCCESS;
+    }
 }

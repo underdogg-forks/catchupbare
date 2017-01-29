@@ -10,7 +10,7 @@ class ProfitAndLossReport extends AbstractReport
 {
     public $columns = [
         'type',
-        'client',
+        'relation',
         'amount',
         'date',
         'notes',
@@ -21,12 +21,12 @@ class ProfitAndLossReport extends AbstractReport
         $company = Auth::user()->company;
 
         $payments = Payment::scope()
-                        ->with('client.contacts')
+                        ->with('relation.contacts')
                         ->withArchived()
                         ->excludeFailed();
 
         foreach ($payments->get() as $payment) {
-            $client = $payment->client;
+            $client = $payment->relation;
             $this->data[] = [
                 trans('texts.payment'),
                 $client ? ($this->isExport ? $client->getDisplayName() : $client->present()->link) : '',
@@ -42,11 +42,11 @@ class ProfitAndLossReport extends AbstractReport
 
 
         $expenses = Expense::scope()
-                        ->with('client.contacts')
+                        ->with('relation.contacts')
                         ->withArchived();
 
         foreach ($expenses->get() as $expense) {
-            $client = $expense->client;
+            $client = $expense->relation;
             $this->data[] = [
                 trans('texts.expense'),
                 $client ? ($this->isExport ? $client->getDisplayName() : $client->present()->link) : '',

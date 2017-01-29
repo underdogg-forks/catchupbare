@@ -40,9 +40,9 @@ return [
             'provider' => 'users',
         ],
         
-        'client' => [
+        'relation' => [
             'driver' => 'session',
-            'provider' => 'client',
+            'provider' => 'relation',
         ],
 
         'api' => [
@@ -74,7 +74,7 @@ return [
             'model' => App\Models\User::class,
         ],
         
-        'client' => [
+        'relation' => [
             'driver' => 'eloquent',
             'model' => App\Models\Contact::class,
         ]
@@ -106,8 +106,8 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
         ],
-        'client' => [
-            'provider' => 'client',
+        'relation' => [
+            'provider' => 'relation',
             'email' => 'emails.client_password',
             'table' => 'password_resets',
             'expire' => 60,

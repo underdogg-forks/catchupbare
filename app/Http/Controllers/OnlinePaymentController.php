@@ -11,14 +11,14 @@ use Exception;
 use Validator;
 use App\Models\Invitation;
 use App\Models\Company;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\PaymentMethod;
 use App\Services\PaymentService;
 use App\Ninja\Mailers\UserMailer;
 use App\Http\Requests\CreateOnlinePaymentRequest;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Services\InvoiceService;
 use App\Models\GatewayType;
@@ -75,14 +75,14 @@ class OnlinePaymentController extends BaseController
             return redirect()->to('view/' . $invitation->invitation_key);
         }
 
-        $invitation = $invitation->load('invoice.client.company.acc_gateways.gateway');
+        $invitation = $invitation->load('invoice.relation.company.acc_gateways.gateway');
         $company = $invitation->company;
 
         if ($company->requiresAuthorization($invitation->invoice) && ! session('authorized:' . $invitation->invitation_key)) {
             return redirect()->to('view/' . $invitation->invitation_key);
         }
 
-        $company->loadLocalizationSettings($invitation->invoice->client);
+        $company->loadLocalizationSettings($invitation->invoice->relation);
 
         if ( ! $gatewayTypeAlias) {
             $gatewayTypeId = Session::get($invitation->id . 'gateway_type');
@@ -138,7 +138,7 @@ class OnlinePaymentController extends BaseController
     public function offsitePayment($invitationKey = false, $gatewayTypeAlias = false)
     {
         $invitationKey = $invitationKey ?: Session::get('invitation_key');
-        $invitation = Invitation::with('invoice.invoice_items', 'invoice.client.currency', 'invoice.client.company.acc_gateways.gateway')
+        $invitation = Invitation::with('invoice.invoice_items', 'invoice.relation.currency', 'invoice.relation.company.acc_gateways.gateway')
                         ->where('invitation_key', '=', $invitationKey)->firstOrFail();
 
         if ( ! $gatewayTypeAlias) {
@@ -268,7 +268,7 @@ class OnlinePaymentController extends BaseController
         }
     }
 
-    public function handleBuyNow(ClientRepository $clientRepo, InvoiceService $invoiceService, $gatewayTypeAlias = false)
+    public function handleBuyNow(RelationRepository $clientRepo, InvoiceService $invoiceService, $gatewayTypeAlias = false)
     {
         if (Crawler::isCrawler()) {
             return redirect()->to(NINJA_WEB_URL, 301);
@@ -289,10 +289,10 @@ class OnlinePaymentController extends BaseController
             return redirect()->to("{$failureUrl}/?error=invalid product");
         }
 
-        // check for existing client using contact_key
+        // check for existing relation using contact_key
         $client = false;
         if ($contactKey = Input::get('contact_key')) {
-            $client = Client::scope()->whereHas('contacts', function ($query) use ($contactKey) {
+            $client = Relation::scope()->whereHas('contacts', function ($query) use ($contactKey) {
                 $query->where('contact_key', $contactKey);
             })->first();
         }
@@ -316,7 +316,7 @@ class OnlinePaymentController extends BaseController
         }
 
         $data = [
-            'client_id' => $client->id,
+            'relation_id' => $client->id,
             'tax_rate1' => $company->default_tax_rate ? $company->default_tax_rate->rate : 0,
             'tax_name1' => $company->default_tax_rate ? $company->default_tax_rate->name : '',
             'invoice_items' => [[

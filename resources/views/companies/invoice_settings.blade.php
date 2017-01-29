@@ -125,11 +125,11 @@
                                     ])->check($company->client_number_pattern ? 'pattern' : 'prefix') !!}
 
                             {!! Former::text('client_number_prefix')
-                                    ->addGroupClass('client-prefix')
+                                    ->addGroupClass('relation-prefix')
                                     ->label(trans('texts.prefix')) !!}
                             {!! Former::text('client_number_pattern')
                                     ->appendIcon('question-sign')
-                                    ->addGroupClass('client-pattern')
+                                    ->addGroupClass('relation-pattern')
                                     ->addGroupClass('number-pattern')
                                     ->label(trans('texts.pattern')) !!}
                             {!! Former::text('client_number_counter')
@@ -165,7 +165,7 @@
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist" style="border: none">
                     <li role="presentation" class="active">
-                        <a href="#client_fields" aria-controls="client_fields" role="tab" data-toggle="tab">{{ trans('texts.client_fields') }}</a>
+                        <a href="#relation_fields" aria-controls="relation_fields" role="tab" data-toggle="tab">{{ trans('texts.relation_fields') }}</a>
                     </li>
                     <li role="presentation">
                         <a href="#corporation_fields" aria-controls="corporation_fields" role="tab" data-toggle="tab">{{ trans('texts.corporation_fields') }}</a>
@@ -182,14 +182,14 @@
                 </ul>
             </div>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="client_fields">
+                <div role="tabpanel" class="tab-pane active" id="relation_fields">
                     <div class="panel-body">
 
                         {!! Former::text('custom_client_label1')
                                 ->label(trans('texts.field_label')) !!}
                         {!! Former::text('custom_client_label2')
                                 ->label(trans('texts.field_label'))
-                                ->help(trans('texts.custom_client_fields_helps')) !!}
+                                ->help(trans('texts.custom_relation_fields_helps')) !!}
 
                     </div>
                 </div>
@@ -384,11 +384,11 @@
     function onClientNumberTypeChange() {
         var val = $('input[name=client_number_type]:checked').val()
         if (val == 'prefix') {
-            $('.client-prefix').show();
-            $('.client-pattern').hide();
+            $('.relation-prefix').show();
+            $('.relation-pattern').hide();
         } else {
-            $('.client-prefix').hide();
-            $('.client-pattern').show();
+            $('.relation-prefix').hide();
+            $('.relation-pattern').show();
         }
     }
 

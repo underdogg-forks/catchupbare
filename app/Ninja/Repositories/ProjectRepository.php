@@ -21,11 +21,11 @@ class ProjectRepository extends BaseRepository
     {
         $query = DB::table('projects')
                 ->where('projects.company_id', '=', Auth::user()->company_id)
-                ->leftjoin('clients', 'clients.id', '=', 'projects.client_id')
-                ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
+                ->leftjoin('relations', 'relations.id', '=', 'projects.relation_id')
+                ->leftJoin('contacts', 'contacts.relation_id', '=', 'relations.id')
                 ->where('contacts.deleted_at', '=', null)
-                ->where('clients.deleted_at', '=', null)
-                ->where(function ($query) { // handle when client isn't set
+                ->where('relations.deleted_at', '=', null)
+                ->where(function ($query) { // handle when relation isn't set
                     $query->where('contacts.is_primary', '=', true)
                           ->orWhere('contacts.is_primary', '=', null);
                 })
@@ -35,16 +35,16 @@ class ProjectRepository extends BaseRepository
                     'projects.user_id',
                     'projects.deleted_at',
                     'projects.is_deleted',
-                    DB::raw("COALESCE(NULLIF(clients.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) client_name"),
-                    'clients.user_id as client_user_id',
-                    'clients.public_id as client_public_id'
+                    DB::raw("COALESCE(NULLIF(relations.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) relation_name"),
+                    'relations.user_id as client_user_id',
+                    'relations.public_id as relation_public_id'
                 );
 
         $this->applyFilters($query, ENTITY_PROJECT);
 
         if ($filter) {
             $query->where(function ($query) use ($filter) {
-                $query->where('clients.name', 'like', '%'.$filter.'%')
+                $query->where('relations.name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.first_name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.last_name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.email', 'like', '%'.$filter.'%')
@@ -65,7 +65,7 @@ class ProjectRepository extends BaseRepository
 
         if ( ! $project) {
             $project = Project::createNew();
-            $project['client_id'] = $input['client_id'];
+            $project['relation_id'] = $input['relation_id'];
         }
 
         $project->fill($input);

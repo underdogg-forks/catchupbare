@@ -78,7 +78,7 @@ class LoginController extends Controller
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
-        // the IP address of the client making these requests into this application.
+        // the IP address of the relation making these requests into this application.
         //$throttles = $this->isUsingThrottlesLoginsTrait();
 
 

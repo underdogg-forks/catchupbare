@@ -5,12 +5,12 @@ use Input;
 use Utils;
 use Illuminate\Http\Request;
 use App\Libraries\HistoryUtils;
-use App\Models\Client;
+use App\Models\Relation;
 
 
-class ClientRequest extends EntityRequest {
+class RelationRequest extends EntityRequest {
 
-    protected $entityType = ENTITY_CLIENT;
+    protected $entityType = ENTITY_RELATION;
 
     public function entity()
     {
@@ -20,9 +20,9 @@ class ClientRequest extends EntityRequest {
         }*/
 
 
-        $the_client_id = Input::get('client_id');
+        $the_client_id = Input::get('relation_id');
         dd($the_client_id);
-        //$client = Client::scope($the_client_id)->withTrashed()->firstOrFail();
+        //$client = Relation::scope($the_client_id)->withTrashed()->firstOrFail();
         
         // eager load the contacts
         if ($client && ! $client->relationLoaded('contacts')) {

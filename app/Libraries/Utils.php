@@ -745,10 +745,10 @@ class Utils
         return ucwords(Utils::toCamelCase($entityType));
     }
 
-    public static function getClientDisplayName($model)
+    public static function getRelationDisplayName($model)
     {
-        if ($model->client_name) {
-            return $model->client_name;
+        if ($model->relation_name) {
+            return $model->relation_name;
         } elseif ($model->first_name || $model->last_name) {
             return $model->first_name.' '.$model->last_name;
         } else {
@@ -791,7 +791,7 @@ class Utils
     public static function lookupEventId($eventName)
     {
         if ($eventName == 'create_client') {
-            return EVENT_CREATE_CLIENT;
+            return EVENT_CREATE_RELATION;
         } elseif ($eventName == 'create_invoice') {
             return EVENT_CREATE_INVOICE;
         } elseif ($eventName == 'create_quote') {
@@ -1117,7 +1117,7 @@ class Utils
         $second = count($parts) > 1 ? $parts[1] : false;
 
         $entityTypes = [
-            'clients',
+            'relations',
             'invoices',
             'payments',
             'recurring_invoices',

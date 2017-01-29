@@ -117,8 +117,8 @@ class DashboardRepository
         $timeframe = 'concat(YEAR('.$entityType.'_date), '.$groupBy.'('.$entityType.'_date))';
 
         $records = DB::table($entityType.'s')
-            ->leftJoin('clients', 'clients.id', '=', $entityType.'s.client_id')
-            ->whereRaw('(clients.id IS NULL OR clients.is_deleted = 0)')
+            ->leftJoin('relations', 'relations.id', '=', $entityType.'s.relation_id')
+            ->whereRaw('(relations.id IS NULL OR relations.is_deleted = 0)')
             ->where($entityType.'s.company_id', '=', $companyId)
             ->where($entityType.'s.is_deleted', '=', false)
             ->where($entityType.'s.'.$entityType.'_date', '>=', $startDate->format('Y-m-d'))
@@ -128,9 +128,9 @@ class DashboardRepository
         if ($entityType == ENTITY_EXPENSE) {
             $records->where('expenses.expense_currency_id', '=', $currencyId);
         } elseif ($currencyId == $company->getCurrencyId()) {
-            $records->whereRaw("(clients.currency_id = {$currencyId} or coalesce(clients.currency_id, 0) = 0)");
+            $records->whereRaw("(relations.currency_id = {$currencyId} or coalesce(relations.currency_id, 0) = 0)");
         } else {
-            $records->where('clients.currency_id', '=', $currencyId);
+            $records->where('relations.currency_id', '=', $currencyId);
         }
 
         if ($entityType == ENTITY_INVOICE) {
@@ -151,19 +151,19 @@ class DashboardRepository
 
     public function totals($companyId, $userId, $viewAll)
     {
-        // total_income, billed_clients, invoice_sent and active_clients
+        // total_income, billed_relations, invoice_sent and active_clients
         $select = DB::raw(
-            'COUNT(DISTINCT CASE WHEN '.DB::getQueryGrammar()->wrap('invoices.id', true).' IS NOT NULL THEN '.DB::getQueryGrammar()->wrap('clients.id', true).' ELSE null END) billed_clients,
+            'COUNT(DISTINCT CASE WHEN '.DB::getQueryGrammar()->wrap('invoices.id', true).' IS NOT NULL THEN '.DB::getQueryGrammar()->wrap('relations.id', true).' ELSE null END) billed_relations,
             SUM(CASE WHEN '.DB::getQueryGrammar()->wrap('invoices.invoice_status_id', true).' >= '.INVOICE_STATUS_SENT.' THEN 1 ELSE 0 END) invoices_sent,
-            COUNT(DISTINCT '.DB::getQueryGrammar()->wrap('clients.id', true).') active_clients'
+            COUNT(DISTINCT '.DB::getQueryGrammar()->wrap('relations.id', true).') active_clients'
         );
 
         $metrics = DB::table('companies')
             ->select($select)
-            ->leftJoin('clients', 'companies.id', '=', 'clients.company_id')
-            ->leftJoin('invoices', 'clients.id', '=', 'invoices.client_id')
+            ->leftJoin('relations', 'companies.id', '=', 'relations.company_id')
+            ->leftJoin('invoices', 'relations.id', '=', 'invoices.relation_id')
             ->where('companies.id', '=', $companyId)
-            ->where('clients.is_deleted', '=', false)
+            ->where('relations.is_deleted', '=', false)
             ->where('invoices.is_deleted', '=', false)
             ->where('invoices.is_recurring', '=', false)
             ->where('invoices.invoice_type_id', '=', INVOICE_TYPE_STANDARD);
@@ -173,7 +173,7 @@ class DashboardRepository
                 $query->where('invoices.user_id', '=', $userId);
                 $query->orwhere(function($query) use($userId){
                     $query->where('invoices.user_id', '=', null);
-                    $query->where('clients.user_id', '=', $userId);
+                    $query->where('relations.user_id', '=', $userId);
                 });
             });
         }
@@ -186,14 +186,14 @@ class DashboardRepository
         $companyId = $company->id;
         $select = DB::raw(
             'SUM('.DB::getQueryGrammar()->wrap('payments.amount', true).' - '.DB::getQueryGrammar()->wrap('payments.refunded', true).') as value,'
-                  .DB::getQueryGrammar()->wrap('clients.currency_id', true).' as currency_id'
+                  .DB::getQueryGrammar()->wrap('relations.currency_id', true).' as currency_id'
         );
         $paidToDate = DB::table('payments')
             ->select($select)
             ->leftJoin('invoices', 'invoices.id', '=', 'payments.invoice_id')
-            ->leftJoin('clients', 'clients.id', '=', 'invoices.client_id')
+            ->leftJoin('relations', 'relations.id', '=', 'invoices.relation_id')
             ->where('payments.company_id', '=', $companyId)
-            ->where('clients.is_deleted', '=', false)
+            ->where('relations.is_deleted', '=', false)
             ->where('invoices.is_deleted', '=', false)
             ->where('payments.is_deleted', '=', false)
             ->whereNotIn('payments.payment_status_id', [PAYMENT_STATUS_VOIDED, PAYMENT_STATUS_FAILED]);
@@ -210,7 +210,7 @@ class DashboardRepository
         }
 
         return $paidToDate->groupBy('payments.company_id')
-            ->groupBy(DB::raw('CASE WHEN '.DB::getQueryGrammar()->wrap('clients.currency_id', true).' IS NULL THEN '.($company->currency_id ?: DEFAULT_CURRENCY).' ELSE '.DB::getQueryGrammar()->wrap('clients.currency_id', true).' END'))
+            ->groupBy(DB::raw('CASE WHEN '.DB::getQueryGrammar()->wrap('relations.currency_id', true).' IS NULL THEN '.($company->currency_id ?: DEFAULT_CURRENCY).' ELSE '.DB::getQueryGrammar()->wrap('relations.currency_id', true).' END'))
             ->get();
     }
 
@@ -219,14 +219,14 @@ class DashboardRepository
         $companyId = $company->id;
         $select = DB::raw(
             'AVG('.DB::getQueryGrammar()->wrap('invoices.amount', true).') as invoice_avg, '
-                  .DB::getQueryGrammar()->wrap('clients.currency_id', true).' as currency_id'
+                  .DB::getQueryGrammar()->wrap('relations.currency_id', true).' as currency_id'
         );
         $averageInvoice = DB::table('companies')
             ->select($select)
-            ->leftJoin('clients', 'companies.id', '=', 'clients.company_id')
-            ->leftJoin('invoices', 'clients.id', '=', 'invoices.client_id')
+            ->leftJoin('relations', 'companies.id', '=', 'relations.company_id')
+            ->leftJoin('invoices', 'relations.id', '=', 'invoices.relation_id')
             ->where('companies.id', '=', $companyId)
-            ->where('clients.is_deleted', '=', false)
+            ->where('relations.is_deleted', '=', false)
             ->where('invoices.is_deleted', '=', false)
             ->where('invoices.invoice_type_id', '=', INVOICE_TYPE_STANDARD)
             ->where('invoices.is_recurring', '=', false);
@@ -241,26 +241,26 @@ class DashboardRepository
         }
 
         return $averageInvoice->groupBy('companies.id')
-            ->groupBy(DB::raw('CASE WHEN '.DB::getQueryGrammar()->wrap('clients.currency_id', true).' IS NULL THEN CASE WHEN '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' IS NULL THEN 1 ELSE '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' END ELSE '.DB::getQueryGrammar()->wrap('clients.currency_id', true).' END'))
+            ->groupBy(DB::raw('CASE WHEN '.DB::getQueryGrammar()->wrap('relations.currency_id', true).' IS NULL THEN CASE WHEN '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' IS NULL THEN 1 ELSE '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' END ELSE '.DB::getQueryGrammar()->wrap('relations.currency_id', true).' END'))
             ->get();
     }
 
     public function balances($companyId, $userId, $viewAll)
     {
         $select = DB::raw(
-            'SUM('.DB::getQueryGrammar()->wrap('clients.balance', true).') as value, '
-                  .DB::getQueryGrammar()->wrap('clients.currency_id', true).' as currency_id'
+            'SUM('.DB::getQueryGrammar()->wrap('relations.balance', true).') as value, '
+                  .DB::getQueryGrammar()->wrap('relations.currency_id', true).' as currency_id'
         );
         $balances = DB::table('companies')
             ->select($select)
-            ->leftJoin('clients', 'companies.id', '=', 'clients.company_id')
+            ->leftJoin('relations', 'companies.id', '=', 'relations.company_id')
             ->where('companies.id', '=', $companyId)
-            ->where('clients.is_deleted', '=', false)
+            ->where('relations.is_deleted', '=', false)
             ->groupBy('companies.id')
-            ->groupBy(DB::raw('CASE WHEN '.DB::getQueryGrammar()->wrap('clients.currency_id', true).' IS NULL THEN CASE WHEN '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' IS NULL THEN 1 ELSE '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' END ELSE '.DB::getQueryGrammar()->wrap('clients.currency_id', true).' END'));
+            ->groupBy(DB::raw('CASE WHEN '.DB::getQueryGrammar()->wrap('relations.currency_id', true).' IS NULL THEN CASE WHEN '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' IS NULL THEN 1 ELSE '.DB::getQueryGrammar()->wrap('companies.currency_id', true).' END ELSE '.DB::getQueryGrammar()->wrap('relations.currency_id', true).' END'));
 
         if (!$viewAll) {
-            $balances->where('clients.user_id', '=', $userId);
+            $balances->where('relations.user_id', '=', $userId);
         }
 
         return $balances->get();
@@ -276,7 +276,7 @@ class DashboardRepository
         }
 
         return $activities->orderBy('activities.created_at', 'desc')
-                ->with('client.contacts', 'user', 'invoice', 'payment', 'credit', 'company', 'task', 'expense', 'contact')
+                ->with('relation.contacts', 'user', 'invoice', 'payment', 'credit', 'company', 'task', 'expense', 'contact')
                 ->take(50)
                 ->get();
     }
@@ -284,10 +284,10 @@ class DashboardRepository
     public function pastDue($companyId, $userId, $viewAll)
     {
         $pastDue = DB::table('invoices')
-                    ->leftJoin('clients', 'clients.id', '=', 'invoices.client_id')
-                    ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
+                    ->leftJoin('relations', 'relations.id', '=', 'invoices.relation_id')
+                    ->leftJoin('contacts', 'contacts.relation_id', '=', 'relations.id')
                     ->where('invoices.company_id', '=', $companyId)
-                    ->where('clients.deleted_at', '=', null)
+                    ->where('relations.deleted_at', '=', null)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('invoices.is_recurring', '=', false)
                     ->where('invoices.quote_invoice_id', '=', null)
@@ -301,7 +301,7 @@ class DashboardRepository
             $pastDue = $pastDue->where('invoices.user_id', '=', $userId);
         }
 
-        return $pastDue->select(['invoices.due_date', 'invoices.balance', 'invoices.public_id', 'invoices.invoice_number', 'clients.name as client_name', 'contacts.email', 'contacts.first_name', 'contacts.last_name', 'clients.currency_id', 'clients.public_id as client_public_id', 'clients.user_id as client_user_id', 'invoice_type_id'])
+        return $pastDue->select(['invoices.due_date', 'invoices.balance', 'invoices.public_id', 'invoices.invoice_number', 'relations.name as relation_name', 'contacts.email', 'contacts.first_name', 'contacts.last_name', 'relations.currency_id', 'relations.public_id as relation_public_id', 'relations.user_id as client_user_id', 'invoice_type_id'])
                     ->orderBy('invoices.due_date', 'asc')
                     ->take(50)
                     ->get();
@@ -310,10 +310,10 @@ class DashboardRepository
     public function upcoming($companyId, $userId, $viewAll)
     {
         $upcoming = DB::table('invoices')
-                    ->leftJoin('clients', 'clients.id', '=', 'invoices.client_id')
-                    ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
+                    ->leftJoin('relations', 'relations.id', '=', 'invoices.relation_id')
+                    ->leftJoin('contacts', 'contacts.relation_id', '=', 'relations.id')
                     ->where('invoices.company_id', '=', $companyId)
-                    ->where('clients.deleted_at', '=', null)
+                    ->where('relations.deleted_at', '=', null)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('invoices.deleted_at', '=', null)
                     ->where('invoices.is_recurring', '=', false)
@@ -329,20 +329,20 @@ class DashboardRepository
         }
 
         return $upcoming->take(50)
-                    ->select(['invoices.due_date', 'invoices.balance', 'invoices.public_id', 'invoices.invoice_number', 'clients.name as client_name', 'contacts.email', 'contacts.first_name', 'contacts.last_name', 'clients.currency_id', 'clients.public_id as client_public_id', 'clients.user_id as client_user_id', 'invoice_type_id'])
+                    ->select(['invoices.due_date', 'invoices.balance', 'invoices.public_id', 'invoices.invoice_number', 'relations.name as relation_name', 'contacts.email', 'contacts.first_name', 'contacts.last_name', 'relations.currency_id', 'relations.public_id as relation_public_id', 'relations.user_id as client_user_id', 'invoice_type_id'])
                     ->get();
     }
 
     public function payments($companyId, $userId, $viewAll)
     {
         $payments = DB::table('payments')
-                    ->leftJoin('clients', 'clients.id', '=', 'payments.client_id')
-                    ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
+                    ->leftJoin('relations', 'relations.id', '=', 'payments.relation_id')
+                    ->leftJoin('contacts', 'contacts.relation_id', '=', 'relations.id')
                     ->leftJoin('invoices', 'invoices.id', '=', 'payments.invoice_id')
                     ->where('payments.company_id', '=', $companyId)
                     ->where('payments.is_deleted', '=', false)
                     ->where('invoices.is_deleted', '=', false)
-                    ->where('clients.is_deleted', '=', false)
+                    ->where('relations.is_deleted', '=', false)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('contacts.is_primary', '=', true)
                     ->whereNotIn('payments.payment_status_id', [PAYMENT_STATUS_VOIDED, PAYMENT_STATUS_FAILED]);
@@ -351,7 +351,7 @@ class DashboardRepository
             $payments = $payments->where('payments.user_id', '=', $userId);
         }
 
-        return $payments->select(['payments.payment_date', DB::raw('(payments.amount - payments.refunded) as amount'), 'invoices.public_id', 'invoices.invoice_number', 'clients.name as client_name', 'contacts.email', 'contacts.first_name', 'contacts.last_name', 'clients.currency_id', 'clients.public_id as client_public_id', 'clients.user_id as client_user_id'])
+        return $payments->select(['payments.payment_date', DB::raw('(payments.amount - payments.refunded) as amount'), 'invoices.public_id', 'invoices.invoice_number', 'relations.name as relation_name', 'contacts.email', 'contacts.first_name', 'contacts.last_name', 'relations.currency_id', 'relations.public_id as relation_public_id', 'relations.user_id as client_user_id'])
                     ->orderBy('payments.payment_date', 'desc')
                     ->take(50)
                     ->get();

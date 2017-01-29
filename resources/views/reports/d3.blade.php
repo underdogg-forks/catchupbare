@@ -46,7 +46,7 @@
   <form class="form-inline" role="form">
     Group By &nbsp;&nbsp;
     <select id="groupBySelect" class="form-control" onchange="update()" style="background-color:white !important">
-      <option>Clients</option>
+      <option>Relations</option>
       <option>Invoices</option>
       <option>Products</option>
     </select>
@@ -60,19 +60,19 @@
   <script type="text/javascript">
 
     // store data as JSON
-    var data = {!! $clients !!};
+    var data = {!! $relations !!};
 
-    _.each(data, function(client) { 
-      _.each(client.invoices, function(invoice) { 
+    _.each(data, function(relation) {
+      _.each(relation.invoices, function(invoice) {
         _.each(invoice.invoice_items, function(invoice_item) { 
           invoice_item.invoice = invoice;          
         });
       });
     });
 
-    // pre-process the possible groupings (clients, invoices and products)
-    var clients = data.concat();
-    var invoices = _.flatten(_.pluck(clients, 'invoices'));
+    // pre-process the possible groupings (relations, invoices and products)
+    var relations = data.concat();
+    var invoices = _.flatten(_.pluck(relations, 'invoices'));
 
     // remove quotes and recurring invoices
     invoices = _.filter(invoices, function(invoice) {       
@@ -97,13 +97,13 @@
       .entries(products);    
 
     // create standardized display properties
-    _.each(clients, function(client) {
-      client.displayName = getClientDisplayName(client);
-      client.displayTotal = +client.paid_to_date + +client.balance;
-      client.displayBalance = +client.balance;
-      client.displayPercent = (+client.paid_to_date / (+client.paid_to_date + +client.balance)).toFixed(2);
-      var oldestInvoice = _.max(client.invoices, function(invoice) { return calculateInvoiceAge(invoice) });      
-      client.displayAge = oldestInvoice ? calculateInvoiceAge(oldestInvoice) : -1;
+    _.each(relations, function(relation) {
+      relation.displayName = getClientDisplayName(relation);
+      relation.displayTotal = +relation.paid_to_date + +relation.balance;
+      relation.displayBalance = +relation.balance;
+      relation.displayPercent = (+relation.paid_to_date / (+relation.paid_to_date + +relation.balance)).toFixed(2);
+      var oldestInvoice = _.max(relation.invoices, function(invoice) { return calculateInvoiceAge(invoice) });
+      relation.displayAge = oldestInvoice ? calculateInvoiceAge(oldestInvoice) : -1;
     });    
     
     _.each(invoices, function(invoice) {
@@ -122,7 +122,7 @@
       product.displayAge = product.values.age;
     });
 
-    //console.log(JSON.stringify(clients));
+    //console.log(JSON.stringify(relations));
     //console.log(JSON.stringify(invoices));
     //console.log(JSON.stringify(products));
     

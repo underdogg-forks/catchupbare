@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests;
 
-use App\Models\Client;
+use App\Models\Relation;
 
 class CreateInvoiceAPIRequest extends InvoiceRequest
 {
@@ -22,8 +22,8 @@ class CreateInvoiceAPIRequest extends InvoiceRequest
     public function rules()
     {
         $rules = [
-            'email' => 'required_without:client_id',
-            'client_id' => 'required_without:email',
+            'email' => 'required_without:relation_id',
+            'relation_id' => 'required_without:email',
             'invoice_items' => 'valid_invoice_items',
             'invoice_number' => 'unique:invoices,invoice_number,,id,company_id,' . $this->user()->company_id,
             'discount' => 'positive',
@@ -34,8 +34,8 @@ class CreateInvoiceAPIRequest extends InvoiceRequest
         ];
 
         if ($this->user()->company->client_number_counter) {
-            $clientId = Client::getPrivateId(request()->input('client')['public_id']);
-            $rules['client.id_number'] = 'unique:clients,id_number,'.$clientId.',id,company_id,' . $this->user()->company_id;
+            $relationId = Relation::getPrivateId(request()->input('relation')['public_id']);
+            $rules['relation.id_number'] = 'unique:relations,id_number,'.$relationId.',id,company_id,' . $this->user()->company_id;
         }
 
         return $rules;

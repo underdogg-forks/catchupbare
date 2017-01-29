@@ -49,9 +49,9 @@ class Activity extends Eloquent
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
     /**
@@ -90,7 +90,7 @@ class Activity extends Eloquent
 
     public function key()
     {
-        return sprintf('%s-%s-%s', $this->activity_type_id, $this->client_id, $this->created_at->timestamp);
+        return sprintf('%s-%s-%s', $this->activity_type_id, $this->relation_id, $this->created_at->timestamp);
     }
 
     /**
@@ -100,7 +100,7 @@ class Activity extends Eloquent
     {
         $activityTypeId = $this->activity_type_id;
         $company = $this->company;
-        $client = $this->client;
+        $client = $this->relation;
         $user = $this->user;
         $invoice = $this->invoice;
         $contactId = $this->contact_id;
@@ -111,7 +111,7 @@ class Activity extends Eloquent
         $task = $this->task;
 
         $data = [
-            'client' => $client ? link_to($client->getRoute(), $client->getDisplayName()) : null,
+            'relation' => $client ? link_to($client->getRoute(), $client->getDisplayName()) : null,
             'user' => $isSystem ? '<i>' . trans('texts.system') . '</i>' : $user->getDisplayName(),
             'invoice' => $invoice ? link_to($invoice->getRoute(), $invoice->getDisplayName()) : null,
             'quote' => $invoice ? link_to($invoice->getRoute(), $invoice->getDisplayName()) : null,

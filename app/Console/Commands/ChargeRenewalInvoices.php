@@ -60,7 +60,7 @@ class ChargeRenewalInvoices extends Command
         $invoices = Invoice::whereCompanyId($ninjaAccount->id)
                         ->whereDueDate(date('Y-m-d'))
                         ->where('balance', '>', 0)
-                        ->with('client')
+                        ->with('relation')
                         ->orderBy('id')
                         ->get();
 
@@ -69,7 +69,7 @@ class ChargeRenewalInvoices extends Command
         foreach ($invoices as $invoice) {
 
             // check if company has switched to free since the invoice was created
-            $company = Company::find($invoice->client->public_id);
+            $company = Company::find($invoice->relation->id);
 
             if ( ! $company) {
                 continue;

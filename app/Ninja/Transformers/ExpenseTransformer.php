@@ -8,7 +8,7 @@ class ExpenseTransformer extends EntityTransformer
     {
         parent::__construct($company, $serializer);
 
-        $this->client = $client;
+        $this->relation = $client;
     }
 
     public function transform(Expense $expense)
@@ -33,7 +33,7 @@ class ExpenseTransformer extends EntityTransformer
             'tax_name2' => $expense->tax_name2,
             'tax_rate1' => $expense->tax_rate1,
             'tax_rate2' => $expense->tax_rate2,
-            'client_id' => $this->client ? $this->client->public_id : (isset($expense->client->public_id) ? (int) $expense->client->public_id : null),
+            'relation_id' => $this->relation ? $this->relation->id : (isset($expense->relation->id) ? (int) $expense->relation->id : null),
             'invoice_id' => isset($expense->invoice->public_id) ? (int) $expense->invoice->public_id : null,
             'vendor_id' => isset($expense->vendor->public_id) ? (int) $expense->vendor->public_id : null,
         ]);

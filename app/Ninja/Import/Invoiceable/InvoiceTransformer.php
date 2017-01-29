@@ -14,7 +14,7 @@ class InvoiceTransformer extends BaseTransformer
      */
     public function transform($data)
     {
-        if ( ! $this->getClientId($data->client_name)) {
+        if ( ! $this->getClientId($data->relation_name)) {
             return false;
         }
 
@@ -24,7 +24,7 @@ class InvoiceTransformer extends BaseTransformer
 
         return new Item($data, function ($data) {
             return [
-                'client_id' => $this->getClientId($data->client_name),
+                'relation_id' => $this->getClientId($data->relation_name),
                 'invoice_number' => $this->getInvoiceNumber($data->ref),
                 'po_number' => $this->getString($data, 'po_number'),
                 'invoice_date_sql' => $data->date,

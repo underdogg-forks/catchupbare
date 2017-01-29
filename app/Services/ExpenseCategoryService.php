@@ -50,13 +50,13 @@ class ExpenseCategoryService extends BaseService
     }
 
     /**
-     * @param $clientPublicId
+     * @param $relationPublicId
      * @param $search
      * @return \Illuminate\Http\JsonResponse
      */
     public function getDatatable($search)
     {
-        // we don't support bulk edit and hide the client on the individual client page
+        // we don't support bulk edit and hide the relation on the individual relation page
         $datatable = new ExpenseCategoryDatatable();
 
         $query = $this->categoryRepo->find($search);

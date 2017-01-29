@@ -4,7 +4,7 @@ use Auth;
 use Utils;
 use Illuminate\Console\Command;
 use Faker\Factory;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Ninja\Repositories\InvoiceRepository;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Repositories\VendorRepository;
@@ -32,14 +32,14 @@ class CreateTestData extends Command
 
     /**
      * CreateTestData constructor.
-     * @param ClientRepository $clientRepo
+     * @param RelationRepository $clientRepo
      * @param InvoiceRepository $invoiceRepo
      * @param PaymentRepository $paymentRepo
      * @param VendorRepository $vendorRepo
      * @param ExpenseRepository $expenseRepo
      */
     public function __construct(
-        ClientRepository $clientRepo,
+        RelationRepository $clientRepo,
         InvoiceRepository $invoiceRepo,
         PaymentRepository $paymentRepo,
         VendorRepository $vendorRepo,
@@ -95,7 +95,7 @@ class CreateTestData extends Command
             ];
 
             $client = $this->clientRepo->save($data);
-            $this->info('Client: ' . $client->name);
+            $this->info('Relation: ' . $client->name);
 
             $this->createInvoices($client);
         }
@@ -108,7 +108,7 @@ class CreateTestData extends Command
     {
         for ($i=0; $i<$this->count; $i++) {
             $data = [
-                'client_id' => $client->id,
+                'relation_id' => $client->id,
                 'invoice_date_sql' => date_create()->modify(rand(-100, 100) . ' days')->format('Y-m-d'),
                 'due_date_sql' => date_create()->modify(rand(-100, 100) . ' days')->format('Y-m-d'),
                 'invoice_items' => [[
@@ -134,7 +134,7 @@ class CreateTestData extends Command
     {
         $data = [
             'invoice_id' => $invoice->id,
-            'client_id' => $client->id,
+            'relation_id' => $client->id,
             'amount' => $this->faker->randomFloat(2, 0, $invoice->amount),
             'payment_date_sql' => date_create()->modify(rand(-100, 100) . ' days')->format('Y-m-d'),
         ];

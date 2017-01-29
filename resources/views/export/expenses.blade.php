@@ -1,6 +1,6 @@
 <tr>
     <td>{{ trans('texts.vendor') }}</td>
-    <td>{{ trans('texts.client') }}</td>
+    <td>{{ trans('texts.relation') }}</td>
     @if ($multiUser)
         <td>{{ trans('texts.user') }}</td>
     @endif
@@ -14,7 +14,7 @@
 @foreach ($expenses as $expense)
     <tr>
         <td>{{ $expense->vendor ? $expense->vendor->getDisplayName() : '' }}</td>
-        <td>{{ $expense->client ? $expense->client->getDisplayName() : '' }}</td>
+        <td>{{ $expense->relation ? $expense->relation->getDisplayName() : '' }}</td>
         @if ($multiUser)
             <td>{{ $expense->user->getDisplayName() }}</td>
         @endif

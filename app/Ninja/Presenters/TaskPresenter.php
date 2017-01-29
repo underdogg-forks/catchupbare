@@ -8,9 +8,9 @@ class TaskPresenter extends EntityPresenter
     /**
      * @return string
      */
-    public function client()
+    public function relation()
     {
-        return $this->entity->client ? $this->entity->client->getDisplayName() : '';
+        return $this->entity->relation ? $this->entity->relation->getDisplayName() : '';
     }
 
     /**

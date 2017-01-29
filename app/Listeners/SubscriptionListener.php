@@ -30,8 +30,8 @@ class SubscriptionListener
      */
     public function createdClient(ClientWasCreated $event)
     {
-        $transformer = new ClientTransformer($event->client->company);
-        $this->checkSubscriptions(EVENT_CREATE_CLIENT, $event->client, $transformer);
+        $transformer = new ClientTransformer($event->relation->company);
+        $this->checkSubscriptions(EVENT_CREATE_RELATION, $event->relation, $transformer);
     }
 
     /**
@@ -40,7 +40,7 @@ class SubscriptionListener
     public function createdQuote(QuoteWasCreated $event)
     {
         $transformer = new InvoiceTransformer($event->quote->company);
-        $this->checkSubscriptions(EVENT_CREATE_QUOTE, $event->quote, $transformer, ENTITY_CLIENT);
+        $this->checkSubscriptions(EVENT_CREATE_QUOTE, $event->quote, $transformer, ENTITY_RELATION);
     }
 
     /**
@@ -49,7 +49,7 @@ class SubscriptionListener
     public function createdPayment(PaymentWasCreated $event)
     {
         $transformer = new PaymentTransformer($event->payment->company);
-        $this->checkSubscriptions(EVENT_CREATE_PAYMENT, $event->payment, $transformer, [ENTITY_CLIENT, ENTITY_INVOICE]);
+        $this->checkSubscriptions(EVENT_CREATE_PAYMENT, $event->payment, $transformer, [ENTITY_RELATION, ENTITY_INVOICE]);
     }
 
     /**
@@ -58,7 +58,7 @@ class SubscriptionListener
     public function createdInvoice(InvoiceWasCreated $event)
     {
         $transformer = new InvoiceTransformer($event->invoice->company);
-        $this->checkSubscriptions(EVENT_CREATE_INVOICE, $event->invoice, $transformer, ENTITY_CLIENT);
+        $this->checkSubscriptions(EVENT_CREATE_INVOICE, $event->invoice, $transformer, ENTITY_RELATION);
     }
 
     /**
@@ -91,7 +91,7 @@ class SubscriptionListener
     public function updatedInvoice(InvoiceWasUpdated $event)
     {
 	    $transformer = new InvoiceTransformer($event->invoice->company);
-	    $this->checkSubscriptions(EVENT_UPDATE_INVOICE, $event->invoice, $transformer, ENTITY_CLIENT);
+	    $this->checkSubscriptions(EVENT_UPDATE_INVOICE, $event->invoice, $transformer, ENTITY_RELATION);
     }
 
     /**
@@ -100,7 +100,7 @@ class SubscriptionListener
     public function deletedInvoice(InvoiceWasDeleted $event)
     {
 	    $transformer = new InvoiceTransformer($event->invoice->company);
-	    $this->checkSubscriptions(EVENT_DELETE_INVOICE, $event->invoice, $transformer, ENTITY_CLIENT);
+	    $this->checkSubscriptions(EVENT_DELETE_INVOICE, $event->invoice, $transformer, ENTITY_RELATION);
     }
 
     /**
@@ -109,7 +109,7 @@ class SubscriptionListener
     public function updatedQuote(QuoteWasUpdated $event)
     {
 	    $transformer = new InvoiceTransformer($event->quote->company);
-	    $this->checkSubscriptions(EVENT_UPDATE_QUOTE, $event->quote, $transformer, ENTITY_CLIENT);
+	    $this->checkSubscriptions(EVENT_UPDATE_QUOTE, $event->quote, $transformer, ENTITY_RELATION);
     }
 
     /**
@@ -118,7 +118,7 @@ class SubscriptionListener
     public function deletedQuote(QuoteWasDeleted $event)
     {
 	    $transformer = new InvoiceTransformer($event->quote->company);
-	    $this->checkSubscriptions(EVENT_DELETE_QUOTE, $event->quote, $transformer, ENTITY_CLIENT);
+	    $this->checkSubscriptions(EVENT_DELETE_QUOTE, $event->quote, $transformer, ENTITY_RELATION);
     }
 
     /**
@@ -144,8 +144,8 @@ class SubscriptionListener
             $data = $manager->createData($resource)->toArray();
 
             // For legacy Zapier support
-            if (isset($data['client_id'])) {
-                $data['client_name'] = $entity->client->getDisplayName();
+            if (isset($data['relation_id'])) {
+                $data['relation_name'] = $entity->relation->getDisplayName();
             }
 
             Utils::notifyZapier($subscription, $data);

@@ -41,7 +41,7 @@ class TaskApiController extends BaseAPIController
     {
         $tasks = Task::scope()
                         ->withTrashed()
-                        ->with('client', 'invoice', 'project')
+                        ->with('relation', 'invoice', 'project')
                         ->orderBy('created_at', 'desc');
 
         return $this->listResponse($tasks);
@@ -73,12 +73,12 @@ class TaskApiController extends BaseAPIController
         $data = Input::all();
         $taskId = isset($data['id']) ? $data['id'] : false;
 
-        if (isset($data['client_id']) && $data['client_id']) {
-            $data['client'] = $data['client_id'];
+        if (isset($data['relation_id']) && $data['relation_id']) {
+            $data['relation'] = $data['relation_id'];
         }
 
         $task = $this->taskRepo->save($taskId, $data);
-        $task = Task::scope($task->public_id)->with('client')->first();
+        $task = Task::scope($task->public_id)->with('relation')->first();
 
         $transformer = new TaskTransformer(Auth::user()->company, Input::get('serializer'));
         $data = $this->createItem($task, $transformer, 'task');

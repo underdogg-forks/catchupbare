@@ -7,7 +7,7 @@ use View;
 use Cache;
 use DropdownButton;
 use App\Models\Invoice;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Ninja\Repositories\PaymentRepository;
 use App\Ninja\Mailers\ContactMailer;
 use App\Services\PaymentService;
@@ -69,12 +69,12 @@ class PaymentController extends BaseController
     }
 
     /**
-     * @param null $clientPublicId
+     * @param null $relationPublicId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDatatable($clientPublicId = null)
+    public function getDatatable($relationPublicId = null)
     {
-        return $this->paymentService->getDatatable($clientPublicId, Input::get('sSearch'));
+        return $this->paymentService->getDatatable($relationPublicId, Input::get('sSearch'));
     }
 
     /**
@@ -86,11 +86,11 @@ class PaymentController extends BaseController
         $invoices = Invoice::scope()
                     ->invoices()
                     ->where('invoices.balance', '>', 0)
-                    ->with('client', 'invoice_status')
+                    ->with('relation', 'invoice_status')
                     ->orderBy('invoice_number')->get();
 
         $data = [
-            'clientPublicId' => Input::old('client') ? Input::old('client') : ($request->client_id ?: 0),
+            'clientPublicId' => Input::old('relation') ? Input::old('relation') : ($request->relation_id ?: 0),
             'invoicePublicId' => Input::old('invoice') ? Input::old('invoice') : ($request->invoice_id ?: 0),
             'invoice' => null,
             'invoices' => $invoices,
@@ -99,7 +99,7 @@ class PaymentController extends BaseController
             'url' => 'payments',
             'title' => trans('texts.new_payment'),
             'paymentTypeId' => Input::get('paymentTypeId'),
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(), ];
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(), ];
 
         return View::make('payments.edit', $data);
     }
@@ -138,12 +138,12 @@ class PaymentController extends BaseController
         }
 
         $data = [
-            'client' => null,
+            'relation' => null,
             'invoice' => null,
             'invoices' => Invoice::scope()
                             ->invoices()
                             ->whereIsPublic(true)
-                            ->with('client', 'invoice_status')
+                            ->with('relation', 'invoice_status')
                             ->orderBy('invoice_number')->get(),
             'payment' => $payment,
             'entity' => $payment,
@@ -152,7 +152,7 @@ class PaymentController extends BaseController
             'title' => trans('texts.edit_payment'),
             'actions' => $actions,
             'paymentTypes' => Cache::get('paymentTypes'),
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
         ];
 
         return View::make('payments.edit', $data);
@@ -169,17 +169,17 @@ class PaymentController extends BaseController
 
         $input = $request->input();
         $input['invoice_id'] = Invoice::getPrivateId($input['invoice']);
-        $input['client_id'] = Client::getPrivateId($input['client']);
+        $input['relation_id'] = Relation::getPrivateId($input['relation']);
         $payment = $this->paymentRepo->save($input);
 
         if (Input::get('email_receipt')) {
             $this->contactMailer->sendPaymentConfirmation($payment);
-            Session::flash('message', trans('texts.created_payment_emailed_client'));
+            Session::flash('message', trans('texts.created_payment_emailed_relation'));
         } else {
             Session::flash('message', trans('texts.created_payment'));
         }
 
-        return redirect()->to($payment->client->getRoute() . '#payments');
+        return redirect()->to($payment->relation->getRoute() . '#payments');
     }
 
     /**

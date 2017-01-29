@@ -19,7 +19,7 @@ class BaseIntent
             foreach (['current', 'previous'] as $reference) {
                 $state->$reference = new stdClass;
                 $state->$reference->entityType = false;
-                foreach ([ENTITY_INVOICE, ENTITY_CLIENT, ENTITY_INVOICE_ITEM] as $entityType) {
+                foreach ([ENTITY_INVOICE, ENTITY_RELATION, ENTITY_INVOICE_ITEM] as $entityType) {
                     $state->$reference->$entityType = [];
                 }
             }
@@ -124,7 +124,7 @@ class BaseIntent
 
     protected function requestClient()
     {
-        $clientRepo = app('App\Ninja\Repositories\ClientRepository');
+        $clientRepo = app('App\Ninja\Repositories\RelationRepository');
         $client = false;
 
         foreach ($this->data->entities as $param) {

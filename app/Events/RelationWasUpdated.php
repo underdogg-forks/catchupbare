@@ -1,6 +1,6 @@
 <?php namespace App\Events;
 
-use App\Models\Client;
+use App\Models\Relation;
 use Illuminate\Queue\SerializesModels;
 
 /**
@@ -11,17 +11,17 @@ class ClientWasUpdated extends Event
     use SerializesModels;
 
     /**
-     * @var Client
+     * @var Relation
      */
     public $client;
 
     /**
      * Create a new event instance.
      *
-     * @param Client $client
+     * @param Relation $client
      */
-    public function __construct(Client $client)
+    public function __construct(Relation $client)
     {
-        $this->client = $client;
+        $this->relation = $client;
     }
 }

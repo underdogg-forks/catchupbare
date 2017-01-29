@@ -97,7 +97,7 @@ AddDefaultCharset utf-8
     # response header (this will NOT make Apache compress them!).
 
     # If the following file types wouldn't be served without the appropriate
-    # `Content-Enable` HTTP response header, client applications (e.g.:
+    # `Content-Enable` HTTP response header, relation applications (e.g.:
     # browsers) wouldn't know that they first need to uncompress the response,
     # and thus, wouldn't be able to understand the content.
 

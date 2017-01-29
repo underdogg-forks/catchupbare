@@ -18,7 +18,7 @@ class PaymentTransformer extends BaseTransformer
             return [
                 'amount' => (float) $data->total - (float) $data->balance,
                 'payment_date_sql' => $data->last_payment_date,
-                'client_id' => $data->client_id,
+                'relation_id' => $data->relation_id,
                 'invoice_id' => $data->invoice_id,
             ];
         });

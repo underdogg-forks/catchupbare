@@ -32,7 +32,7 @@ class CreateOnlinePaymentRequest extends Request
     {
         $input = $this->all();
 
-        $invitation = Invitation::with('invoice.invoice_items', 'invoice.client.currency', 'invoice.client.company.currency', 'invoice.client.company.acc_gateways.gateway')
+        $invitation = Invitation::with('invoice.invoice_items', 'invoice.relation.currency', 'invoice.relation.company.currency', 'invoice.relation.company.acc_gateways.gateway')
             ->where('invitation_key', '=', $this->invitation_key)
             ->firstOrFail();
 

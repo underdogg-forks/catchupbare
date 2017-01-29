@@ -40,7 +40,7 @@
                                 {{ trans('texts.' . $invoice->present()->balanceDueLabel) }}:
                             </span><br />
                             <span class="total" style="font-size: 26px; display: block;margin-top: 5px;">
-                                {{ $company->formatMoney($invoice->getRequestedAmount(), $client) }}
+                                {{ $company->formatMoney($invoice->getRequestedAmount(), $relation) }}
                             </span>
                         </p>
                     </td>

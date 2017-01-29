@@ -36,7 +36,7 @@
               <div class="col-md-3"><div>?</div></div>
               <div class="col-md-3 key-label">{{ trans('texts.help') }}</div>
               <div class="col-md-3"><div>N</div><div>C</div></div>
-              <div class="col-md-3 key-label">{{ trans('texts.new_client') }}</div>
+              <div class="col-md-3 key-label">{{ trans('texts.new_relation') }}</div>
           </div>
           <div class="row">
               <div class="col-md-3"><div>/</div></div>
@@ -119,7 +119,7 @@
             'p' => ENTITY_PAYMENT,
             'e' => ENTITY_EXPENSE,
             't' => ENTITY_TASK,
-            'c' => ENTITY_CLIENT,
+            'c' => ENTITY_RELATION,
             'q' => ENTITY_QUOTE,
             'v' => ENTITY_VENDOR,
             'r' => ENTITY_RECURRING_INVOICE,

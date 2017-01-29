@@ -23,7 +23,7 @@ class Authenticate
     {
         $authenticated = Auth::guard($guard)->check();
 
-        if ($guard == 'client') {
+        if ($guard == 'relation') {
             if (!empty($request->invitation_key)) {
                 $contact_key = session('contact_key');
                 if ($contact_key) {
@@ -38,7 +38,7 @@ class Authenticate
                     }
 
                     if ($contact && $contact->id != $invitation->contact_id) {
-                        // This is a different client; reauthenticate
+                        // This is a different relation; reauthenticate
                         $authenticated = false;
                         Auth::guard($guard)->logout();
                     }
@@ -60,12 +60,12 @@ class Authenticate
                 $contact = $invitation->contact;
                 Session::put('contact_key', $contact->contact_key);
             } else {
-                return \Redirect::to('client/sessionexpired');
+                return \Redirect::to('relation/sessionexpired');
             }
             $company = $contact->company;
 
             if (Auth::guard('user')->check() && Auth::user('user')->company_id === $company->id) {
-                // This is an admin; let them pretend to be a client
+                // This is an admin; let them pretend to be a relation
                 $authenticated = true;
             }
 
@@ -83,7 +83,7 @@ class Authenticate
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                return redirect()->guest($guard == 'client' ? '/client/login' : '/login');
+                return redirect()->guest($guard == 'relation' ? '/relation/login' : '/login');
             }
         }
 

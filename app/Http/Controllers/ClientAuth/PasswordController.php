@@ -28,7 +28,7 @@ class PasswordController extends Controller
     /**
      * @var string
      */
-    protected $redirectTo = '/client/dashboard';
+    protected $redirectTo = '/relation/dashboard';
 
     /**
      * Create a new password controller instance.
@@ -39,7 +39,7 @@ class PasswordController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
-        Config::set('auth.defaults.passwords', 'client');
+        Config::set('auth.defaults.passwords', 'relation');
     }
 
     /**
@@ -57,7 +57,7 @@ class PasswordController extends Controller
                 $data['clientFontUrl'] = $company->getFontsUrl();
             }
         } else {
-            return \Redirect::to('/client/sessionexpired');
+            return \Redirect::to('/relation/sessionexpired');
         }
 
         return view('clientauth.password')->with($data);
@@ -132,7 +132,7 @@ class PasswordController extends Controller
                 $data['company'] = $company;
                 $data['clientFontUrl'] = $company->getFontsUrl();
             } else {
-                return \Redirect::to('/client/sessionexpired');
+                return \Redirect::to('/relation/sessionexpired');
             }
         }
 

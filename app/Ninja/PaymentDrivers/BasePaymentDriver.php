@@ -102,14 +102,14 @@ class BasePaymentDriver
         return $this->invitation->contact;
     }
 
-    protected function client()
+    protected function relation()
     {
-        return $this->invoice()->client;
+        return $this->invoice()->relation;
     }
 
     protected function company()
     {
-        return $this->client()->company;
+        return $this->relation()->company;
     }
 
     public function startPurchase($input = false, $sourceId = false)
@@ -155,11 +155,11 @@ class BasePaymentDriver
             'url' => 'payment/' . $this->invitation->invitation_key,
             'amount' => $this->invoice()->getRequestedAmount(),
             'invoiceNumber' => $this->invoice()->invoice_number,
-            'client' => $this->client(),
+            'relation' => $this->relation(),
             'contact' => $this->invitation->contact,
             'gatewayType' => $this->gatewayType,
-            'currencyId' => $this->client()->getCurrencyId(),
-            'currencyCode' => $this->client()->getCurrencyCode(),
+            'currencyId' => $this->relation()->getCurrencyId(),
+            'currencyCode' => $this->relation()->getCurrencyCode(),
             'company' => $this->company(),
             'sourceId' => $sourceId,
             'clientFontUrl' => $this->company()->getFontsUrl(),
@@ -255,7 +255,7 @@ class BasePaymentDriver
         // load or create token
         if ($this->isGatewayType(GATEWAY_TYPE_TOKEN)) {
             if ( ! $paymentMethod) {
-                $paymentMethod = PaymentMethod::clientId($this->client()->id)
+                $paymentMethod = PaymentMethod::clientId($this->relation()->id)
                     ->wherePublicId($this->sourceId)
                     ->firstOrFail();
             }
@@ -341,7 +341,7 @@ class BasePaymentDriver
         }
 
         // update the address info
-        $client = $this->client();
+        $client = $this->relation();
         $client->address1 = trim($this->input['address1']);
         $client->address2 = trim($this->input['address2']);
         $client->city = trim($this->input['city']);
@@ -385,7 +385,7 @@ class BasePaymentDriver
     private function paymentDetailsFromInput($input)
     {
         $invoice = $this->invoice();
-        $client = $this->client();
+        $client = $this->relation();
 
         $data = [
             'corporation' => $client->getDisplayName(),
@@ -428,7 +428,7 @@ class BasePaymentDriver
     public function paymentDetailsFromClient()
     {
         $invoice = $this->invoice();
-        $client = $this->client();
+        $client = $this->relation();
         $contact = $this->invitation->contact ?: $client->contacts()->first();
 
         return [
@@ -483,17 +483,17 @@ class BasePaymentDriver
     }
     */
 
-    public function customer($clientId = false)
+    public function customer($relationId = false)
     {
         if ($this->customer) {
             return $this->customer;
         }
 
-        if ( ! $clientId) {
-            $clientId = $this->client()->id;
+        if ( ! $relationId) {
+            $relationId = $this->relation()->id;
         }
 
-        $this->customer = AccountGatewayToken::clientAndGateway($clientId, $this->accGateway->id)
+        $this->customer = AccountGatewayToken::clientAndGateway($relationId, $this->accGateway->id)
                             ->with('payment_methods')
                             ->first();
 
@@ -534,13 +534,13 @@ class BasePaymentDriver
             $customer->company_id = $company->id;
             $customer->contact_id = $this->invitation->contact_id;
             $customer->acc_gateway_id = $this->accGateway->id;
-            $customer->client_id = $this->client()->id;
+            $customer->relation_id = $this->relation()->id;
             $customer = $this->creatingCustomer($customer);
             $customer->save();
         }
 
         // archive the old payment method
-        $paymentMethod = PaymentMethod::clientId($this->client()->id)
+        $paymentMethod = PaymentMethod::clientId($this->relation()->id)
             ->isBankAccount($this->isGatewayType(GATEWAY_TYPE_BANK_TRANSFER))
             ->first();
 
@@ -574,7 +574,7 @@ class BasePaymentDriver
 
         if ($paymentMethod) {
             // archive the old payment method
-            $oldPaymentMethod = PaymentMethod::clientId($this->client()->id)
+            $oldPaymentMethod = PaymentMethod::clientId($this->relation()->id)
                 ->wherePaymentTypeId($paymentMethod->payment_type_id)
                 ->first();
 
@@ -609,7 +609,7 @@ class BasePaymentDriver
         $payment->acc_gateway_id = $this->accGateway->id;
         $payment->invoice_id = $invoice->id;
         $payment->amount = $invoice->getRequestedAmount();
-        $payment->client_id = $invoice->client_id;
+        $payment->relation_id = $invoice->relation_id;
         $payment->contact_id = $invitation->contact_id;
         $payment->transaction_reference = $ref;
         $payment->payment_date = Utils::today();
@@ -656,7 +656,7 @@ class BasePaymentDriver
             }
 
             if (!empty($plan)) {
-                $company = Company::with('users')->find($invoice->client->public_id);
+                $company = Company::with('users')->find($invoice->relation->id);
                 $corporation = $company->corporation;
 
                 if(

@@ -136,7 +136,7 @@ class Invitation extends EntityModel
     public function markViewed()
     {
         $invoice = $this->invoice;
-        $client = $invoice->client;
+        $client = $invoice->relation;
 
         $this->viewed_date = Carbon::now()->toDateTimeString();
         $this->save();

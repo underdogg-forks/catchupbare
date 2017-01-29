@@ -277,7 +277,7 @@
                 "{{ $company->getDisplayName() }}",
                 "{{ $company->formatDate($company->getDateTime()) }}",
                 "{{ $company->formatDate($company->getDateTime()) }}",
-                "Client Name",
+                "Relation Name",
                 formatMoneyAccount(100, company),
                 "Contact Name",
                 "First Name",
@@ -290,7 +290,7 @@
                 "{{ URL::to('/payment/...') }}$password",
                 '{!! Form::flatButton('pay_now', '#36c157') !!}$password',
                 '{{ trans('texts.auto_bill_notification_placeholder') }}',
-                "{{ URL::to('/client/portal/...') }}",
+                "{{ URL::to('/relation/portal/...') }}",
                 '{!! Form::flatButton('view_portal', '#36c157') !!}',
             ];
 

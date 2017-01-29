@@ -25,19 +25,19 @@ class ReportController extends BaseController
 
         if (Auth::user()->company->hasFeature(FEATURE_REPORTS)) {
             $company = Company::where('id', '=', Auth::user()->company->id)
-                            ->with(['clients.invoices.invoice_items', 'clients.contacts'])
+                            ->with(['relations.invoices.invoice_items', 'relations.contacts'])
                             ->first();
             $company = $company->hideFieldsForViz();
-            $clients = $company->clients->toJson();
+            $relations = $company->relations->toJson();
         } elseif (file_exists($fileName)) {
-            $clients = file_get_contents($fileName);
+            $relations = file_get_contents($fileName);
             $message = trans('texts.sample_data');
         } else {
-            $clients = '[]';
+            $relations = '[]';
         }
 
         $data = [
-            'clients' => $clients,
+            'relations' => $relations,
             'message' => $message,
         ];
 
@@ -64,7 +64,7 @@ class ReportController extends BaseController
         }
 
         $reportTypes = [
-            'client',
+            'relation',
             'product',
             'invoice',
             'invoice_details',

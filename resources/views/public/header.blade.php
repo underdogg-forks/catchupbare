@@ -72,36 +72,36 @@
                 @if (isset($company) && $company->enable_client_portal)
                 <ul class="nav navbar-nav navbar-right">
                     @if (isset($company) && $company->enable_client_portal_dashboard)
-                        <li {!! Request::is('*client/dashboard') ? 'class="active"' : '' !!}>
-                            {!! link_to('/client/dashboard', trans('texts.dashboard') ) !!}
+                        <li {!! Request::is('*relation/dashboard') ? 'class="active"' : '' !!}>
+                            {!! link_to('/relation/dashboard', trans('texts.dashboard') ) !!}
                         </li>
                     @endif
                     @if (isset($hasQuotes) && $hasQuotes)
-                        <li {!! Request::is('*client/quotes') ? 'class="active"' : '' !!}>
-                            {!! link_to('/client/quotes', trans('texts.quotes') ) !!}
+                        <li {!! Request::is('*relation/quotes') ? 'class="active"' : '' !!}>
+                            {!! link_to('/relation/quotes', trans('texts.quotes') ) !!}
                         </li>
                     @endif
-                    <li {!! Request::is('*client/invoices') ? 'class="active"' : '' !!}>
-                        {!! link_to('/client/invoices', trans('texts.invoices') ) !!}
+                    <li {!! Request::is('*relation/invoices') ? 'class="active"' : '' !!}>
+                        {!! link_to('/relation/invoices', trans('texts.invoices') ) !!}
                     </li>
                     @if (isset($company)
                         && $company->hasFeature(FEATURE_DOCUMENTS)
                         && (isset($hasDocuments) && $hasDocuments))
-                        <li {!! Request::is('*client/documents') ? 'class="active"' : '' !!}>
-                            {!! link_to('/client/documents', trans('texts.documents') ) !!}
+                        <li {!! Request::is('*relation/documents') ? 'class="active"' : '' !!}>
+                            {!! link_to('/relation/documents', trans('texts.documents') ) !!}
                         </li>
                     @endif
                     @if (isset($company) && $company->getTokenGatewayId() && !$company->enable_client_portal_dashboard)
-                        <li {!! Request::is('*client/payment_methods') ? 'class="active"' : '' !!}>
-                            {!! link_to('/client/payment_methods', trans('texts.payment_methods') ) !!}
+                        <li {!! Request::is('*relation/payment_methods') ? 'class="active"' : '' !!}>
+                            {!! link_to('/relation/payment_methods', trans('texts.payment_methods') ) !!}
                         </li>
                     @endif
-                    <li {!! Request::is('*client/payments') ? 'class="active"' : '' !!}>
-                        {!! link_to('/client/payments', trans('texts.payments') ) !!}
+                    <li {!! Request::is('*relation/payments') ? 'class="active"' : '' !!}>
+                        {!! link_to('/relation/payments', trans('texts.payments') ) !!}
                     </li>
                     @if (isset($hasCredits) && $hasCredits)
-                        <li {!! Request::is('*client/credits') ? 'class="active"' : '' !!}>
-                            {!! link_to('/client/credits', trans('texts.credits') ) !!}
+                        <li {!! Request::is('*relation/credits') ? 'class="active"' : '' !!}>
+                            {!! link_to('/relation/credits', trans('texts.credits') ) !!}
                         </li>
                     @endif
                 </ul>

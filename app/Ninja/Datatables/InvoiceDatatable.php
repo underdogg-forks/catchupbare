@@ -26,12 +26,12 @@ class InvoiceDatatable extends EntityDatatable
                 }
             ],
             [
-                'client_name',
+                'relation_name',
                 function ($model) {
-                    if(!Auth::user()->can('viewByOwner', [ENTITY_CLIENT, $model->client_user_id])){
-                        return Utils::getClientDisplayName($model);
+                    if(!Auth::user()->can('viewByOwner', [ENTITY_RELATION, $model->client_user_id])){
+                        return Utils::getRelationDisplayName($model);
                     }
-                    return link_to("clients/{$model->client_public_id}", Utils::getClientDisplayName($model))->toHtml();
+                    return link_to("relations/{$model->relation_public_id}", Utils::getRelationDisplayName($model))->toHtml();
                 },
                 ! $this->hideClient
             ],
@@ -130,7 +130,7 @@ class InvoiceDatatable extends EntityDatatable
             [
                 trans('texts.enter_payment'),
                 function ($model) {
-                    return URL::to("payments/create/{$model->client_public_id}/{$model->public_id}");
+                    return URL::to("payments/create/{$model->relation_public_id}/{$model->public_id}");
                 },
                 function ($model) use ($entityType) {
                     return $model->is_public && $entityType == ENTITY_INVOICE && $model->balance > 0 && Auth::user()->can('create', ENTITY_PAYMENT);

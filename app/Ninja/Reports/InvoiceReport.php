@@ -3,12 +3,12 @@
 namespace App\Ninja\Reports;
 
 use Auth;
-use App\Models\Client;
+use App\Models\Relation;
 
 class InvoiceReport extends AbstractReport
 {
     public $columns = [
-        'client',
+        'relation',
         'invoice_number',
         'invoice_date',
         'amount',
@@ -22,7 +22,7 @@ class InvoiceReport extends AbstractReport
         $company = Auth::user()->company;
         $status = $this->options['invoice_status'];
 
-        $clients = Client::scope()
+        $relations = Relation::scope()
                         ->withArchived()
                         ->with('contacts')
                         ->with(['invoices' => function($query) use ($status) {
@@ -42,7 +42,7 @@ class InvoiceReport extends AbstractReport
                                   }, 'invoice_items']);
                         }]);
 
-        foreach ($clients->get() as $client) {
+        foreach ($relations->get() as $client) {
             foreach ($client->invoices as $invoice) {
 
                 $payments = count($invoice->payments) ? $invoice->payments : [false];

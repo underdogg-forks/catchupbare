@@ -38,7 +38,7 @@ class CreditListener
         }
 
         $credit = Credit::createNew();
-        $credit->client_id = $payment->client_id;
+        $credit->relation_id = $payment->relation_id;
         $credit->credit_date = Carbon::now()->toDateTimeString();
         $credit->balance = $credit->amount = $payment->getCompletedAmount();
         $credit->private_notes = trans('texts.refunded_credit_payment');

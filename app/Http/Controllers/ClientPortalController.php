@@ -51,7 +51,7 @@ class ClientPortalController extends BaseController
         }
 
         $invoice = $invitation->invoice;
-        $client = $invoice->client;
+        $client = $invoice->relation;
         $company = $invoice->company;
 
         if (!$company->checkSubdomain(Request::server('HTTP_HOST'))) {
@@ -99,9 +99,9 @@ class ClientPortalController extends BaseController
             'phone',
         ]);
 
-        // translate the client country name
-        if ($invoice->client->country) {
-            $invoice->client->country->name = trans('texts.country_' . $invoice->client->country->name);
+        // translate the relation country name
+        if ($invoice->relation->country) {
+            $invoice->relation->country->name = trans('texts.country_' . $invoice->relation->country->name);
         }
 
         $data = [];
@@ -161,7 +161,7 @@ class ClientPortalController extends BaseController
             $zipDocs = $this->getInvoiceZipDocuments($invoice, $size);
 
             if(count($zipDocs) > 1){
-                $data['documentsZipURL'] = URL::to("client/documents/{$invitation->invitation_key}");
+                $data['documentsZipURL'] = URL::to("relation/documents/{$invitation->invitation_key}");
                 $data['documentsZipSize'] = $size;
             }
         }
@@ -231,7 +231,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
         $company = $client->company;
         $company->loadLocalizationSettings($client);
 
@@ -241,7 +241,7 @@ class ClientPortalController extends BaseController
         if (!$company->enable_client_portal) {
             return $this->returnError();
         } elseif (!$company->enable_client_portal_dashboard) {
-            return redirect()->to('/client/invoices/');
+            return redirect()->to('/relation/invoices/');
         }
 
         if ($paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN)) {
@@ -252,7 +252,7 @@ class ClientPortalController extends BaseController
             'color' => $color,
             'contact' => $contact,
             'company' => $company,
-            'client' => $client,
+            'relation' => $client,
             'clientFontUrl' => $company->getFontsUrl(),
             'gateway' => $company->getTokenGateway(),
             'paymentMethods' => $customer ? $customer->payment_methods : false,
@@ -268,7 +268,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
 
         $query = $this->activityRepo->findByClientId($client->id);
         $query->where('activities.adjustment', '!=', 0);
@@ -277,10 +277,10 @@ class ClientPortalController extends BaseController
             ->addColumn('activities.id', function ($model) { return Utils::timestampToDateTimeString(strtotime($model->created_at)); })
             ->addColumn('activity_type_id', function ($model) {
                 $data = [
-                    'client' => Utils::getClientDisplayName($model),
+                    'relation' => Utils::getRelationDisplayName($model),
                     'user' => $model->is_system ? ('<i>' . trans('texts.system') . '</i>') : ($model->acc_name),
                     'invoice' => $model->invoice,
-                    'contact' => Utils::getClientDisplayName($model),
+                    'contact' => Utils::getRelationDisplayName($model),
                     'payment' => $model->payment ? ' ' . $model->payment : '',
                     'credit' => $model->payment_amount ? Utils::formatMoney($model->credit, $model->currency_id, $model->country_id) : '',
                     'payment_amount' => $model->payment_amount ? Utils::formatMoney($model->payment_amount, $model->currency_id, $model->country_id) : null,
@@ -301,7 +301,7 @@ class ClientPortalController extends BaseController
         }
 
         $company = $contact->company;
-        $company->loadLocalizationSettings($contact->client);
+        $company->loadLocalizationSettings($contact->relation);
 
         if (!$company->enable_client_portal) {
             return $this->returnError();
@@ -312,7 +312,7 @@ class ClientPortalController extends BaseController
         $data = [
             'color' => $color,
             'company' => $company,
-            'client' => $contact->client,
+            'relation' => $contact->relation,
             'clientFontUrl' => $company->getFontsUrl(),
             'title' => trans('texts.recurring_invoices'),
             'entityType' => ENTITY_RECURRING_INVOICE,
@@ -329,7 +329,7 @@ class ClientPortalController extends BaseController
         }
 
         $company = $contact->company;
-        $company->loadLocalizationSettings($contact->client);
+        $company->loadLocalizationSettings($contact->relation);
 
         if (!$company->enable_client_portal) {
             return $this->returnError();
@@ -340,7 +340,7 @@ class ClientPortalController extends BaseController
         $data = [
             'color' => $color,
             'company' => $company,
-            'client' => $contact->client,
+            'relation' => $contact->relation,
             'clientFontUrl' => $company->getFontsUrl(),
             'title' => trans('texts.invoices'),
             'entityType' => ENTITY_INVOICE,
@@ -376,7 +376,7 @@ class ClientPortalController extends BaseController
         }
 
         $company = $contact->company;
-        $company->loadLocalizationSettings($contact->client);
+        $company->loadLocalizationSettings($contact->relation);
 
         if (!$company->enable_client_portal) {
             return $this->returnError();
@@ -448,7 +448,7 @@ class ClientPortalController extends BaseController
         }
 
         $company = $contact->company;
-        $company->loadLocalizationSettings($contact->client);
+        $company->loadLocalizationSettings($contact->relation);
 
         if (!$company->enable_client_portal) {
             return $this->returnError();
@@ -485,7 +485,7 @@ class ClientPortalController extends BaseController
         }
 
         $company = $contact->company;
-        $company->loadLocalizationSettings($contact->client);
+        $company->loadLocalizationSettings($contact->relation);
 
         if (!$company->enable_client_portal) {
             return $this->returnError();
@@ -511,7 +511,7 @@ class ClientPortalController extends BaseController
             return false;
         }
 
-        return $this->creditRepo->getClientDatatable($contact->client_id);
+        return $this->creditRepo->getClientDatatable($contact->relation_id);
     }
 
     public function documentIndex()
@@ -521,7 +521,7 @@ class ClientPortalController extends BaseController
         }
 
         $company = $contact->company;
-        $company->loadLocalizationSettings($contact->client);
+        $company->loadLocalizationSettings($contact->relation);
 
         if (!$company->enable_client_portal) {
             return $this->returnError();
@@ -589,9 +589,9 @@ class ClientPortalController extends BaseController
         }
 
         $authorized = false;
-        if($document->expense && $document->expense->client_id == $contact->client_id){
+        if($document->expense && $document->expense->relation_id == $contact->relation_id){
             $authorized = true;
-        } else if($document->invoice && $document->invoice->client_id ==$contact->client_id){
+        } else if($document->invoice && $document->invoice->relation_id ==$contact->relation_id){
             $authorized = true;
         }
 
@@ -701,13 +701,13 @@ class ClientPortalController extends BaseController
 
         Session::put('contact_key', $invitation->contact->contact_key);// track current contact
 
-        $clientId = $invitation->invoice->client_id;
+        $relationId = $invitation->invoice->relation_id;
         $document = Document::scope($publicId, $invitation->company_id)->firstOrFail();
 
         $authorized = false;
-        if($document->expense && $document->expense->client_id == $invitation->invoice->client_id){
+        if($document->expense && $document->expense->relation_id == $invitation->invoice->relation_id){
             $authorized = true;
-        } else if($document->invoice && $document->invoice->client_id == $invitation->invoice->client_id){
+        } else if($document->invoice && $document->invoice->relation_id == $invitation->invoice->relation_id){
             $authorized = true;
         }
 
@@ -724,7 +724,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
         $company = $client->company;
 
         $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
@@ -734,7 +734,7 @@ class ClientPortalController extends BaseController
             'company' => $company,
             'contact' => $contact,
             'color' => $company->primary_color ? $company->primary_color : '#0b4d78',
-            'client' => $client,
+            'relation' => $client,
             'clientViewCSS' => $company->clientViewCSS(),
             'clientFontUrl' => $company->getFontsUrl(),
             'paymentMethods' => $customer ? $customer->payment_methods : false,
@@ -756,7 +756,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
         $company = $client->company;
 
         $paymentDriver = $company->paymentDriver(null, GATEWAY_TYPE_BANK_TRANSFER);
@@ -768,7 +768,7 @@ class ClientPortalController extends BaseController
             Session::flash('message', trans('texts.payment_method_verified'));
         }
 
-        return redirect()->to($company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+        return redirect()->to($company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
     }
 
     public function removePaymentMethod($publicId)
@@ -777,7 +777,7 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
         $company = $contact->company;
 
         $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
@@ -792,7 +792,7 @@ class ClientPortalController extends BaseController
             Session::flash('error', $exception->getMessage());
         }
 
-        return redirect()->to($client->company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+        return redirect()->to($client->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
     }
 
     public function setDefaultPaymentMethod(){
@@ -800,12 +800,12 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
         $company = $client->company;
 
         $validator = Validator::make(Input::all(), ['source' => 'required']);
         if ($validator->fails()) {
-            return Redirect::to($client->company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+            return Redirect::to($client->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
         }
 
         $paymentDriver = $company->paymentDriver(false, GATEWAY_TYPE_TOKEN);
@@ -819,7 +819,7 @@ class ClientPortalController extends BaseController
 
         Session::flash('message', trans('texts.payment_method_set_as_default'));
 
-        return redirect()->to($client->company->enable_client_portal_dashboard?'/client/dashboard':'/client/payment_methods/');
+        return redirect()->to($client->company->enable_client_portal_dashboard?'/relation/dashboard':'/relation/payment_methods/');
     }
 
     private function paymentMethodError($type, $error, $accGateway = false, $exception = false)
@@ -839,12 +839,12 @@ class ClientPortalController extends BaseController
             return $this->returnError();
         }
 
-        $client = $contact->client;
+        $client = $contact->relation;
 
         $validator = Validator::make(Input::all(), ['public_id' => 'required']);
 
         if ($validator->fails()) {
-            return Redirect::to('client/invoices/recurring');
+            return Redirect::to('relation/invoices/recurring');
         }
 
         $publicId = Input::get('public_id');
@@ -856,6 +856,6 @@ class ClientPortalController extends BaseController
             $invoice->save();
         }
 
-        return Redirect::to('client/invoices/recurring');
+        return Redirect::to('relation/invoices/recurring');
     }
 }

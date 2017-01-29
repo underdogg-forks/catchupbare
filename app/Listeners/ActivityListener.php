@@ -68,8 +68,8 @@ class ActivityListener
     public function createdClient(ClientWasCreated $event)
     {
         $this->activityRepo->create(
-            $event->client,
-            ACTIVITY_TYPE_CREATE_CLIENT
+            $event->relation,
+            ACTIVITY_TYPE_CREATE_RELATION
         );
     }
 
@@ -79,8 +79,8 @@ class ActivityListener
     public function deletedClient(ClientWasDeleted $event)
     {
         $this->activityRepo->create(
-            $event->client,
-            ACTIVITY_TYPE_DELETE_CLIENT
+            $event->relation,
+            ACTIVITY_TYPE_DELETE_RELATION
         );
     }
 
@@ -89,13 +89,13 @@ class ActivityListener
      */
     public function archivedClient(ClientWasArchived $event)
     {
-        if ($event->client->is_deleted) {
+        if ($event->relation->is_deleted) {
             return;
         }
 
         $this->activityRepo->create(
-            $event->client,
-            ACTIVITY_TYPE_ARCHIVE_CLIENT
+            $event->relation,
+            ACTIVITY_TYPE_ARCHIVE_RELATION
         );
     }
 
@@ -105,8 +105,8 @@ class ActivityListener
     public function restoredClient(ClientWasRestored $event)
     {
         $this->activityRepo->create(
-            $event->client,
-            ACTIVITY_TYPE_RESTORE_CLIENT
+            $event->relation,
+            ACTIVITY_TYPE_RESTORE_RELATION
         );
     }
 
@@ -131,7 +131,7 @@ class ActivityListener
             return;
         }
 
-        $backupInvoice = Invoice::with('invoice_items', 'client.company', 'client.contacts')
+        $backupInvoice = Invoice::with('invoice_items', 'relation.company', 'relation.contacts')
                             ->withTrashed()
                             ->find($event->invoice->id);
 
@@ -239,7 +239,7 @@ class ActivityListener
             return;
         }
 
-        $backupQuote = Invoice::with('invoice_items', 'client.company', 'client.contacts')
+        $backupQuote = Invoice::with('invoice_items', 'relation.company', 'relation.contacts')
                             ->withTrashed()
                             ->find($event->quote->id);
 

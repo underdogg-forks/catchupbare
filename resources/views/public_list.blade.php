@@ -35,22 +35,22 @@
 		</div>
 		-->
 
-        @if($entityType == ENTITY_INVOICE && $company->getTokenGatewayId() && $client->hasAutoBillConfigurableInvoices())
+        @if($entityType == ENTITY_INVOICE && $company->getTokenGatewayId() && $relation->hasAutoBillConfigurableInvoices())
             <div class="pull-right" style="margin-top:5px">
-                {!! Button::info(trans("texts.manage_auto_bill"))->asLinkTo(URL::to('/client/invoices/recurring'))->appendIcon(Icon::create('repeat')) !!}
+                {!! Button::info(trans("texts.manage_auto_bill"))->asLinkTo(URL::to('/relation/invoices/recurring'))->appendIcon(Icon::create('repeat')) !!}
             </div>
         @endif
         <h3>{{ $title }}</h3>
 
 		{!! Datatable::table()
 	    	->addColumn($columns)
-	    	->setUrl(route('api.client.' . $entityType . 's'))
+	    	->setUrl(route('api.relation.' . $entityType . 's'))
 	    	->setOptions('sPaginationType', 'bootstrap')
 	    	->render('datatable') !!}
 	</div>
 
     @if($entityType == ENTITY_RECURRING_INVOICE)
-        {!! Former::open(URL::to('/client/invoices/auto_bill'))->id('auto_bill_form')  !!}
+        {!! Former::open(URL::to('/relation/invoices/auto_bill'))->id('auto_bill_form')  !!}
         <input type="hidden" name="public_id" id="auto_bill_public_id">
         <input type="hidden" name="enable" id="auto_bill_enable">
         {!! Former::close() !!}

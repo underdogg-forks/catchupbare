@@ -7,7 +7,7 @@ use App\Models\Corporation;
 use App\Models\Affiliate;
 use App\Models\Country;
 use App\Models\InvoiceDesign;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Contact;
 use App\Models\Product;
 use App\Models\DateFormat;
@@ -60,7 +60,7 @@ class UserTableSeeder extends Seeder
             'is_admin' => 1,
         ]);
 
-        $client = Client::create([
+        $client = Relation::create([
             'user_id' => $user->id,
             'company_id' => $company->id,
             'public_id' => 1,
@@ -77,7 +77,7 @@ class UserTableSeeder extends Seeder
         Contact::create([
             'user_id' => $user->id,
             'company_id' => $company->id,
-            'client_id' => $client->id,
+            'relation_id' => $client->id,
             'public_id' => 1,
             'email' => env('TEST_EMAIL', TEST_USERNAME),
             'is_primary' => true,

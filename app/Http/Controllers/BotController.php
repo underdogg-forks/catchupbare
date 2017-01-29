@@ -110,11 +110,11 @@ class BotController extends Controller
             return $token;
         }
 
-        $clientId = env('MSBOT_CLIENT_ID');
+        $relationId = env('MSBOT_CLIENT_ID');
         $clientSecret = env('MSBOT_CLIENT_SECRET');
         $scope = 'https://graph.microsoft.com/.default';
 
-        $data = sprintf('grant_type=client_credentials&client_id=%s&client_secret=%s&scope=%s', $clientId, $clientSecret, $scope);
+        $data = sprintf('grant_type=client_credentials&relation_id=%s&client_secret=%s&scope=%s', $relationId, $clientSecret, $scope);
 
         $response = CurlUtils::post(MSBOT_LOGIN_URL, $data);
         $response = json_decode($response);

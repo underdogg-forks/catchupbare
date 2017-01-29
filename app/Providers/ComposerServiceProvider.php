@@ -16,7 +16,7 @@ class ComposerServiceProvider extends ServiceProvider
         view()->composer(
             [
                 'companies.details',
-                'clients.edit',
+                'relations.edit',
                 'payments.edit',
                 'invoices.edit',
                 'companies.localization'

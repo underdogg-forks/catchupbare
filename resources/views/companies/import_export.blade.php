@@ -69,7 +69,7 @@
         <div class="form-group entity-types">
             <label class="control-label col-lg-4 col-sm-4"></label>
             <div class="col-lg-2 col-sm-2">
-                @include('partials/checkbox', ['field' => 'clients'])
+                @include('partials/checkbox', ['field' => 'relations'])
                 @include('partials/checkbox', ['field' => 'contacts'])
                 @include('partials/checkbox', ['field' => 'credits'])
                 @include('partials/checkbox', ['field' => 'tasks'])

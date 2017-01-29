@@ -1,5 +1,5 @@
 <tr>
-    <td>{{ trans('texts.client') }}</td>
+    <td>{{ trans('texts.relation') }}</td>
     <td>{{ trans('texts.email') }}</td>
     @if ($multiUser)
         <td>{{ trans('texts.user') }}</td>
@@ -26,16 +26,16 @@
 </tr>
 
 @foreach ($invoices as $invoice)
-    @if (!$invoice->client->is_deleted)
+    @if (!$invoice->relation->is_deleted)
         <tr>
-            <td>{{ $invoice->present()->client }}</td>
+            <td>{{ $invoice->present()->relation }}</td>
             <td>{{ $invoice->present()->email }}</td>
             @if ($multiUser)
                 <td>{{ $invoice->present()->user }}</td>
             @endif
             <td>{{ $invoice->invoice_number }}</td>
-            <td>{{ $company->formatMoney($invoice->amount, $invoice->client) }}</td>
-            <td>{{ $company->formatMoney($invoice->amount - $invoice->balance, $invoice->client) }}</td>
+            <td>{{ $company->formatMoney($invoice->amount, $invoice->relation) }}</td>
+            <td>{{ $company->formatMoney($invoice->amount - $invoice->balance, $invoice->relation) }}</td>
             <td>{{ $invoice->po_number }}</td>
             <td>{{ $invoice->present()->status }}</td>
             <td>{{ $invoice->present()->invoice_date }}</td>

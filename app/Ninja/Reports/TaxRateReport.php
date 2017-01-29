@@ -3,7 +3,7 @@
 namespace App\Ninja\Reports;
 
 use Auth;
-use App\Models\Client;
+use App\Models\Relation;
 
 class TaxRateReport extends AbstractReport
 {
@@ -18,7 +18,7 @@ class TaxRateReport extends AbstractReport
     {
         $company = Auth::user()->company;
 
-        $clients = Client::scope()
+        $relations = Relation::scope()
                         ->withArchived()
                         ->with('contacts')
                         ->with(['invoices' => function($query) {
@@ -41,7 +41,7 @@ class TaxRateReport extends AbstractReport
                             }
                         }]);
 
-        foreach ($clients->get() as $client) {
+        foreach ($relations->get() as $client) {
             $currencyId = $client->currency_id ?: Auth::user()->company->getCurrencyId();
             $amount = 0;
             $paid = 0;

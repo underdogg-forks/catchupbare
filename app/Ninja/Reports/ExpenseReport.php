@@ -10,7 +10,7 @@ class ExpenseReport extends AbstractReport
 {
     public $columns = [
         'vendor',
-        'client',
+        'relation',
         'date',
         'category',
         'expense_amount',
@@ -22,7 +22,7 @@ class ExpenseReport extends AbstractReport
 
         $expenses = Expense::scope()
                         ->withArchived()
-                        ->with('client.contacts', 'vendor')
+                        ->with('relation.contacts', 'vendor')
                         ->where('expense_date', '>=', $this->startDate)
                         ->where('expense_date', '<=', $this->endDate);
 
@@ -31,7 +31,7 @@ class ExpenseReport extends AbstractReport
 
             $this->data[] = [
                 $expense->vendor ? ($this->isExport ? $expense->vendor->name : $expense->vendor->present()->link) : '',
-                $expense->client ? ($this->isExport ? $expense->client->getDisplayName() : $expense->client->present()->link) : '',
+                $expense->relation ? ($this->isExport ? $expense->relation->getDisplayName() : $expense->relation->present()->link) : '',
                 $expense->present()->expense_date,
                 $expense->present()->category,
                 Utils::formatMoney($amount, $expense->currency_id),

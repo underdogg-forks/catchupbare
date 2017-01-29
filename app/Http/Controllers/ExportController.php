@@ -7,7 +7,7 @@ use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
 use App\Ninja\Serializers\ArraySerializer;
 use App\Ninja\Transformers\AccountTransformer;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Contact;
 use App\Models\Credit;
 use App\Models\Task;
@@ -74,7 +74,7 @@ class ExportController extends BaseController
 
         // eager load data, include archived but exclude deleted
         $company = Auth::user()->company;
-        $company->load(['clients' => function($query) {
+        $company->load(['relations' => function($query) {
             $query->withArchived()
                   ->with(['contacts', 'invoices' => function($query) {
                       $query->withArchived()
@@ -85,7 +85,7 @@ class ExportController extends BaseController
         }]);
 
         $resource = new Item($company, new AccountTransformer);
-        $data = $manager->parseIncludes('clients.invoices.payments')
+        $data = $manager->parseIncludes('relations.invoices.payments')
                     ->createData($resource)
                     ->toArray();
 
@@ -167,8 +167,8 @@ class ExportController extends BaseController
             'multiUser' => $company->users->count() > 1
         ];
 
-        if ($request->input('include') === 'all' || $request->input('clients')) {
-            $data['clients'] = Client::scope()
+        if ($request->input('include') === 'all' || $request->input('relations')) {
+            $data['relations'] = Relation::scope()
                 ->with('user', 'contacts', 'country')
                 ->withArchived()
                 ->get();
@@ -176,20 +176,20 @@ class ExportController extends BaseController
 
         if ($request->input('include') === 'all' || $request->input('contacts')) {
             $data['contacts'] = Contact::scope()
-                ->with('user', 'client.contacts')
+                ->with('user', 'relation.contacts')
                 ->withTrashed()
                 ->get();
         }
 
         if ($request->input('include') === 'all' || $request->input('credits')) {
             $data['credits'] = Credit::scope()
-                ->with('user', 'client.contacts')
+                ->with('user', 'relation.contacts')
                 ->get();
         }
 
         if ($request->input('include') === 'all' || $request->input('tasks')) {
             $data['tasks'] = Task::scope()
-                ->with('user', 'client.contacts')
+                ->with('user', 'relation.contacts')
                 ->withArchived()
                 ->get();
         }
@@ -197,7 +197,7 @@ class ExportController extends BaseController
         if ($request->input('include') === 'all' || $request->input('invoices')) {
             $data['invoices'] = Invoice::scope()
                 ->invoiceType(INVOICE_TYPE_STANDARD)
-                ->with('user', 'client.contacts', 'invoice_status')
+                ->with('user', 'relation.contacts', 'invoice_status')
                 ->withArchived()
                 ->where('is_recurring', '=', false)
                 ->get();
@@ -206,7 +206,7 @@ class ExportController extends BaseController
         if ($request->input('include') === 'all' || $request->input('quotes')) {
             $data['quotes'] = Invoice::scope()
                 ->invoiceType(INVOICE_TYPE_QUOTE)
-                ->with('user', 'client.contacts', 'invoice_status')
+                ->with('user', 'relation.contacts', 'invoice_status')
                 ->withArchived()
                 ->where('is_recurring', '=', false)
                 ->get();
@@ -215,7 +215,7 @@ class ExportController extends BaseController
         if ($request->input('include') === 'all' || $request->input('recurring')) {
             $data['recurringInvoices'] = Invoice::scope()
                 ->invoiceType(INVOICE_TYPE_STANDARD)
-                ->with('user', 'client.contacts', 'invoice_status', 'frequency')
+                ->with('user', 'relation.contacts', 'invoice_status', 'frequency')
                 ->withArchived()
                 ->where('is_recurring', '=', true)
                 ->get();
@@ -224,13 +224,13 @@ class ExportController extends BaseController
         if ($request->input('include') === 'all' || $request->input('payments')) {
             $data['payments'] = Payment::scope()
                 ->withArchived()
-                ->with('user', 'client.contacts', 'payment_type', 'invoice', 'acc_gateway.gateway')
+                ->with('user', 'relation.contacts', 'payment_type', 'invoice', 'acc_gateway.gateway')
                 ->get();
         }
 
         if ($request->input('include') === 'all' || $request->input('expenses')) {
             $data['expenses'] = Expense::scope()
-                ->with('user', 'vendor.vendor_contacts', 'client.contacts', 'expense_category')
+                ->with('user', 'vendor.vendor_contacts', 'relation.contacts', 'expense_category')
                 ->withArchived()
                 ->get();
         }

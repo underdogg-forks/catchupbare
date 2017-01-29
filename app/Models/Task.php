@@ -18,7 +18,7 @@ class Task extends EntityModel
      * @var array
      */
     protected $fillable = [
-        'client_id',
+        'relation_id',
         'description',
         'time_log',
         'is_running',
@@ -64,9 +64,9 @@ class Task extends EntityModel
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
     /**

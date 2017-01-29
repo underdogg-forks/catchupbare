@@ -8,7 +8,7 @@ use App\Models\Payment;
 class PaymentReport extends AbstractReport
 {
     public $columns = [
-        'client',
+        'relation',
         'invoice_number',
         'invoice_date',
         'amount',
@@ -24,19 +24,19 @@ class PaymentReport extends AbstractReport
         $payments = Payment::scope()
                         ->withArchived()
                         ->excludeFailed()
-                        ->whereHas('client', function($query) {
+                        ->whereHas('relation', function($query) {
                             $query->where('is_deleted', '=', false);
                         })
                         ->whereHas('invoice', function($query) {
                             $query->where('is_deleted', '=', false);
                         })
-                        ->with('client.contacts', 'invoice', 'payment_type', 'acc_gateway.gateway')
+                        ->with('relation.contacts', 'invoice', 'payment_type', 'acc_gateway.gateway')
                         ->where('payment_date', '>=', $this->startDate)
                         ->where('payment_date', '<=', $this->endDate);
 
         foreach ($payments->get() as $payment) {
             $invoice = $payment->invoice;
-            $client = $payment->client;
+            $client = $payment->relation;
             $this->data[] = [
                 $this->isExport ? $client->getDisplayName() : $client->present()->link,
                 $this->isExport ? $invoice->invoice_number : $invoice->present()->link,

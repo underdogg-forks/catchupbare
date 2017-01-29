@@ -241,7 +241,7 @@
                                     ->placeholder('https://www.example.com')
                                     ->help('redirect_url_help') !!}
 
-                            {!! Former::checkboxes('client_fields')
+                            {!! Former::checkboxes('relation_fields')
                                     ->onchange('updateBuyNowButtons()')
                                     ->checkboxes([
                                         trans('texts.first_name') => ['value' => 'first_name', 'name' => 'first_name'],

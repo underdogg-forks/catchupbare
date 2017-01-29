@@ -1,6 +1,6 @@
 <?php namespace App\Libraries;
 
-use JonnyW\PhantomJs\Client;
+use JonnyW\PhantomJs\Relation;
 
 class CurlUtils
 {
@@ -47,7 +47,7 @@ class CurlUtils
             return false;
         }
 
-        $client = Client::getInstance();
+        $client = Relation::getInstance();
         $client->getEngine()->setPath($path);
 
         $request = $client->getMessageFactory()->createRequest($url, $method);

@@ -35,23 +35,23 @@
 
     function formatMoneyInvoice(value, invoice, decorator) {
         var company = invoice.company;
-        var client = invoice.client;
+        var relation = invoice.relation;
 
-        return formatMoneyAccount(value, company, client, decorator);
+        return formatMoneyAccount(value, company, relation, decorator);
     }
 
-    function formatMoneyAccount(value, company, client, decorator) {
+    function formatMoneyAccount(value, company, relation, decorator) {
         var currencyId = false;
         var countryId = false;
 
-        if (client && client.currency_id) {
-            currencyId = client.currency_id;
+        if (relation && relation.currency_id) {
+            currencyId = relation.currency_id;
         } else if (company && company.currency_id) {
             currencyId = company.currency_id;
         }
 
-        if (client && client.country_id) {
-            countryId = client.country_id;
+        if (relation && relation.country_id) {
+            countryId = relation.country_id;
         } else if (company && company.country_id) {
             countryId = company.country_id;
         }

@@ -12,7 +12,7 @@ if (!defined('APP_NAME'))
 
     define('RECENTLY_VIEWED', 'recent_history');
 
-    define('ENTITY_CLIENT', 'client');
+    define('ENTITY_RELATION', 'relation');
     define('ENTITY_CONTACT', 'contact');
     define('ENTITY_INVOICE', 'invoice');
     define('ENTITY_DOCUMENT', 'document');
@@ -82,9 +82,9 @@ if (!defined('APP_NAME'))
     define('ACTION_CONVERT', 'convert');
     define('ACTION_DELETE', 'delete');
 
-    define('ACTIVITY_TYPE_CREATE_CLIENT', 1);
-    define('ACTIVITY_TYPE_ARCHIVE_CLIENT', 2);
-    define('ACTIVITY_TYPE_DELETE_CLIENT', 3);
+    define('ACTIVITY_TYPE_CREATE_RELATION', 1);
+    define('ACTIVITY_TYPE_ARCHIVE_RELATION', 2);
+    define('ACTIVITY_TYPE_DELETE_RELATION', 3);
     define('ACTIVITY_TYPE_CREATE_INVOICE', 4);
     define('ACTIVITY_TYPE_UPDATE_INVOICE', 5);
     define('ACTIVITY_TYPE_EMAIL_INVOICE', 6);
@@ -107,7 +107,7 @@ if (!defined('APP_NAME'))
     define('ACTIVITY_TYPE_DELETE_QUOTE', 23);
     define('ACTIVITY_TYPE_RESTORE_QUOTE', 24);
     define('ACTIVITY_TYPE_RESTORE_INVOICE', 25);
-    define('ACTIVITY_TYPE_RESTORE_CLIENT', 26);
+    define('ACTIVITY_TYPE_RESTORE_RELATION', 26);
     define('ACTIVITY_TYPE_RESTORE_PAYMENT', 27);
     define('ACTIVITY_TYPE_RESTORE_CREDIT', 28);
     define('ACTIVITY_TYPE_APPROVE_QUOTE', 29);
@@ -272,7 +272,7 @@ if (!defined('APP_NAME'))
     // The remote gateway doesn't understand the concept of customers
     define('CUSTOMER_REFERENCE_LOCAL', 'local');
 
-    define('EVENT_CREATE_CLIENT', 1);
+    define('EVENT_CREATE_RELATION', 1);
     define('EVENT_CREATE_INVOICE', 2);
     define('EVENT_CREATE_QUOTE', 3);
     define('EVENT_CREATE_PAYMENT', 4);
@@ -461,7 +461,7 @@ if (!defined('APP_NAME'))
     define('FEATURE_CLIENT_PORTAL_PASSWORD', 'client_portal_password');
     define('FEATURE_CUSTOM_URL', 'custom_url');
 
-    define('FEATURE_MORE_CLIENTS', 'more_clients'); // No trial allowed
+    define('FEATURE_MORE_RELATIONS', 'more_relations'); // No trial allowed
 
     // Whitelabel
     define('FEATURE_WHITE_LABEL', 'feature_white_label');
@@ -506,7 +506,7 @@ if (!defined('APP_NAME'))
     define('SKYPE_BUTTON_SHOW_IMAGE', 'showImage');
     define('SKYPE_BUTTON_DOWNLOAD_FILE', 'downloadFile');
 
-    define('INVOICE_FIELDS_CLIENT', 'client_fields');
+    define('INVOICE_FIELDS_RELATION', 'relation_fields');
     define('INVOICE_FIELDS_INVOICE', 'invoice_fields');
     define('INVOICE_FIELDS_COMPANY', 'account_fields');
 

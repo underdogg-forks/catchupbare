@@ -26,7 +26,7 @@ class AnalyticsListener
         }
 
         $analyticsId = env('ANALYTICS_KEY');
-        $client = $payment->client;
+        $client = $payment->relation;
         $amount = $payment->amount;
         $item = $invoice->invoice_items->last()->product_key;
 

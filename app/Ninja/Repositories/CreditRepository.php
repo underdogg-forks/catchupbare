@@ -3,7 +3,7 @@
 use DB;
 use Utils;
 use App\Models\Credit;
-use App\Models\Client;
+use App\Models\Relation;
 
 class CreditRepository extends BaseRepository
 {
@@ -12,22 +12,22 @@ class CreditRepository extends BaseRepository
         return 'App\Models\Credit';
     }
 
-    public function find($clientPublicId = null, $filter = null)
+    public function find($relationPublicId = null, $filter = null)
     {
         $query = DB::table('credits')
                     ->join('companies', 'companies.id', '=', 'credits.company_id')
-                    ->join('clients', 'clients.id', '=', 'credits.client_id')
-                    ->join('contacts', 'contacts.client_id', '=', 'clients.id')
-                    ->where('clients.company_id', '=', \Auth::user()->company_id)
+                    ->join('relations', 'relations.id', '=', 'credits.relation_id')
+                    ->join('contacts', 'contacts.relation_id', '=', 'relations.id')
+                    ->where('relations.company_id', '=', \Auth::user()->company_id)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('contacts.is_primary', '=', true)
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
+                        DB::raw('COALESCE(relations.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(relations.country_id, companies.country_id) country_id'),
                         'credits.public_id',
-                        DB::raw("COALESCE(NULLIF(clients.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) client_name"),
-                        'clients.public_id as client_public_id',
-                        'clients.user_id as client_user_id',
+                        DB::raw("COALESCE(NULLIF(relations.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) relation_name"),
+                        'relations.public_id as relation_public_id',
+                        'relations.user_id as client_user_id',
                         'credits.amount',
                         'credits.balance',
                         'credits.credit_date',
@@ -40,35 +40,35 @@ class CreditRepository extends BaseRepository
                         'credits.user_id'
                     );
 
-        if ($clientPublicId) {
-            $query->where('clients.public_id', '=', $clientPublicId);
+        if ($relationPublicId) {
+            $query->where('relations.public_id', '=', $relationPublicId);
         } else {
-            $query->whereNull('clients.deleted_at');
+            $query->whereNull('relations.deleted_at');
         }
 
         $this->applyFilters($query, ENTITY_CREDIT);
 
         if ($filter) {
             $query->where(function ($query) use ($filter) {
-                $query->where('clients.name', 'like', '%'.$filter.'%');
+                $query->where('relations.name', 'like', '%'.$filter.'%');
             });
         }
 
         return $query;
     }
 
-    public function getClientDatatable($clientId)
+    public function getClientDatatable($relationId)
     {
         $query = DB::table('credits')
                     ->join('companies', 'companies.id', '=', 'credits.company_id')
-                    ->join('clients', 'clients.id', '=', 'credits.client_id')
-                    ->where('credits.client_id', '=', $clientId)
-                    ->where('clients.deleted_at', '=', null)
+                    ->join('relations', 'relations.id', '=', 'credits.relation_id')
+                    ->where('credits.relation_id', '=', $relationId)
+                    ->where('relations.deleted_at', '=', null)
                     ->where('credits.deleted_at', '=', null)
                     ->where('credits.balance', '>', 0)
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
+                        DB::raw('COALESCE(relations.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(relations.country_id, companies.country_id) country_id'),
                         'credits.amount',
                         'credits.balance',
                         'credits.credit_date'
@@ -94,7 +94,7 @@ class CreditRepository extends BaseRepository
             \Log::warning('Entity not set in credit repo save');
         } else {
             $credit = Credit::createNew();
-            $credit->client_id = Client::getPrivateId($input['client']);
+            $credit->relation_id = Relation::getPrivateId($input['relation']);
         }
 
         $credit->credit_date = Utils::toSqlDate($input['credit_date']);

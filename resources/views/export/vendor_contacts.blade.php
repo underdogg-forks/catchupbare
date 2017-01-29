@@ -1,5 +1,5 @@
 <tr>
-    <td>{{ trans('texts.client') }}</td>
+    <td>{{ trans('texts.relation') }}</td>
     @if ($multiUser)
         <td>{{ trans('texts.user') }}</td>
     @endif

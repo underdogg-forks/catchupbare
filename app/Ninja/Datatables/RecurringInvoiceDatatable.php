@@ -20,9 +20,9 @@ class RecurringInvoiceDatatable extends EntityDatatable
                 }
             ],
             [
-                'client_name',
+                'relation_name',
                 function ($model) {
-                    return link_to("clients/{$model->client_public_id}", Utils::getClientDisplayName($model))->toHtml();
+                    return link_to("relations/{$model->relation_public_id}", Utils::getRelationDisplayName($model))->toHtml();
                 },
                 ! $this->hideClient
             ],

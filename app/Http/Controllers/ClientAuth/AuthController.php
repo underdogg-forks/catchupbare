@@ -14,12 +14,12 @@ class AuthController extends Controller
     /**
      * @var string
      */
-    protected $guard = 'client';
+    protected $guard = 'relation';
 
     /**
      * @var string
      */
-    protected $redirectTo = '/client/dashboard';
+    protected $redirectTo = '/relation/dashboard';
 
     /**
      * @return mixed

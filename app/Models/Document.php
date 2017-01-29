@@ -252,7 +252,7 @@ class Document extends EntityModel
      * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
     public function getClientUrl($invitation){
-        return url('client/documents/'.$invitation->invitation_key.'/'.$this->public_id.'/'.$this->name);
+        return url('relation/documents/'.$invitation->invitation_key.'/'.$this->public_id.'/'.$this->name);
     }
 
     /**
@@ -275,7 +275,7 @@ class Document extends EntityModel
      */
     public function getClientVFSJSUrl(){
         if(!$this->isPDFEmbeddable())return null;
-        return url('client/documents/js/'.$this->public_id.'/'.$this->name.'.js');
+        return url('relation/documents/js/'.$this->public_id.'/'.$this->name.'.js');
     }
 
     /**

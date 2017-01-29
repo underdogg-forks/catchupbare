@@ -24,7 +24,7 @@ class AddCustomFields extends Migration
             $table->string('custom_client_label2')->nullable();
         });
 
-        Schema::table('clients', function ($table) {
+        Schema::table('relations', function ($table) {
             $table->string('custom_value1')->nullable();
             $table->string('custom_value2')->nullable();
         });
@@ -48,7 +48,7 @@ class AddCustomFields extends Migration
             $table->dropColumn('custom_client_label2');
         });
 
-        Schema::table('clients', function ($table) {
+        Schema::table('relations', function ($table) {
             $table->dropColumn('custom_value1');
             $table->dropColumn('custom_value2');
         });

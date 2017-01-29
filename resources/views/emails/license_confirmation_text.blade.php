@@ -1,4 +1,4 @@
-{!! $client !!},
+{!! $relation !!},
 
 {!! trans('texts.payment_message', ['amount' => $amount]) !!}
 

@@ -232,7 +232,7 @@
                     <div class="panel-body">
                       <div class="row">
                           @include('companies.partials.invoice_fields_selector', ['section' => 'invoice_fields', 'fields' => INVOICE_FIELDS_INVOICE])
-                          @include('companies.partials.invoice_fields_selector', ['section' => 'client_fields', 'fields' => INVOICE_FIELDS_CLIENT])
+                          @include('companies.partials.invoice_fields_selector', ['section' => 'relation_fields', 'fields' => INVOICE_FIELDS_RELATION])
                           @include('companies.partials.invoice_fields_selector', ['section' => 'account_fields1', 'fields' => INVOICE_FIELDS_COMPANY])
                           @include('companies.partials.invoice_fields_selector', ['section' => 'account_fields2', 'fields' => INVOICE_FIELDS_COMPANY])
                       </div>

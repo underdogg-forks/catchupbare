@@ -19,7 +19,7 @@ class ExpenseTransformer extends BaseTransformer
             return [
                 'amount' => $this->getFloat($data, 'amount'),
                 'vendor_id' => isset($data->vendor) ? $this->getVendorId($data->vendor) : null,
-                'client_id' => isset($data->client) ? $this->getClientId($data->client) : null,
+                'relation_id' => isset($data->relation) ? $this->getClientId($data->relation) : null,
                 'expense_date' => isset($data->expense_date) ? date('Y-m-d', strtotime($data->expense_date)) : null,
                 'public_notes' => $this->getString($data, 'public_notes'),
                 'expense_category_id' => isset($data->expense_category) ? $this->getExpenseCategoryId($data->expense_category) : null,

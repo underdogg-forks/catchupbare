@@ -13,14 +13,14 @@ class CreditWasArchived extends Event
     use SerializesModels;
 
     /**
-     * @var Client
+     * @var Relation
      */
     public $credit;
 
     /**
      * Create a new event instance.
      *
-     * @param Client $credit
+     * @param Relation $credit
      */
     public function __construct(Credit $credit)
     {

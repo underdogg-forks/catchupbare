@@ -37,7 +37,7 @@ class BaseController extends Controller
         if ($action == 'restore' && count($ids) == 1) {
             return redirect("{$entityTypes}/" . $ids[0]);
         // when viewing from a datatable list
-        } elseif (strpos($referer, '/clients/')) {
+        } elseif (strpos($referer, '/relations/')) {
             return redirect($referer);
         } elseif ($isDatatable || ($action == 'archive' || $action == 'delete')) {
             return redirect("{$entityTypes}");

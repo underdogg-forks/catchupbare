@@ -17,10 +17,10 @@ class InvoiceCard
 
         $this->setTitle(trans('texts.invoice_for_client', [
             'invoice' => link_to($invoice->getRoute(), $invoice->invoice_number),
-            'client' => link_to($invoice->client->getRoute(), $invoice->client->getDisplayName())
+            'relation' => link_to($invoice->relation->getRoute(), $invoice->relation->getDisplayName())
         ]));
 
-        $this->addFact(trans('texts.email'), HTML::mailto($invoice->client->contacts[0]->email)->toHtml());
+        $this->addFact(trans('texts.email'), HTML::mailto($invoice->relation->contacts[0]->email)->toHtml());
 
         if ($invoice->due_date) {
             $this->addFact($invoice->present()->dueDateLabel, $invoice->present()->due_date);

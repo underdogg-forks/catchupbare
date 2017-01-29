@@ -45,16 +45,16 @@ class ExpenseRepository extends BaseRepository
         $accountid = \Auth::user()->company_id;
         $query = DB::table('expenses')
                     ->join('companies', 'companies.id', '=', 'expenses.company_id')
-                    ->leftjoin('clients', 'clients.id', '=', 'expenses.client_id')
-                    ->leftJoin('contacts', 'contacts.client_id', '=', 'clients.id')
+                    ->leftjoin('relations', 'relations.id', '=', 'expenses.relation_id')
+                    ->leftJoin('contacts', 'contacts.relation_id', '=', 'relations.id')
                     ->leftjoin('vendors', 'vendors.id', '=', 'expenses.vendor_id')
                     ->leftJoin('invoices', 'invoices.id', '=', 'expenses.invoice_id')
                     ->leftJoin('expense_categories', 'expenses.expense_category_id', '=', 'expense_categories.id')
                     ->where('expenses.company_id', '=', $accountid)
                     ->where('contacts.deleted_at', '=', null)
                     ->where('vendors.deleted_at', '=', null)
-                    ->where('clients.deleted_at', '=', null)
-                    ->where(function ($query) { // handle when client isn't set
+                    ->where('relations.deleted_at', '=', null)
+                    ->where(function ($query) { // handle when relation isn't set
                         $query->where('contacts.is_primary', '=', true)
                               ->orWhere('contacts.is_primary', '=', null);
                     })
@@ -85,13 +85,13 @@ class ExpenseRepository extends BaseRepository
                         'vendors.name as vendor_name',
                         'vendors.public_id as vendor_public_id',
                         'vendors.user_id as vendor_user_id',
-                        DB::raw("COALESCE(NULLIF(clients.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) client_name"),
-                        'clients.public_id as client_public_id',
-                        'clients.user_id as client_user_id',
+                        DB::raw("COALESCE(NULLIF(relations.name,''), NULLIF(CONCAT(contacts.first_name, ' ', contacts.last_name),''), NULLIF(contacts.email,'')) relation_name"),
+                        'relations.public_id as relation_public_id',
+                        'relations.user_id as client_user_id',
                         'contacts.first_name',
                         'contacts.email',
                         'contacts.last_name',
-                        'clients.country_id as client_country_id'
+                        'relations.country_id as client_country_id'
                     );
 
         $this->applyFilters($query, ENTITY_EXPENSE);
@@ -121,7 +121,7 @@ class ExpenseRepository extends BaseRepository
         if ($filter) {
             $query->where(function ($query) use ($filter) {
                 $query->where('expenses.public_notes', 'like', '%'.$filter.'%')
-                      ->orWhere('clients.name', 'like', '%'.$filter.'%')
+                      ->orWhere('relations.name', 'like', '%'.$filter.'%')
                       ->orWhere('vendors.name', 'like', '%'.$filter.'%')
                       ->orWhere('expense_categories.name', 'like', '%'.$filter.'%');;
             });
@@ -156,7 +156,7 @@ class ExpenseRepository extends BaseRepository
             $expense->expense_date = Utils::toSqlDate($input['expense_date']);
         }
 
-        $expense->should_be_invoiced = isset($input['should_be_invoiced']) && floatval($input['should_be_invoiced']) || $expense->client_id ? true : false;
+        $expense->should_be_invoiced = isset($input['should_be_invoiced']) && floatval($input['should_be_invoiced']) || $expense->relation_id ? true : false;
 
         if ( ! $expense->expense_currency_id) {
             $expense->expense_currency_id = \Auth::user()->company->getCurrencyId();

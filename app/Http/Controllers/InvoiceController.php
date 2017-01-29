@@ -10,7 +10,7 @@ use Redirect;
 use DB;
 use URL;
 use App\Models\Invoice;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Expense;
@@ -20,7 +20,7 @@ use App\Models\InvoiceDesign;
 use App\Models\Activity;
 use App\Jobs\SendInvoiceEmail;
 use App\Ninja\Repositories\InvoiceRepository;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Ninja\Repositories\DocumentRepository;
 use App\Ninja\Datatables\InvoiceDatatable;
 use App\Services\InvoiceService;
@@ -40,7 +40,7 @@ class InvoiceController extends BaseController
     protected $recurringInvoiceService;
     protected $entityType = ENTITY_INVOICE;
 
-    public function __construct(InvoiceRepository $invoiceRepo, ClientRepository $clientRepo, InvoiceService $invoiceService, DocumentRepository $documentRepo, RecurringInvoiceService $recurringInvoiceService, PaymentService $paymentService)
+    public function __construct(InvoiceRepository $invoiceRepo, RelationRepository $clientRepo, InvoiceService $invoiceService, DocumentRepository $documentRepo, RecurringInvoiceService $recurringInvoiceService, PaymentService $paymentService)
     {
         // parent::__construct();
 
@@ -63,26 +63,26 @@ class InvoiceController extends BaseController
         return response()->view('list_wrapper', $data);
     }
 
-    public function getDatatable($clientPublicId = null)
+    public function getDatatable($relationPublicId = null)
     {
         $companyId = Auth::user()->company_id;
         $search = Input::get('sSearch');
 
-        return $this->invoiceService->getDatatable($companyId, $clientPublicId, ENTITY_INVOICE, $search);
+        return $this->invoiceService->getDatatable($companyId, $relationPublicId, ENTITY_INVOICE, $search);
     }
 
-    public function getRecurringDatatable($clientPublicId = null)
+    public function getRecurringDatatable($relationPublicId = null)
     {
         $companyId = Auth::user()->company_id;
         $search = Input::get('sSearch');
 
-        return $this->recurringInvoiceService->getDatatable($companyId, $clientPublicId, ENTITY_RECURRING_INVOICE, $search);
+        return $this->recurringInvoiceService->getDatatable($companyId, $relationPublicId, ENTITY_RECURRING_INVOICE, $search);
     }
 
     public function edit(InvoiceRequest $request, $publicId, $clone = false)
     {
         $company = Auth::user()->company;
-        $invoice = $request->entity()->load('invitations', 'company.country', 'client.contacts', 'client.country', 'invoice_items', 'documents', 'expenses', 'expenses.documents', 'payments');
+        $invoice = $request->entity()->load('invitations', 'company.country', 'relation.contacts', 'relation.country', 'invoice_items', 'documents', 'expenses', 'expenses.documents', 'payments');
 
         $entityType = $invoice->getEntityType();
 
@@ -93,7 +93,7 @@ class InvoiceController extends BaseController
             ->where('invitations.deleted_at', '=', null)
             ->select('contacts.public_id')->pluck('public_id');
 
-        $clients = Client::scope()->withTrashed()->with('contacts', 'country');
+        $relations = Relation::scope()->withTrashed()->with('contacts', 'country');
 
         if ($clone) {
             $invoice->id = $invoice->public_id = null;
@@ -107,7 +107,7 @@ class InvoiceController extends BaseController
         } else {
             $method = 'PUT';
             $url = "{$entityType}s/{$invoice->public_id}";
-            $clients->whereId($invoice->client_id);
+            $relations->whereId($invoice->relation_id);
         }
 
         $invoice->invoice_date = Utils::fromSqlDate($invoice->invoice_date);
@@ -125,11 +125,11 @@ class InvoiceController extends BaseController
         $lastSent = ($invoice->is_recurring && $invoice->last_sent_date) ? $invoice->recurring_invoices->last() : null;
 
         if(!Auth::user()->hasPermission('view_all')){
-            $clients = $clients->where('clients.user_id', '=', Auth::user()->id);
+            $relations = $relations->where('relations.user_id', '=', Auth::user()->id);
         }
 
         $data = [
-                'clients' => $clients->get(),
+                'relations' => $relations->get(),
                 'entityType' => $entityType,
                 'showBreadcrumbs' => $clone,
                 'invoice' => $invoice,
@@ -137,24 +137,24 @@ class InvoiceController extends BaseController
                 'invitationContactIds' => $contactIds,
                 'url' => $url,
                 'title' => trans("texts.edit_{$entityType}"),
-                'client' => $invoice->client,
+                'relation' => $invoice->relation,
                 'isRecurring' => $invoice->is_recurring,
                 'lastSent' => $lastSent];
         $data = array_merge($data, self::getViewModel($invoice));
 
         if ($invoice->isSent() && $invoice->getAutoBillEnabled() && !$invoice->isPaid()) {
-            $data['autoBillChangeWarning'] = $invoice->client->autoBillLater();
+            $data['autoBillChangeWarning'] = $invoice->relation->autoBillLater();
         }
 
         if ($clone) {
             $data['formIsChanged'] = true;
         }
 
-        // Set the invitation data on the client's contacts
+        // Set the invitation data on the relation's contacts
         if ( ! $clone) {
-            $clients = $data['clients'];
-            foreach ($clients as $client) {
-                if ($client->id != $invoice->client->id) {
+            $relations = $data['relations'];
+            foreach ($relations as $client) {
+                if ($client->id != $invoice->relation->id) {
                     continue;
                 }
 
@@ -178,27 +178,27 @@ class InvoiceController extends BaseController
         return View::make('invoices.edit', $data);
     }
 
-    public function create(InvoiceRequest $request, $clientPublicId = 0, $isRecurring = false)
+    public function create(InvoiceRequest $request, $relationPublicId = 0, $isRecurring = false)
     {
         $company = Auth::user()->company;
 
         $entityType = $isRecurring ? ENTITY_RECURRING_INVOICE : ENTITY_INVOICE;
-        $clientId = null;
+        $relationId = null;
 
-        if ($request->client_id) {
-            $clientId = Client::getPrivateId($request->client_id);
+        if ($request->relation_id) {
+            $relationId = Relation::getPrivateId($request->relation_id);
         }
 
-        $invoice = $company->createInvoice($entityType, $clientId);
+        $invoice = $company->createInvoice($entityType, $relationId);
         $invoice->public_id = 0;
 
-        $clients = Client::scope()->with('contacts', 'country')->orderBy('name');
+        $relations = Relation::scope()->with('contacts', 'country')->orderBy('name');
         if (!Auth::user()->hasPermission('view_all')) {
-            $clients = $clients->where('clients.user_id', '=', Auth::user()->id);
+            $relations = $relations->where('relations.user_id', '=', Auth::user()->id);
         }
 
         $data = [
-            'clients' => $clients->get(),
+            'relations' => $relations->get(),
             'entityType' => $invoice->getEntityType(),
             'invoice' => $invoice,
             'method' => 'POST',
@@ -210,9 +210,9 @@ class InvoiceController extends BaseController
         return View::make('invoices.edit', $data);
     }
 
-    public function createRecurring(InvoiceRequest $request, $clientPublicId = 0)
+    public function createRecurring(InvoiceRequest $request, $relationPublicId = 0)
     {
-        return self::create($request, $clientPublicId, true);
+        return self::create($request, $relationPublicId, true);
     }
 
     private static function getViewModel($invoice)
@@ -346,6 +346,8 @@ class InvoiceController extends BaseController
     public function store(CreateInvoiceRequest $request)
     {
         $data = $request->input();
+
+
         $data['documents'] = $request->file('documents');
 
         $action = Input::get('action');
@@ -356,9 +358,9 @@ class InvoiceController extends BaseController
         $message = trans("texts.created_{$entityType}");
 
         $input = $request->input();
-        $clientPublicId = isset($input['client']['public_id']) ? $input['client']['public_id'] : false;
-        if ($clientPublicId == '-1') {
-            $message = $message.' '.trans('texts.and_created_client');
+        $relationPublicId = isset($input['relation']['id']) ? $input['relation']['id'] : false;
+        if ($relationPublicId == '-1') {
+            $message = $message.' '.trans('texts.and_created_relation');
         }
 
         Session::flash('message', $message);
@@ -515,7 +517,7 @@ class InvoiceController extends BaseController
         $invoice = $request->entity();
         $paymentId = $request->payment_id ? Payment::getPrivateId($request->payment_id) : false;
 
-        $invoice->load('user', 'invoice_items', 'documents', 'expenses', 'expenses.documents', 'company.country', 'client.contacts', 'client.country');
+        $invoice->load('user', 'invoice_items', 'documents', 'expenses', 'expenses.documents', 'company.country', 'relation.contacts', 'relation.country');
         $invoice->invoice_date = Utils::fromSqlDate($invoice->invoice_date);
         $invoice->due_date = Utils::fromSqlDate($invoice->due_date);
         $invoice->features = [

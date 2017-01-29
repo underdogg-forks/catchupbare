@@ -5,7 +5,7 @@ use View;
 use Utils;
 use Input;
 use Session;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Services\ProjectService;
 use App\Ninja\Repositories\ProjectRepository;
 use App\Ninja\Datatables\ProjectDatatable;
@@ -54,8 +54,8 @@ class ProjectController extends BaseController
             'method' => 'POST',
             'url' => 'projects',
             'title' => trans('texts.new_project'),
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $request->client_id,
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
+            'clientPublicId' => $request->relation_id,
         ];
 
         return View::make('projects.edit', $data);
@@ -70,8 +70,8 @@ class ProjectController extends BaseController
             'method' => 'PUT',
             'url' => 'projects/' . $project->public_id,
             'title' => trans('texts.edit_project'),
-            'clients' => Client::scope()->with('contacts')->orderBy('name')->get(),
-            'clientPublicId' => $project->client ? $project->client->public_id : null,
+            'relations' => Relation::scope()->with('contacts')->orderBy('name')->get(),
+            'clientPublicId' => $project->relation ? $project->relation->id : null,
         ];
 
         return View::make('projects.edit', $data);

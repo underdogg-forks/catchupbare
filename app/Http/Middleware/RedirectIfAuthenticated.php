@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Session;
 use Closure;
-use App\Models\Client;
+use App\Models\Relation;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\RedirectResponse;
 
@@ -39,7 +39,7 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($this->auth->check() && Client::scope()->count() > 0) {
+        if ($this->auth->check() && Relation::scope()->count() > 0) {
             Session::reflash();
 
             return new RedirectResponse(url('/dashboard'));

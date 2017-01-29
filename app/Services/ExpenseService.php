@@ -3,7 +3,7 @@
 use Auth;
 use Utils;
 use App\Ninja\Repositories\ExpenseRepository;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Vendor;
 use App\Models\ExpenseCategory;
 use App\Ninja\Datatables\ExpenseDatatable;
@@ -50,8 +50,8 @@ class ExpenseService extends BaseService
      */
     public function save($data, $expense = null)
     {
-        if (isset($data['client_id']) && $data['client_id']) {
-            $data['client_id'] = Client::getPrivateId($data['client_id']);
+        if (isset($data['relation_id']) && $data['relation_id']) {
+            $data['relation_id'] = Relation::getPrivateId($data['relation_id']);
         }
 
         if (isset($data['vendor_id']) && $data['vendor_id']) {

@@ -3,21 +3,21 @@
 use DB;
 use Cache;
 use Auth;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Contact;
 use App\Events\ClientWasCreated;
 use App\Events\ClientWasUpdated;
 
-class ClientRepository extends BaseRepository
+class RelationRepository extends BaseRepository
 {
     public function getClassName()
     {
-        return 'App\Models\Client';
+        return 'App\Models\Relation';
     }
 
     public function all()
     {
-        return Client::scope()
+        return Relation::scope()
                 ->with('user', 'contacts', 'country')
                 ->withTrashed()
                 ->where('is_deleted', '=', false)
@@ -26,37 +26,37 @@ class ClientRepository extends BaseRepository
 
     public function find($filter = null, $userId = false)
     {
-        $query = DB::table('clients')
-                    ->join('companies', 'companies.id', '=', 'clients.company_id')
-                    ->join('contacts', 'contacts.client_id', '=', 'clients.id')
-                    ->where('clients.company_id', '=', \Auth::user()->company_id)
+        $query = DB::table('relations')
+                    ->join('companies', 'companies.id', '=', 'relations.company_id')
+                    ->join('contacts', 'contacts.relation_id', '=', 'relations.id')
+                    ->where('relations.company_id', '=', \Auth::user()->company_id)
                     ->where('contacts.is_primary', '=', true)
                     ->where('contacts.deleted_at', '=', null)
-                    //->whereRaw('(clients.name != "" or contacts.first_name != "" or contacts.last_name != "" or contacts.email != "")') // filter out buy now invoices
+                    //->whereRaw('(relations.name != "" or contacts.first_name != "" or contacts.last_name != "" or contacts.email != "")') // filter out buy now invoices
                     ->select(
-                        DB::raw('COALESCE(clients.currency_id, companies.currency_id) currency_id'),
-                        DB::raw('COALESCE(clients.country_id, companies.country_id) country_id'),
+                        DB::raw('COALESCE(relations.currency_id, companies.currency_id) currency_id'),
+                        DB::raw('COALESCE(relations.country_id, companies.country_id) country_id'),
                         DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name) contact"),
-                        'clients.id',
-                        'clients.name',
+                        'relations.id',
+                        'relations.name',
                         'contacts.first_name',
                         'contacts.last_name',
-                        'clients.balance',
-                        'clients.last_login',
-                        'clients.created_at',
-                        'clients.created_at as client_created_at',
-                        'clients.work_phone',
+                        'relations.balance',
+                        'relations.last_login',
+                        'relations.created_at',
+                        'relations.created_at as client_created_at',
+                        'relations.work_phone',
                         'contacts.email',
-                        'clients.deleted_at',
-                        'clients.is_deleted',
-                        'clients.user_id'
+                        'relations.deleted_at',
+                        'relations.is_deleted',
+                        'relations.user_id'
                     );
 
-        $this->applyFilters($query, ENTITY_CLIENT);
+        $this->applyFilters($query, ENTITY_RELATION);
 
         if ($filter) {
             $query->where(function ($query) use ($filter) {
-                $query->where('clients.name', 'like', '%'.$filter.'%')
+                $query->where('relations.name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.first_name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.last_name', 'like', '%'.$filter.'%')
                       ->orWhere('contacts.email', 'like', '%'.$filter.'%');
@@ -64,7 +64,7 @@ class ClientRepository extends BaseRepository
         }
 
         if ($userId) {
-            $query->where('clients.user_id', '=', $userId);
+            $query->where('relations.user_id', '=', $userId);
         }
 
         return $query;
@@ -77,12 +77,12 @@ class ClientRepository extends BaseRepository
         if ($client) {
            // do nothing
         } elseif (!$publicId || $publicId == '-1') {
-            $client = Client::createNew();
+            $client = Relation::createNew();
             if (Auth::check() && Auth::user()->company->client_number_counter && empty($data['id_number'])) {
                 $data['id_number'] = Auth::user()->company->getNextNumber();
             }
         } else {
-            $client = Client::scope($publicId)->with('contacts')->firstOrFail();
+            $client = Relation::scope($publicId)->with('contacts')->firstOrFail();
         }
 
         if ($client->is_deleted) {
@@ -151,11 +151,11 @@ class ClientRepository extends BaseRepository
 
         $map = [];
         $max = SIMILAR_MIN_THRESHOLD;
-        $clientId = 0;
+        $relationId = 0;
 
-        $clients = Client::scope()->get(['id', 'name', 'public_id']);
+        $relations = Relation::scope()->get(['id', 'name', 'public_id']);
 
-        foreach ($clients as $client) {
+        foreach ($relations as $client) {
             $map[$client->id] = $client;
 
             if ( ! $client->name) {
@@ -165,27 +165,27 @@ class ClientRepository extends BaseRepository
             $similar = similar_text($clientNameMeta, metaphone($client->name), $percent);
 
             if ($percent > $max) {
-                $clientId = $client->id;
+                $relationId = $client->id;
                 $max = $percent;
             }
         }
 
-        $contacts = Contact::scope()->get(['client_id', 'first_name', 'last_name', 'public_id']);
+        $contacts = Contact::scope()->get(['relation_id', 'first_name', 'last_name', 'public_id']);
 
         foreach ($contacts as $contact) {
-            if ( ! $contact->getFullName() || ! isset($map[$contact->client_id])) {
+            if ( ! $contact->getFullName() || ! isset($map[$contact->relation_id])) {
                 continue;
             }
 
             $similar = similar_text($clientNameMeta, metaphone($contact->getFullName()), $percent);
 
             if ($percent > $max) {
-                $clientId = $contact->client_id;
+                $relationId = $contact->relation_id;
                 $max = $percent;
             }
         }
 
-        return ($clientId && isset($map[$clientId])) ? $map[$clientId] : null;
+        return ($relationId && isset($map[$relationId])) ? $map[$relationId] : null;
     }
 
 }

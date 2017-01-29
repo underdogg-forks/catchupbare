@@ -2,7 +2,7 @@
 
 @section('body')
     <div>
-        {{ $client }},
+        {{ $relation }},
     </div>
     &nbsp;
     <div>

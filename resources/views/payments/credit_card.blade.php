@@ -47,17 +47,17 @@
             )) !!}
 
 
-    @if ($client)
-        {{ Former::populate($client) }}
+    @if ($relation)
+        {{ Former::populate($relation) }}
         {{ Former::populateField('first_name', $contact->first_name) }}
         {{ Former::populateField('last_name', $contact->last_name) }}
         {{ Former::populateField('email', $contact->email) }}
-        @if (!$client->country_id && $client->company->country_id)
-            {{ Former::populateField('country_id', $client->company->country_id) }}
+        @if (!$relation->country_id && $relation->company->country_id)
+            {{ Former::populateField('country_id', $relation->company->country_id) }}
         @endif
-        @if (!$client->currency_id && $client->company->currency_id)
-            {{ Former::populateField('currency_id', $client->company->currency_id) }}
-            {{ Former::populateField('currency', $client->company->currency->code) }}
+        @if (!$relation->currency_id && $relation->company->currency_id)
+            {{ Former::populateField('currency_id', $relation->company->currency_id) }}
+            {{ Former::populateField('currency', $relation->company->currency->code) }}
         @endif
     @endif
 
@@ -230,7 +230,7 @@
     </div>
     <div class="row" style="padding-top:18px">
         <div class="col-md-5">
-            @if (isset($amount) && $client && $company->showTokenCheckbox($storageGateway/* will contain gateway id */))
+            @if (isset($amount) && $relation && $company->showTokenCheckbox($storageGateway/* will contain gateway id */))
                 <input id="token_billing" type="checkbox" name="token_billing" {{ $company->selectTokenCheckbox() ? 'CHECKED' : '' }} value="1" style="margin-left:0px; vertical-align:top">
                 <label for="token_billing" class="checkbox" style="display: inline;">{{ trans('texts.token_billing') }}</label>
                 <span class="help-block" style="font-size:15px">
@@ -261,7 +261,7 @@
     <p>&nbsp;</p>
     <center>
         @if(isset($amount))
-            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $client, CURRENCY_DECORATOR_CODE)  ))
+            {!! Button::success(strtoupper(trans('texts.pay_now') . ' - ' . $company->formatMoney($amount, $relation, CURRENCY_DECORATOR_CODE)  ))
                             ->submit()
                             ->large() !!}
         @else

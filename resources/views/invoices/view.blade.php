@@ -5,7 +5,7 @@
 
 		@include('money_script')
 
-		@foreach ($invoice->client->company->getFontFolders() as $font)
+		@foreach ($invoice->relation->company->getFontFolders() as $font)
         	<script src="{{ asset('js/vfs_fonts/'.$font.'.js') }}" type="text/javascript"></script>
     	@endforeach
 
@@ -56,7 +56,7 @@
                         enableShippingAddress: false,
                         enableBillingAddress: false,
                         headless: true,
-                        locale: "{{ $invoice->client->language ? $invoice->client->language->locale : $invoice->company->language->locale }}"
+                        locale: "{{ $invoice->relation->language ? $invoice->relation->language->locale : $invoice->company->language->locale }}"
                     },
                     dataCollector: {
                         paypal: true
@@ -86,7 +86,7 @@
                     if(!email)return;
 
                     WePay.bank_acc.create({
-                        'client_id': '{{ WEPAY_CLIENT_ID }}',
+                        'relation_id': '{{ WEPAY_CLIENT_ID }}',
                         'email':email
                     }, function(data){
                         dataObj = JSON.parse(data);
@@ -118,7 +118,7 @@
                 @endif
 			@elseif ( ! $invoice->canBePaid())
 				{!! Button::normal(trans('texts.download_pdf'))->withAttributes(['onclick' => 'onDownloadClick()'])->large() !!}
-    		@elseif ($invoice->client->company->isGatewayConfigured() && floatval($invoice->balance) && !$invoice->is_recurring)
+    		@elseif ($invoice->relation->company->isGatewayConfigured() && floatval($invoice->balance) && !$invoice->is_recurring)
                 {!! Button::normal(trans('texts.download_pdf'))->withAttributes(['onclick' => 'onDownloadClick()'])->large() !!}&nbsp;&nbsp;
                 @if (count($paymentTypes) > 1)
                     {!! DropdownButton::success(trans('texts.pay_now'))->withContents($paymentTypes)->large() !!}
@@ -175,9 +175,9 @@
 
 			window.invoice = {!! $invoice->toJson() !!};
 			invoice.features = {
-                customize_invoice_design:{{ $invoice->client->company->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN) ? 'true' : 'false' }},
-                remove_created_by:{{ $invoice->client->company->hasFeature(FEATURE_REMOVE_CREATED_BY) ? 'true' : 'false' }},
-                invoice_settings:{{ $invoice->client->company->hasFeature(FEATURE_INVOICE_SETTINGS) ? 'true' : 'false' }}
+                customize_invoice_design:{{ $invoice->relation->company->hasFeature(FEATURE_CUSTOMIZE_INVOICE_DESIGN) ? 'true' : 'false' }},
+                remove_created_by:{{ $invoice->relation->company->hasFeature(FEATURE_REMOVE_CREATED_BY) ? 'true' : 'false' }},
+                invoice_settings:{{ $invoice->relation->company->hasFeature(FEATURE_INVOICE_SETTINGS) ? 'true' : 'false' }}
             };
 			invoice.is_quote = {{ $invoice->isQuote() ? 'true' : 'false' }};
 			invoice.contact = {!! $contact->toJson() !!};
@@ -287,7 +287,7 @@
 
 		</script>
 
-		@include('invoices.pdf', ['company' => $invoice->client->company])
+		@include('invoices.pdf', ['company' => $invoice->relation->company])
 
 		<p>&nbsp;</p>
 

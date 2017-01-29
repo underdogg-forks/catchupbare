@@ -44,7 +44,7 @@ class ExpenseApiController extends BaseAPIController
     {
         $expenses = Expense::scope()
             ->withTrashed()
-            ->with('client', 'invoice', 'vendor', 'expense_category')
+            ->with('relation', 'invoice', 'vendor', 'expense_category')
             ->orderBy('created_at','desc');
 
         return $this->listResponse($expenses);
@@ -76,7 +76,7 @@ class ExpenseApiController extends BaseAPIController
         $expense = $this->expenseRepo->save($request->input());
 
         $expense = Expense::scope($expense->public_id)
-            ->with('client', 'invoice', 'vendor')
+            ->with('relation', 'invoice', 'vendor')
             ->first();
 
         return $this->itemResponse($expense);

@@ -229,7 +229,7 @@ class EntityModel extends Eloquent
         }
     }
 
-    // converts "App\Models\Client" to "client_id"
+    // converts "App\Models\Relation" to "relation_id"
     /**
      * @return string
      */
@@ -277,7 +277,7 @@ class EntityModel extends Eloquent
     {
         $icons = [
             'dashboard' => 'tachometer',
-            'clients' => 'users',
+            'relations' => 'users',
             'products' => 'cube',
             'invoices' => 'file-pdf-o',
             'payments' => 'credit-card',

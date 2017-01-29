@@ -20,7 +20,7 @@ class ContactMailer extends Mailer
         'company',
         'dueDate',
         'invoiceDate',
-        'client',
+        'relation',
         'amount',
         'contact',
         'firstName',
@@ -59,10 +59,10 @@ class ContactMailer extends Mailer
      */
     public function sendInvoice(Invoice $invoice, $reminder = false, $pdfString = false)
     {
-        $invoice->load('invitations', 'client.language', 'company');
+        $invoice->load('invitations', 'relation.language', 'company');
         $entityType = $invoice->getEntityType();
 
-        $client = $invoice->client;
+        $client = $invoice->relation;
         $company = $invoice->company;
 
         $response = null;
@@ -147,7 +147,7 @@ class ContactMailer extends Mailer
     )
     {
 
-        $client = $invoice->client;
+        $client = $invoice->relation;
         $company = $invoice->company;
 
         if (Auth::check()) {
@@ -171,12 +171,12 @@ class ContactMailer extends Mailer
 
         $variables = [
             'company' => $company,
-            'client' => $client,
+            'relation' => $client,
             'invitation' => $invitation,
             'amount' => $invoice->getRequestedAmount()
         ];
 
-        // Let the client know they'll be billed later
+        // Let the relation know they'll be billed later
         if ($client->autoBillLater()) {
             $variables['autobill'] = $invoice->present()->autoBillEmailMessage();
         }
@@ -195,7 +195,7 @@ class ContactMailer extends Mailer
             'invoiceId' => $invoice->id,
             'invitation' => $invitation,
             'company' => $company,
-            'client' => $client,
+            'relation' => $client,
             'invoice' => $invoice,
             'documents' => $documentStrings,
             'notes' => $reminder,
@@ -253,7 +253,7 @@ class ContactMailer extends Mailer
     public function sendPaymentConfirmation(Payment $payment)
     {
         $company = $payment->company;
-        $client = $payment->client;
+        $client = $payment->relation;
 
         $company->loadLocalizationSettings($client);
 
@@ -274,7 +274,7 @@ class ContactMailer extends Mailer
 
         $variables = [
             'company' => $company,
-            'client' => $client,
+            'relation' => $client,
             'invitation' => $invitation,
             'amount' => $payment->amount,
         ];
@@ -283,7 +283,7 @@ class ContactMailer extends Mailer
             'body' => $this->templateService->processVariables($emailTemplate, $variables),
             'link' => $invitation->getLink(),
             'invoice' => $invoice,
-            'client' => $client,
+            'relation' => $client,
             'company' => $company,
             'payment' => $payment,
             'entityType' => ENTITY_INVOICE,
@@ -329,7 +329,7 @@ class ContactMailer extends Mailer
         }
 
         $data = [
-            'client' => $name,
+            'relation' => $name,
             'amount' => Utils::formatMoney($amount, DEFAULT_CURRENCY, DEFAULT_COUNTRY),
             'license' => $license
         ];

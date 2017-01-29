@@ -392,7 +392,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <th>{{ trans('texts.invoice_number_short') }}</th>
-                                <th>{{ trans('texts.client') }}</th>
+                                <th>{{ trans('texts.relation') }}</th>
                                 <th>{{ trans('texts.payment_date') }}</th>
                                 <th>{{ trans('texts.amount') }}</th>
                                 </thead>
@@ -400,10 +400,10 @@
                                 @foreach ($payments as $payment)
                                     <tr>
                                         <td>{!! \App\Models\Invoice::calcLink($payment) !!}</td>
-                                        @can('viewByOwner', [ENTITY_CLIENT, $payment->client_user_id])
-                                        <td>{!! link_to('/clients/'.$payment->client_public_id, trim($payment->client_name) ?: (trim($payment->first_name . ' ' . $payment->last_name) ?: $payment->email)) !!}</td>
+                                        @can('viewByOwner', [ENTITY_RELATION, $payment->client_user_id])
+                                        <td>{!! link_to('/relations/'.$payment->relation_public_id, trim($payment->relation_name) ?: (trim($payment->first_name . ' ' . $payment->last_name) ?: $payment->email)) !!}</td>
                                         @else
-                                            <td>{{ trim($payment->client_name) ?: (trim($payment->first_name . ' ' . $payment->last_name) ?: $payment->email) }}</td>
+                                            <td>{{ trim($payment->relation_name) ?: (trim($payment->first_name . ' ' . $payment->last_name) ?: $payment->email) }}</td>
                                             @endcan
                                             <td>{{ Utils::fromSqlDate($payment->payment_date) }}</td>
                                             <td>{{ Utils::formatMoney($payment->amount, $payment->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
@@ -428,7 +428,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <th>{{ trans('texts.invoice_number_short') }}</th>
-                                <th>{{ trans('texts.client') }}</th>
+                                <th>{{ trans('texts.relation') }}</th>
                                 <th>{{ trans('texts.due_date') }}</th>
                                 <th>{{ trans('texts.balance_due') }}</th>
                                 </thead>
@@ -437,10 +437,10 @@
                                     @if ($invoice->invoice_type_id == INVOICE_TYPE_STANDARD)
                                         <tr>
                                             <td>{!! \App\Models\Invoice::calcLink($invoice) !!}</td>
-                                            @can('viewByOwner', [ENTITY_CLIENT, $invoice->client_user_id])
-                                            <td>{!! link_to('/clients/'.$invoice->client_public_id, trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
+                                            @can('viewByOwner', [ENTITY_RELATION, $invoice->client_user_id])
+                                            <td>{!! link_to('/relations/'.$invoice->relation_public_id, trim($invoice->relation_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
                                             @else
-                                                <td>{{ trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email) }}</td>
+                                                <td>{{ trim($invoice->relation_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email) }}</td>
                                                 @endcan
                                                 <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
                                                 <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
@@ -463,7 +463,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <th>{{ trans('texts.invoice_number_short') }}</th>
-                                <th>{{ trans('texts.client') }}</th>
+                                <th>{{ trans('texts.relation') }}</th>
                                 <th>{{ trans('texts.due_date') }}</th>
                                 <th>{{ trans('texts.balance_due') }}</th>
                                 </thead>
@@ -472,10 +472,10 @@
                                     @if ($invoice->invoice_type_id == INVOICE_TYPE_STANDARD)
                                         <tr>
                                             <td>{!! \App\Models\Invoice::calcLink($invoice) !!}</td>
-                                            @can('viewByOwner', [ENTITY_CLIENT, $invoice->client_user_id])
-                                            <td>{!! link_to('/clients/'.$invoice->client_public_id, trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
+                                            @can('viewByOwner', [ENTITY_RELATION, $invoice->client_user_id])
+                                            <td>{!! link_to('/relations/'.$invoice->relation_public_id, trim($invoice->relation_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
                                             @else
-                                                <td>{{ trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email) }}</td>
+                                                <td>{{ trim($invoice->relation_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email) }}</td>
                                                 @endcan
                                                 <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
                                                 <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
@@ -508,7 +508,7 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <th>{{ trans('texts.quote_number_short') }}</th>
-                                    <th>{{ trans('texts.client') }}</th>
+                                    <th>{{ trans('texts.relation') }}</th>
                                     <th>{{ trans('texts.valid_until') }}</th>
                                     <th>{{ trans('texts.amount') }}</th>
                                     </thead>
@@ -517,7 +517,7 @@
                                         @if ($invoice->invoice_type_id == INVOICE_TYPE_QUOTE)
                                             <tr>
                                                 <td>{!! \App\Models\Invoice::calcLink($invoice) !!}</td>
-                                                <td>{!! link_to('/clients/'.$invoice->client_public_id, trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
+                                                <td>{!! link_to('/relations/'.$invoice->relation_public_id, trim($invoice->relation_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
                                                 <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
                                                 <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                                             </tr>
@@ -539,7 +539,7 @@
                                 <table class="table table-striped">
                                     <thead>
                                     <th>{{ trans('texts.quote_number_short') }}</th>
-                                    <th>{{ trans('texts.client') }}</th>
+                                    <th>{{ trans('texts.relation') }}</th>
                                     <th>{{ trans('texts.valid_until') }}</th>
                                     <th>{{ trans('texts.amount') }}</th>
                                     </thead>
@@ -548,7 +548,7 @@
                                         @if ($invoice->invoice_type_id == INVOICE_TYPE_QUOTE)
                                             <tr>
                                                 <td>{!! \App\Models\Invoice::calcLink($invoice) !!}</td>
-                                                <td>{!! link_to('/clients/'.$invoice->client_public_id, trim($invoice->client_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
+                                                <td>{!! link_to('/relations/'.$invoice->relation_public_id, trim($invoice->relation_name) ?: (trim($invoice->first_name . ' ' . $invoice->last_name) ?: $invoice->email)) !!}</td>
                                                 <td>{{ Utils::fromSqlDate($invoice->due_date) }}</td>
                                                 <td>{{ Utils::formatMoney($invoice->balance, $invoice->currency_id ?: ($company->currency_id ?: DEFAULT_CURRENCY)) }}</td>
                                             </tr>

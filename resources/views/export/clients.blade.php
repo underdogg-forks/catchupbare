@@ -23,29 +23,29 @@
     @endif
 </tr>
 
-@foreach ($clients as $client)
+@foreach ($relations as $relation)
     <tr>
-        <td>{{ $client->getDisplayName() }}</td>
+        <td>{{ $relation->getDisplayName() }}</td>
         @if ($multiUser)
-            <td>{{ $client->user->getDisplayName() }}</td>
+            <td>{{ $relation->user->getDisplayName() }}</td>
         @endif
-        <td>{{ $company->formatMoney($client->balance, $client) }}</td>
-        <td>{{ $company->formatMoney($client->paid_to_date, $client) }}</td>
-        <td>{{ $client->address1 }}</td>
-        <td>{{ $client->address2 }}</td>
-        <td>{{ $client->city }}</td>
-        <td>{{ $client->state }}</td>
-        <td>{{ $client->postal_code }}</td>
-        <td>{{ $client->present()->country }}</td>
-        <td>{{ $client->id_number }}</td>
-        <td>{{ $client->vat_number }}</td>
-        <td>{{ $client->website }}</td>
-        <td>{{ $client->work_phone }}</td>
+        <td>{{ $company->formatMoney($relation->balance, $relation) }}</td>
+        <td>{{ $company->formatMoney($relation->paid_to_date, $relation) }}</td>
+        <td>{{ $relation->address1 }}</td>
+        <td>{{ $relation->address2 }}</td>
+        <td>{{ $relation->city }}</td>
+        <td>{{ $relation->state }}</td>
+        <td>{{ $relation->postal_code }}</td>
+        <td>{{ $relation->present()->country }}</td>
+        <td>{{ $relation->id_number }}</td>
+        <td>{{ $relation->vat_number }}</td>
+        <td>{{ $relation->website }}</td>
+        <td>{{ $relation->work_phone }}</td>
         @if ($company->custom_client_label1)
-            <td>{{ $client->custom_value1 }}</td>
+            <td>{{ $relation->custom_value1 }}</td>
         @endif
         @if ($company->custom_client_label2)
-            <td>{{ $client->custom_value2 }}</td>
+            <td>{{ $relation->custom_value2 }}</td>
         @endif
     </tr>
 @endforeach

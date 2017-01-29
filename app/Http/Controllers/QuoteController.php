@@ -8,7 +8,7 @@ use View;
 use Cache;
 use Session;
 use App\Models\Company;
-use App\Models\Client;
+use App\Models\Relation;
 use App\Models\Country;
 use App\Models\InvoiceDesign;
 use App\Models\Product;
@@ -17,7 +17,7 @@ use App\Models\Invitation;
 use App\Models\Invoice;
 use App\Ninja\Mailers\ContactMailer as Mailer;
 use App\Ninja\Repositories\InvoiceRepository;
-use App\Ninja\Repositories\ClientRepository;
+use App\Ninja\Repositories\RelationRepository;
 use App\Services\InvoiceService;
 use App\Http\Requests\InvoiceRequest;
 use App\Ninja\Datatables\InvoiceDatatable;
@@ -30,7 +30,7 @@ class QuoteController extends BaseController
     protected $invoiceService;
     protected $entityType = ENTITY_INVOICE;
 
-    public function __construct(Mailer $mailer, InvoiceRepository $invoiceRepo, ClientRepository $clientRepo, InvoiceService $invoiceService)
+    public function __construct(Mailer $mailer, InvoiceRepository $invoiceRepo, RelationRepository $clientRepo, InvoiceService $invoiceService)
     {
         // parent::__construct();
 
@@ -54,26 +54,26 @@ class QuoteController extends BaseController
         return response()->view('list_wrapper', $data);
     }
 
-    public function getDatatable($clientPublicId = null)
+    public function getDatatable($relationPublicId = null)
     {
         $companyId = Auth::user()->company_id;
         $search = Input::get('sSearch');
 
-        return $this->invoiceService->getDatatable($companyId, $clientPublicId, ENTITY_QUOTE, $search);
+        return $this->invoiceService->getDatatable($companyId, $relationPublicId, ENTITY_QUOTE, $search);
     }
 
-    public function create(InvoiceRequest $request, $clientPublicId = 0)
+    public function create(InvoiceRequest $request, $relationPublicId = 0)
     {
         if (!Utils::hasFeature(FEATURE_QUOTES)) {
             return Redirect::to('/invoices/create');
         }
 
         $company = Auth::user()->company;
-        $clientId = null;
-        if ($clientPublicId) {
-            $clientId = Client::getPrivateId($clientPublicId);
+        $relationId = null;
+        if ($relationPublicId) {
+            $relationId = Relation::getPrivateId($relationPublicId);
         }
-        $invoice = $company->createInvoice(ENTITY_QUOTE, $clientId);
+        $invoice = $company->createInvoice(ENTITY_QUOTE, $relationId);
         $invoice->public_id = 0;
 
         $data = [
@@ -113,7 +113,7 @@ class QuoteController extends BaseController
           'taxRateOptions' => $options,
           'defaultTax' => $defaultTax,
           'countries' => Cache::get('countries'),
-          'clients' => Client::scope()->with('contacts', 'country')->orderBy('name')->get(),
+          'relations' => Relation::scope()->with('contacts', 'country')->orderBy('name')->get(),
           'taxRates' => TaxRate::scope()->orderBy('name')->get(),
           'currencies' => Cache::get('currencies'),
           'sizes' => Cache::get('sizes'),

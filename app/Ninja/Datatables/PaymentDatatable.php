@@ -31,13 +31,13 @@ class PaymentDatatable extends EntityDatatable
                 }
             ],
             [
-                'client_name',
+                'relation_name',
                 function ($model) {
-                    if(!Auth::user()->can('viewByOwner', [ENTITY_CLIENT, $model->client_user_id])){
-                        return Utils::getClientDisplayName($model);
+                    if(!Auth::user()->can('viewByOwner', [ENTITY_RELATION, $model->client_user_id])){
+                        return Utils::getRelationDisplayName($model);
                     }
 
-                    return $model->client_public_id ? link_to("clients/{$model->client_public_id}", Utils::getClientDisplayName($model))->toHtml() : '';
+                    return $model->relation_public_id ? link_to("relations/{$model->relation_public_id}", Utils::getRelationDisplayName($model))->toHtml() : '';
                 },
                 ! $this->hideClient
             ],

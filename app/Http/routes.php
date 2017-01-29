@@ -25,8 +25,8 @@ Route::get('/invoice_now', 'HomeController@invoiceNow');
 Route::get('/keep_alive', 'HomeController@keepAlive');
 Route::post('/get_started', 'AccountController@getStarted');
 
-// Client visible pages
-Route::group(['middleware' => 'auth:client'], function() {
+// Relation visible pages
+Route::group(['middleware' => 'auth:relation'], function() {
     Route::get('view/{invitation_key}', 'ClientPortalController@view');
     Route::get('download/{invitation_key}', 'ClientPortalController@download');
     Route::put('sign/{invitation_key}', 'ClientPortalController@sign');
@@ -36,31 +36,31 @@ Route::group(['middleware' => 'auth:client'], function() {
     Route::post('payment/{invitation_key}', 'OnlinePaymentController@doPayment');
     Route::match(['GET', 'POST'], 'complete/{invitation_key?}/{gateway_type?}', 'OnlinePaymentController@offsitePayment');
     Route::get('bank/{routing_number}', 'OnlinePaymentController@getBankInfo');
-    Route::get('client/payment_methods', 'ClientPortalController@paymentMethods');
-    Route::post('client/payment_methods/verify', 'ClientPortalController@verifyPaymentMethod');
-    //Route::get('client/payment_methods/add/{gateway_type}/{source_id?}', 'ClientPortalController@addPaymentMethod');
-    //Route::post('client/payment_methods/add/{gateway_type}', 'ClientPortalController@postAddPaymentMethod');
-    Route::post('client/payment_methods/default', 'ClientPortalController@setDefaultPaymentMethod');
-    Route::post('client/payment_methods/{source_id}/remove', 'ClientPortalController@removePaymentMethod');
-    Route::get('client/quotes', 'ClientPortalController@quoteIndex');
-    Route::get('client/credits', 'ClientPortalController@creditIndex');
-    Route::get('client/invoices', 'ClientPortalController@invoiceIndex');
-    Route::get('client/invoices/recurring', 'ClientPortalController@recurringInvoiceIndex');
-    Route::post('client/invoices/auto_bill', 'ClientPortalController@setAutoBill');
-    Route::get('client/documents', 'ClientPortalController@documentIndex');
-    Route::get('client/payments', 'ClientPortalController@paymentIndex');
-    Route::get('client/dashboard/{contact_key?}', 'ClientPortalController@dashboard');
-    Route::get('client/documents/js/{documents}/{filename}', 'ClientPortalController@getDocumentVFSJS');
-    Route::get('client/documents/{invitation_key}/{documents}/{filename?}', 'ClientPortalController@getDocument');
-    Route::get('client/documents/{invitation_key}/{filename?}', 'ClientPortalController@getInvoiceDocumentsZip');
+    Route::get('relation/payment_methods', 'ClientPortalController@paymentMethods');
+    Route::post('relation/payment_methods/verify', 'ClientPortalController@verifyPaymentMethod');
+    //Route::get('relation/payment_methods/add/{gateway_type}/{source_id?}', 'ClientPortalController@addPaymentMethod');
+    //Route::post('relation/payment_methods/add/{gateway_type}', 'ClientPortalController@postAddPaymentMethod');
+    Route::post('relation/payment_methods/default', 'ClientPortalController@setDefaultPaymentMethod');
+    Route::post('relation/payment_methods/{source_id}/remove', 'ClientPortalController@removePaymentMethod');
+    Route::get('relation/quotes', 'ClientPortalController@quoteIndex');
+    Route::get('relation/credits', 'ClientPortalController@creditIndex');
+    Route::get('relation/invoices', 'ClientPortalController@invoiceIndex');
+    Route::get('relation/invoices/recurring', 'ClientPortalController@recurringInvoiceIndex');
+    Route::post('relation/invoices/auto_bill', 'ClientPortalController@setAutoBill');
+    Route::get('relation/documents', 'ClientPortalController@documentIndex');
+    Route::get('relation/payments', 'ClientPortalController@paymentIndex');
+    Route::get('relation/dashboard/{contact_key?}', 'ClientPortalController@dashboard');
+    Route::get('relation/documents/js/{documents}/{filename}', 'ClientPortalController@getDocumentVFSJS');
+    Route::get('relation/documents/{invitation_key}/{documents}/{filename?}', 'ClientPortalController@getDocument');
+    Route::get('relation/documents/{invitation_key}/{filename?}', 'ClientPortalController@getInvoiceDocumentsZip');
 
-    Route::get('api/client.quotes', ['as'=>'api.client.quotes', 'uses'=>'ClientPortalController@quoteDatatable']);
-    Route::get('api/client.credits', ['as'=>'api.client.credits', 'uses'=>'ClientPortalController@creditDatatable']);
-    Route::get('api/client.invoices', ['as'=>'api.client.invoices', 'uses'=>'ClientPortalController@invoiceDatatable']);
-    Route::get('api/client.recurring_invoices', ['as'=>'api.client.recurring_invoices', 'uses'=>'ClientPortalController@recurringInvoiceDatatable']);
-    Route::get('api/client.documents', ['as'=>'api.client.documents', 'uses'=>'ClientPortalController@documentDatatable']);
-    Route::get('api/client.payments', ['as'=>'api.client.payments', 'uses'=>'ClientPortalController@paymentDatatable']);
-    Route::get('api/client.activity', ['as'=>'api.client.activity', 'uses'=>'ClientPortalController@activityDatatable']);
+    Route::get('api/relation.quotes', ['as'=>'api.relation.quotes', 'uses'=>'ClientPortalController@quoteDatatable']);
+    Route::get('api/relation.credits', ['as'=>'api.relation.credits', 'uses'=>'ClientPortalController@creditDatatable']);
+    Route::get('api/relation.invoices', ['as'=>'api.relation.invoices', 'uses'=>'ClientPortalController@invoiceDatatable']);
+    Route::get('api/relation.recurring_invoices', ['as'=>'api.relation.recurring_invoices', 'uses'=>'ClientPortalController@recurringInvoiceDatatable']);
+    Route::get('api/relation.documents', ['as'=>'api.relation.documents', 'uses'=>'ClientPortalController@documentDatatable']);
+    Route::get('api/relation.payments', ['as'=>'api.relation.payments', 'uses'=>'ClientPortalController@paymentDatatable']);
+    Route::get('api/relation.activity', ['as'=>'api.relation.activity', 'uses'=>'ClientPortalController@activityDatatable']);
 });
 
 
@@ -103,29 +103,29 @@ Route::post('/payment_hook/{accKey}/{gatewayId}', 'OnlinePaymentController@handl
 Route::get('/user/confirm/{code}', 'UserController@confirm');
 
 
-    Route::get('/client/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@showLoginForm']);
-    Route::post('/client/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@login']);
-    Route::get('/client/logout', ['as' => 'clientlogout', 'uses' => 'ClientAuth\LoginController@logout']);
-    Route::get('/client/sessionexpired', ['as' => 'sessionexpired', 'uses' => 'ClientAuth\LoginController@getSessionExpired']);
+    Route::get('/relation/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@showLoginForm']);
+    Route::post('/relation/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@login']);
+    Route::get('/relation/logout', ['as' => 'clientlogout', 'uses' => 'ClientAuth\LoginController@logout']);
+    Route::get('/relation/sessionexpired', ['as' => 'sessionexpired', 'uses' => 'ClientAuth\LoginController@getSessionExpired']);
 
 
     // Password Reset Routes...
-    Route::get('/client/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@showLinkRequestForm']);
-    Route::post('/client/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@sendResetLinkEmail']);
-    Route::get('/client/password/reset/{token}', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@showResetForm']);
-    Route::post('/client/password/reset', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@reset']);
+    Route::get('/relation/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@showLinkRequestForm']);
+    Route::post('/relation/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@sendResetLinkEmail']);
+    Route::get('/relation/password/reset/{token}', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@showResetForm']);
+    Route::post('/relation/password/reset', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@reset']);
 
 
-// Client auth
+// Relation auth
 /*
-Route::get('/client/login', ['as' => 'login', 'uses' => 'ClientAuth\AuthController@getLogin']);
-Route::post('/client/login', ['as' => 'login', 'uses' => 'ClientAuth\AuthController@postLogin']);
-Route::get('/client/logout', ['as' => 'logout', 'uses' => 'ClientAuth\AuthController@getLogout']);
-Route::get('/client/sessionexpired', ['as' => 'logout', 'uses' => 'ClientAuth\AuthController@getSessionExpired']);
-Route::get('/client/recover_password', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@getEmail']);
-Route::post('/client/recover_password', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@postEmail']);
-Route::get('/client/password/reset/{invitation_key}/{token}', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@getReset']);
-Route::post('/client/password/reset', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@postReset']);
+Route::get('/relation/login', ['as' => 'login', 'uses' => 'ClientAuth\AuthController@getLogin']);
+Route::post('/relation/login', ['as' => 'login', 'uses' => 'ClientAuth\AuthController@postLogin']);
+Route::get('/relation/logout', ['as' => 'logout', 'uses' => 'ClientAuth\AuthController@getLogout']);
+Route::get('/relation/sessionexpired', ['as' => 'logout', 'uses' => 'ClientAuth\AuthController@getSessionExpired']);
+Route::get('/relation/recover_password', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@getEmail']);
+Route::post('/relation/recover_password', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@postEmail']);
+Route::get('/relation/password/reset/{invitation_key}/{token}', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@getReset']);
+Route::post('/relation/password/reset', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@postReset']);
 */
 
 
@@ -155,34 +155,34 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::post('settings/payment_gateway_limits', 'AccountController@savePaymentGatewayLimits');
     Route::post('users/change_password', 'UserController@changePassword');
 
-    Route::resource('clients', 'ClientController');
-    Route::get('api/clients', 'ClientController@getDatatable');
-    Route::get('api/activities/{client_id?}', 'ActivityController@getDatatable');
-    Route::get('clients/{client_id}', 'ClientController@show');
-    Route::post('clients/bulk', 'ClientController@bulk');
-    Route::get('clients/statement/{client_id}', 'ClientController@statement');
+    Route::resource('relations', 'RelationController');
+    Route::get('api/relations', 'RelationController@getDatatable');
+    Route::get('api/activities/{relation_id?}', 'ActivityController@getDatatable');
+    Route::get('relations/{relation_id}', 'RelationController@show');
+    Route::post('relations/bulk', 'RelationController@bulk');
+    Route::get('relations/statement/{relation_id}', 'RelationController@statement');
 
     Route::resource('tasks', 'TaskController');
-    Route::get('api/tasks/{client_id?}', 'TaskController@getDatatable');
-    Route::get('tasks/create/{client_id?}/{project_id?}', 'TaskController@create');
+    Route::get('api/tasks/{relation_id?}', 'TaskController@getDatatable');
+    Route::get('tasks/create/{relation_id?}/{project_id?}', 'TaskController@create');
     Route::post('tasks/bulk', 'TaskController@bulk');
     Route::get('projects', 'ProjectController@index');
     Route::get('api/projects', 'ProjectController@getDatatable');
-    Route::get('projects/create/{client_id?}', 'ProjectController@create');
+    Route::get('projects/create/{relation_id?}', 'ProjectController@create');
     Route::post('projects', 'ProjectController@store');
     Route::put('projects/{projects}', 'ProjectController@update');
     Route::get('projects/{projects}/edit', 'ProjectController@edit');
     Route::post('projects/bulk', 'ProjectController@bulk');
 
-    Route::get('api/recurring_invoices/{client_id?}', 'InvoiceController@getRecurringDatatable');
+    Route::get('api/recurring_invoices/{relation_id?}', 'InvoiceController@getRecurringDatatable');
 
     Route::get('invoices/invoice_history/{invoice_id}', 'InvoiceController@invoiceHistory');
     Route::get('quotes/quote_history/{invoice_id}', 'InvoiceController@invoiceHistory');
 
     Route::resource('invoices', 'InvoiceController');
-    Route::get('api/invoices/{client_id?}', 'InvoiceController@getDatatable');
-    Route::get('invoices/create/{client_id?}', 'InvoiceController@create');
-    Route::get('recurring_invoices/create/{client_id?}', 'InvoiceController@createRecurring');
+    Route::get('api/invoices/{relation_id?}', 'InvoiceController@getDatatable');
+    Route::get('invoices/create/{relation_id?}', 'InvoiceController@create');
+    Route::get('recurring_invoices/create/{relation_id?}', 'InvoiceController@createRecurring');
     Route::get('recurring_invoices', 'RecurringInvoiceController@index');
     Route::get('recurring_invoices/{invoices}/edit', 'InvoiceController@edit');
     Route::get('invoices/{invoices}/clone', 'InvoiceController@cloneInvoice');
@@ -195,24 +195,24 @@ Route::group(['middleware' => 'auth:user'], function() {
     Route::post('documents', 'DocumentController@postUpload');
     Route::delete('documents/{documents}', 'DocumentController@delete');
 
-    Route::get('quotes/create/{client_id?}', 'QuoteController@create');
+    Route::get('quotes/create/{relation_id?}', 'QuoteController@create');
     Route::get('quotes/{invoices}/clone', 'InvoiceController@cloneInvoice');
     Route::get('quotes/{invoices}/edit', 'InvoiceController@edit');
     Route::put('quotes/{invoices}', 'InvoiceController@update');
     Route::get('quotes/{invoices}', 'InvoiceController@edit');
     Route::post('quotes', 'InvoiceController@store');
     Route::get('quotes', 'QuoteController@index');
-    Route::get('api/quotes/{client_id?}', 'QuoteController@getDatatable');
+    Route::get('api/quotes/{relation_id?}', 'QuoteController@getDatatable');
     Route::post('quotes/bulk', 'QuoteController@bulk');
 
     Route::resource('payments', 'PaymentController');
-    Route::get('payments/create/{client_id?}/{invoice_id?}', 'PaymentController@create');
-    Route::get('api/payments/{client_id?}', 'PaymentController@getDatatable');
+    Route::get('payments/create/{relation_id?}/{invoice_id?}', 'PaymentController@create');
+    Route::get('api/payments/{relation_id?}', 'PaymentController@getDatatable');
     Route::post('payments/bulk', 'PaymentController@bulk');
 
     Route::resource('credits', 'CreditController');
-    Route::get('credits/create/{client_id?}/{invoice_id?}', 'CreditController@create');
-    Route::get('api/credits/{client_id?}', 'CreditController@getDatatable');
+    Route::get('credits/create/{relation_id?}/{invoice_id?}', 'CreditController@create');
+    Route::get('api/credits/{relation_id?}', 'CreditController@getDatatable');
     Route::post('credits/bulk', 'CreditController@bulk');
 
     Route::get('api/products', 'ProductController@getDatatable');
@@ -231,7 +231,7 @@ Route::group(['middleware' => 'auth:user'], function() {
 
     // Expense
     Route::resource('expenses', 'ExpenseController');
-    Route::get('expenses/create/{vendor_id?}/{client_id?}/{category_id?}', 'ExpenseController@create');
+    Route::get('expenses/create/{vendor_id?}/{relation_id?}/{category_id?}', 'ExpenseController@create');
     Route::get('api/expenses', 'ExpenseController@getDatatable');
     Route::get('api/expenses/{id}', 'ExpenseController@getDatatableVendor');
     Route::post('expenses/bulk', 'ExpenseController@bulk');
@@ -322,7 +322,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'api/v1'], function()
     Route::get('static', 'AccountApiController@getStaticData');
     Route::get('companies', 'AccountApiController@show');
     Route::put('companies', 'AccountApiController@update');
-    Route::resource('clients', 'ClientApiController');
+    Route::resource('relations', 'ClientApiController');
     Route::get('quotes', 'QuoteApiController@index');
     Route::get('invoices', 'InvoiceApiController@index');
     Route::get('download/{invoice_id}', 'InvoiceApiController@download');

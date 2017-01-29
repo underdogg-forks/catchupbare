@@ -53,11 +53,11 @@
         {!! Button::normal(trans('texts.categories'))->asLinkTo(URL::to('/expense_categories'))->appendIcon(Icon::create('list')) !!}
 	@elseif ($entityType == ENTITY_TASK)
 		{!! Button::normal(trans('texts.projects'))->asLinkTo(URL::to('/projects'))->appendIcon(Icon::create('list')) !!}
-		{!! Button::primary(trans('texts.new_project'))->asLinkTo(URL::to('/projects/create/' . (isset($clientId) ? $clientId : '')))->appendIcon(Icon::create('plus-sign')) !!}
+		{!! Button::primary(trans('texts.new_project'))->asLinkTo(URL::to('/projects/create/' . (isset($relationId) ? $relationId : '')))->appendIcon(Icon::create('plus-sign')) !!}
     @endif
 
 	@if (Auth::user()->can('create', $entityType) && empty($vendorId))
-    	{!! Button::primary(mtrans($entityType, "new_{$entityType}"))->asLinkTo(url(Utils::pluralizeEntityType($entityType) . '/create/' . (isset($clientId) ? $clientId : '')))->appendIcon(Icon::create('plus-sign')) !!}
+    	{!! Button::primary(mtrans($entityType, "new_{$entityType}"))->asLinkTo(url(Utils::pluralizeEntityType($entityType) . '/create/' . (isset($relationId) ? $relationId : '')))->appendIcon(Icon::create('plus-sign')) !!}
 	@endif
 
 </div>
@@ -65,11 +65,11 @@
 
 {!! Datatable::table()
 	->addColumn(Utils::trans($datatable->columnFields(), $datatable->entityType))
-	->setUrl(url('api/' . Utils::pluralizeEntityType($entityType) . '/' . (isset($clientId) ? $clientId : (isset($vendorId) ? $vendorId : ''))))
+	->setUrl(url('api/' . Utils::pluralizeEntityType($entityType) . '/' . (isset($relationId) ? $relationId : (isset($vendorId) ? $vendorId : ''))))
 	->setCustomValues('entityType', Utils::pluralizeEntityType($entityType))
-	->setCustomValues('clientId', isset($clientId) && $clientId)
+	->setCustomValues('clientId', isset($relationId) && $relationId)
 	->setOptions('sPaginationType', 'bootstrap')
-    ->setOptions('aaSorting', [[isset($clientId) ? ($datatable->sortCol-1) : $datatable->sortCol, 'desc']])
+    ->setOptions('aaSorting', [[isset($relationId) ? ($datatable->sortCol-1) : $datatable->sortCol, 'desc']])
 	->render('datatable') !!}
 
 @if ($entityType == ENTITY_PAYMENT)

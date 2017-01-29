@@ -159,9 +159,9 @@ class Company extends Eloquent
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function clients()
+    public function relations()
     {
-        return $this->hasMany('App\Models\Client');
+        return $this->hasMany('App\Models\Relation');
     }
 
     /**
@@ -860,10 +860,10 @@ class Company extends Eloquent
 
     /**
      * @param $entityType
-     * @param null $clientId
+     * @param null $relationId
      * @return mixed
      */
-    public function createInvoice($entityType = ENTITY_INVOICE, $clientId = null)
+    public function createInvoice($entityType = ENTITY_INVOICE, $relationId = null)
     {
         $invoice = Invoice::createNew();
 
@@ -872,7 +872,7 @@ class Company extends Eloquent
         $invoice->invoice_date = Utils::today();
         $invoice->start_date = Utils::today();
         $invoice->invoice_design_id = $this->invoice_design_id;
-        $invoice->client_id = $clientId;
+        $invoice->relation_id = $relationId;
 
         if ($entityType === ENTITY_RECURRING_INVOICE) {
             $invoice->invoice_number = microtime(true);
@@ -882,16 +882,16 @@ class Company extends Eloquent
                 $invoice->invoice_type_id = INVOICE_TYPE_QUOTE;
             }
 
-            if ($this->hasClientNumberPattern($invoice) && !$clientId) {
+            if ($this->hasClientNumberPattern($invoice) && !$relationId) {
                 // do nothing, we don't yet know the value
             } elseif ( ! $invoice->invoice_number) {
                 $invoice->invoice_number = $this->getNextNumber($invoice);
             }
         }
 
-        if (!$clientId) {
-            $invoice->client = Client::createNew();
-            $invoice->client->public_id = 0;
+        if (!$relationId) {
+            $invoice->relation = Relation::createNew();
+            $invoice->relation->id = 0;
         }
 
         return $invoice;
@@ -999,7 +999,7 @@ class Company extends Eloquent
                 return $selfHost || !empty($planDetails);
 
             // Pro; No trial allowed, unless they're trialing enterprise with an active pro plan
-            case FEATURE_MORE_CLIENTS:
+            case FEATURE_MORE_RELATIONS:
                 return $selfHost || !empty($planDetails) && (!$planDetails['trial'] || !empty($this->getPlanDetails(false, false)));
 
             // White Label
@@ -1251,7 +1251,7 @@ class Company extends Eloquent
      */
     public function hideFieldsForViz()
     {
-        foreach ($this->clients as $client) {
+        foreach ($this->relations as $client) {
             $client->setVisible([
                 'public_id',
                 'name',

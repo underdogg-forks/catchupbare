@@ -30,15 +30,15 @@ class ExpenseDatatable extends EntityDatatable
                 ! $this->hideClient
             ],
             [
-                'client_name',
+                'relation_name',
                 function ($model)
                 {
-                    if ($model->client_public_id) {
-                        if(!Auth::user()->can('viewByOwner', [ENTITY_CLIENT, $model->client_user_id])){
-                            return Utils::getClientDisplayName($model);
+                    if ($model->relation_public_id) {
+                        if(!Auth::user()->can('viewByOwner', [ENTITY_RELATION, $model->client_user_id])){
+                            return Utils::getRelationDisplayName($model);
                         }
 
-                        return link_to("clients/{$model->client_public_id}", Utils::getClientDisplayName($model))->toHtml();
+                        return link_to("relations/{$model->relation_public_id}", Utils::getRelationDisplayName($model))->toHtml();
                     } else {
                         return '';
                     }

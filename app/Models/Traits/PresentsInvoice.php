@@ -26,15 +26,15 @@ trait PresentsInvoice
                 'invoice.balance_due',
                 'invoice.partial_due',
             ],
-            INVOICE_FIELDS_CLIENT => [
-                'client.client_name',
-                'client.id_number',
-                'client.vat_number',
-                'client.address1',
-                'client.address2',
-                'client.city_state_postal',
-                'client.country',
-                'client.email',
+            INVOICE_FIELDS_RELATION => [
+                'relation.relation_name',
+                'relation.id_number',
+                'relation.vat_number',
+                'relation.address1',
+                'relation.address2',
+                'relation.city_state_postal',
+                'relation.country',
+                'relation.email',
             ],
             'account_fields1' => [
                 'company.corporation_name',
@@ -60,10 +60,10 @@ trait PresentsInvoice
             $fields[INVOICE_FIELDS_INVOICE][] = 'invoice.custom_text_value2';
         }
         if ($this->custom_client_label1) {
-            $fields[INVOICE_FIELDS_CLIENT][] = 'client.custom_value1';
+            $fields[INVOICE_FIELDS_RELATION][] = 'relation.custom_value1';
         }
         if ($this->custom_client_label2) {
-            $fields[INVOICE_FIELDS_CLIENT][] = 'client.custom_value2';
+            $fields[INVOICE_FIELDS_RELATION][] = 'relation.custom_value2';
         }
         if ($this->custom_label1) {
             $fields['account_fields2'][] = 'company.custom_value1';
@@ -89,20 +89,20 @@ trait PresentsInvoice
                 'invoice.custom_text_value2',
                 '.blank',
             ],
-            INVOICE_FIELDS_CLIENT => [
-                'client.client_name',
-                'client.id_number',
-                'client.vat_number',
-                'client.address1',
-                'client.address2',
-                'client.city_state_postal',
-                'client.postal_city_state',
-                'client.country',
-                'client.email',
-                'client.phone',
-                'client.contact_name',
-                'client.custom_value1',
-                'client.custom_value2',
+            INVOICE_FIELDS_RELATION => [
+                'relation.relation_name',
+                'relation.id_number',
+                'relation.vat_number',
+                'relation.address1',
+                'relation.address2',
+                'relation.city_state_postal',
+                'relation.postal_city_state',
+                'relation.country',
+                'relation.email',
+                'relation.phone',
+                'relation.contact_name',
+                'relation.custom_value1',
+                'relation.custom_value2',
                 '.blank',
             ],
             INVOICE_FIELDS_COMPANY => [
@@ -192,7 +192,7 @@ trait PresentsInvoice
             'invoice_no',
             'quote_no',
             'valid_until',
-            'client_name',
+            'relation_name',
             'address1',
             'address2',
             'id_number',
@@ -228,8 +228,8 @@ trait PresentsInvoice
         foreach ([
             'invoice.custom_text_value1' => 'custom_invoice_text_label1',
             'invoice.custom_text_value2' => 'custom_invoice_text_label2',
-            'client.custom_value1' => 'custom_client_label1',
-            'client.custom_value2' => 'custom_client_label2',
+            'relation.custom_value1' => 'custom_client_label1',
+            'relation.custom_value2' => 'custom_client_label2',
             'company.custom_value1' => 'custom_label1',
             'company.custom_value2' => 'custom_label2'
         ] as $field => $property) {

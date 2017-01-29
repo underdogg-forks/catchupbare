@@ -44,7 +44,7 @@
 
         function onDownloadClick() {
             var doc = generatePDF(invoice, invoiceDesigns[0].javascript, true);
-            doc.save("{{ str_replace(' ', '_', trim($client->getDisplayName())) . '-' . trans('texts.statement') }}" + '.pdf');
+            doc.save("{{ str_replace(' ', '_', trim($relation->getDisplayName())) . '-' . trans('texts.statement') }}" + '.pdf');
         }
 
     </script>
@@ -57,13 +57,13 @@
         {!! Button::normal(trans('texts.download_pdf'))
                 ->withAttributes(['onclick' => 'onDownloadClick()'])
                 ->appendIcon(Icon::create('download-alt')) !!}
-        {!! Button::primary(trans('texts.view_client'))
-                ->asLinkTo($client->present()->url) !!}
+        {!! Button::primary(trans('texts.view_relation'))
+                ->asLinkTo($relation->present()->url) !!}
     </div>
 
     <ol class="breadcrumb pull-left">
-      <li>{{ link_to('/clients', trans('texts.clients')) }}</li>
-      <li class='active'>{{ $client->getDisplayName() }}</li>
+      <li>{{ link_to('/relations', trans('texts.relations')) }}</li>
+      <li class='active'>{{ $relation->getDisplayName() }}</li>
     </ol>
 
     <p>&nbsp;</p>

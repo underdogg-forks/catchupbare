@@ -1,6 +1,6 @@
 <?php namespace App\Http\Requests;
 
-use App\Models\Client;
+use App\Models\Relation;
 
 class UpdateInvoiceAPIRequest extends InvoiceRequest
 {
@@ -38,8 +38,8 @@ class UpdateInvoiceAPIRequest extends InvoiceRequest
         ];
 
         if ($this->user()->company->client_number_counter) {
-            $clientId = Client::getPrivateId(request()->input('client')['public_id']);
-            $rules['client.id_number'] = 'unique:clients,id_number,'.$clientId.',id,company_id,' . $this->user()->company_id;
+            $relationId = Relation::getPrivateId(request()->input('relation')['public_id']);
+            $rules['relation.id_number'] = 'unique:relations,id_number,'.$relationId.',id,company_id,' . $this->user()->company_id;
         }
 
         return $rules;

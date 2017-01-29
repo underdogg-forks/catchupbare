@@ -199,7 +199,7 @@
             }
           }
           @endif
-          @foreach (['clients', 'contacts', 'invoices', 'quotes', 'navigation'] as $type)
+          @foreach (['relations', 'contacts', 'invoices', 'quotes', 'navigation'] as $type)
           ,{
             name: 'data',
             limit: 3,
@@ -464,7 +464,7 @@
       <ul class="nav navbar-nav hide-non-phone" style="font-weight: bold">
         @foreach ([
             'dashboard' => false,
-            'clients' => false,
+            'relations' => false,
             'products' => false,
             'invoices' => false,
             'payments' => false,
@@ -491,7 +491,7 @@
         <ul class="sidebar-nav">
             @foreach([
                 'dashboard',
-                'clients',
+                'relations',
                 'products',
                 'invoices',
                 'payments',

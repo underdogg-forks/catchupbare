@@ -18,8 +18,8 @@ class TemplateService
         /** @var \App\Models\Company $company */
         $company = $data['company'];
 
-        /** @var \App\Models\Client $client */
-        $client = $data['client'];
+        /** @var \App\Models\Relation $client */
+        $client = $data['relation'];
 
         /** @var \App\Models\Invitation $invitation */
         $invitation = $data['invitation'];

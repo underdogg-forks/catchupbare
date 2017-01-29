@@ -61,9 +61,9 @@
 @section('body')
 <div class="container">
 
-    @include('partials.warn_session', ['redirectTo' => '/client/sessionexpired'])
+    @include('partials.warn_session', ['redirectTo' => '/relation/sessionexpired'])
 
-    {!! Former::open('client/login')
+    {!! Former::open('relation/login')
             ->rules(['password' => 'required'])
             ->addClass('form-signin') !!}
     {{ Former::populateField('remember', 'true') }}
@@ -89,7 +89,7 @@
                     ->large()->submit()->block() !!}</p>
 
             <p class="link">
-                {!! link_to('/client/recover_password', trans('texts.recover_password')) !!}
+                {!! link_to('/relation/recover_password', trans('texts.recover_password')) !!}
             </p>
 
 

@@ -12,7 +12,7 @@
             var $form = $('.payment-form');
             $('.payment-form').submit(function(event) {
                 var data = {
-                    client_id: {{ WEPAY_CLIENT_ID }},
+                    relation_id: {{ WEPAY_CLIENT_ID }},
                     user_name: $('#first_name').val() + ' ' + $('#last_name').val(),
                     email: $('#email').val(),
                     cc_number: $('#card_number').val(),

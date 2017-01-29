@@ -29,7 +29,7 @@ class Expense extends EntityModel
      * @var array
      */
     protected $fillable = [
-        'client_id',
+        'relation_id',
         'vendor_id',
         'expense_currency_id',
         'expense_date',
@@ -51,7 +51,7 @@ class Expense extends EntityModel
     public static function getImportColumns()
     {
         return [
-            'client',
+            'relation',
             'vendor',
             'amount',
             'public_notes',
@@ -65,7 +65,7 @@ class Expense extends EntityModel
         return [
             'amount|total' => 'amount',
             'category' => 'expense_category',
-            'client' => 'client',
+            'relation' => 'relation',
             'vendor' => 'vendor',
             'notes|details' => 'public_notes',
             'date' => 'expense_date',
@@ -106,9 +106,9 @@ class Expense extends EntityModel
     /**
      * @return mixed
      */
-    public function client()
+    public function relation()
     {
-        return $this->belongsTo('App\Models\Client')->withTrashed();
+        return $this->belongsTo('App\Models\Relation')->withTrashed();
     }
 
     /**
