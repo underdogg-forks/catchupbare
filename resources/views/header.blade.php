@@ -433,7 +433,7 @@
               @if (count(session(SESSION_USERACCS)) > 1)
                   <li>{!! link_to('/manage_companies', trans('texts.manage_companies')) !!}</li>
               @elseif (!session(SESSION_USERACCS) || count(session(SESSION_USERACCS)) < 5)
-                  <li>{!! link_to('/invoice_now?new_corporation=true&sign_up=true', trans('texts.add_corporation')) !!}</li>
+                  <li>{!! link_to('/invoice_now?new_corporation=true&sign_up=true', trans('texts.add_company')) !!}</li>
               @endif
             @endif
             <li>{!! link_to('#', trans('texts.logout'), array('onclick'=>'logout()')) !!}</li>

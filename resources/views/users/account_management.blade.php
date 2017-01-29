@@ -5,7 +5,7 @@
 
 <center>
     @if (!session(SESSION_USERACCS) || count(session(SESSION_USERACCS)) < 5)
-        {!! Button::success(trans('texts.add_corporation'))->asLinkTo(url('/invoice_now?new_corporation=true&sign_up=true')) !!}
+        {!! Button::success(trans('texts.add_company'))->asLinkTo(url('/invoice_now?new_corporation=true&sign_up=true')) !!}
     @endif
 </center>
 
