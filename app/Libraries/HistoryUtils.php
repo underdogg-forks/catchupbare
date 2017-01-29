@@ -92,7 +92,7 @@ class HistoryUtils
         $data = [];
 
         // Add to the list and make sure to only show each item once
-        for ($i = 0; $i<count($companyHistory); $i++) {
+        /*for ($i = 0; $i<count($companyHistory); $i++) {
             $item = $companyHistory[$i];
 
             if ($object->url == $item->url) {
@@ -101,12 +101,12 @@ class HistoryUtils
 
             array_push($data, $item);
 
-            if (isset($counts[$item->accountId])) {
-                $counts[$item->accountId]++;
-            } else {
-                $counts[$item->accountId] = 1;
-            }
-        }
+            /*if (isset($counts[$item->accountId])) {
+                    $counts[$item->accountId]++;
+                } else {
+                    $counts[$item->accountId] = 1;
+                }*  /
+          }*/
 
         array_unshift($data, $object);
 

@@ -430,7 +430,7 @@
             <li class="divider"></li>
             @if (Utils::isAdmin())
               @if (count(session(SESSION_USERACCS)) > 1)
-                  <li>{!! link_to('/manage_corporations', trans('texts.manage_corporations')) !!}</li>
+                  <li>{!! link_to('/manage_companies', trans('texts.manage_companies')) !!}</li>
               @elseif (!session(SESSION_USERACCS) || count(session(SESSION_USERACCS)) < 5)
                   <li>{!! link_to('/invoice_now?new_corporation=true&sign_up=true', trans('texts.add_corporation')) !!}</li>
               @endif

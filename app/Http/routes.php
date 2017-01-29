@@ -80,19 +80,44 @@ Route::post('/hook/email_opened', 'AppController@emailOpened');
 Route::post('/hook/bot/{platform?}', 'BotController@handleMessage');
 Route::post('/payment_hook/{accKey}/{gatewayId}', 'OnlinePaymentController@handlePaymentWebhook');
 
+
+//Auth::routes();
+
 // Laravel auth routes
-Route::get('/signup', ['as' => 'signup', 'uses' => 'Auth\AuthController@getRegister']);
-Route::post('/signup', ['as' => 'signup', 'uses' => 'Auth\AuthController@postRegister']);
-Route::get('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLoginWrapper']);
-Route::post('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
-Route::get('/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogoutWrapper']);
-Route::get('/recover_password', ['as' => 'forgot', 'uses' => 'Auth\PasswordController@getEmail']);
-Route::post('/recover_password', ['as' => 'forgot', 'uses' => 'Auth\PasswordController@postEmail']);
-Route::get('/password/reset/{token}', ['as' => 'forgot', 'uses' => 'Auth\PasswordController@getReset']);
-Route::post('/password/reset', ['as' => 'forgot', 'uses' => 'Auth\PasswordController@postReset']);
+    // Authentication Routes...
+    Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
+    Route::post('login', ['as' => 'login', 'uses' => 'Auth\LoginController@login']);
+    Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
+
+    // Registration Routes...
+    Route::get('signup', ['as' => 'signup', 'uses' => 'Auth\RegisterController@showRegistrationForm']);
+    Route::post('signup', ['as' => 'signup', 'uses' => 'Auth\RegisterController@register']);
+
+    // Password Reset Routes...
+    Route::get('recover_password', ['as' => 'forgot', 'uses' => 'Auth\ForgotPasswordController@showLinkRequestForm']);
+    Route::post('recover_password', ['as' => 'forgot', 'uses' => 'Auth\ForgotPasswordController@sendResetLinkEmail']);
+    Route::get('password/reset/{token}', ['as' => 'forgot', 'uses' => 'Auth\ResetPasswordController@showResetForm']);
+    Route::post('password/reset', ['as' => 'forgot', 'uses' => 'Auth\ResetPasswordController@reset']);
+
+
 Route::get('/user/confirm/{code}', 'UserController@confirm');
 
+
+    Route::get('/client/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@showLoginForm']);
+    Route::post('/client/login', ['as' => 'clientlogin', 'uses' => 'ClientAuth\LoginController@login']);
+    Route::get('/client/logout', ['as' => 'clientlogout', 'uses' => 'ClientAuth\LoginController@logout']);
+    Route::get('/client/sessionexpired', ['as' => 'sessionexpired', 'uses' => 'ClientAuth\LoginController@getSessionExpired']);
+
+
+    // Password Reset Routes...
+    Route::get('/client/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@showLinkRequestForm']);
+    Route::post('/client/recover_password', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ForgotPasswordController@sendResetLinkEmail']);
+    Route::get('/client/password/reset/{token}', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@showResetForm']);
+    Route::post('/client/password/reset', ['as' => 'clientforgot', 'uses' => 'ClientAuth\ResetPasswordController@reset']);
+
+
 // Client auth
+/*
 Route::get('/client/login', ['as' => 'login', 'uses' => 'ClientAuth\AuthController@getLogin']);
 Route::post('/client/login', ['as' => 'login', 'uses' => 'ClientAuth\AuthController@postLogin']);
 Route::get('/client/logout', ['as' => 'logout', 'uses' => 'ClientAuth\AuthController@getLogout']);
@@ -101,6 +126,7 @@ Route::get('/client/recover_password', ['as' => 'forgot', 'uses' => 'ClientAuth\
 Route::post('/client/recover_password', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@postEmail']);
 Route::get('/client/password/reset/{invitation_key}/{token}', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@getReset']);
 Route::post('/client/password/reset', ['as' => 'forgot', 'uses' => 'ClientAuth\PasswordController@postReset']);
+*/
 
 
 if (Utils::isNinja()) {
@@ -233,7 +259,7 @@ Route::group([
     Route::get('send_confirmation/{user_id}', 'UserController@sendConfirmation');
     Route::get('/switch_account/{user_id}', 'UserController@switchAccount');
     Route::get('/unlink_account/{user_account_id}/{user_id}', 'UserController@unlinkAccount');
-    Route::get('/manage_corporations', 'UserController@manageCompanies');
+    Route::get('/manage_companies', 'UserController@manageCompanies');
 
     Route::get('api/tokens', 'TokenController@getDatatable');
     Route::resource('tokens', 'TokenController');
