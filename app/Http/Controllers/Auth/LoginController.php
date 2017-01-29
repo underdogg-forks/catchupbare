@@ -127,6 +127,13 @@ class LoginController extends Controller
         /*if ($throttles) {
             $this->clearLoginAttempts($request);
         }*/
+        Event::fire(new UserLoggedIn()); 
+
+
+        $users = $this->companyRepo->loadAccounts(Auth::user()->id);
+        Session::put(SESSION_USERACCS, $users);
+
+
 
         if (method_exists($this, 'authenticated')) {
             return $this->authenticated($request, Auth::user());
